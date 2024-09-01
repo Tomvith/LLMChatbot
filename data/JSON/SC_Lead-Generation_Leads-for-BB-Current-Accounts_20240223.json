@@ -1,0 +1,299 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Lead for Business Banking Current Accounts",
+    "description": "##### Introduction\nThe Open API for HK Lead serves the business functions associated with **Business Banking Current Accounts**\noffered by the bank. The operations and the features supported in this API\nare described in the following sections.\n\n<hr />\n\n##### Authentication\n\nTo make a request to any of the APIs, the Client has to present an Access\nToken, following the OAuth 2.0 specifications. Here is the API endpoint for getting an OAuth 2.0 Token.\n\n**https:\\/\\/api.sc.com\\/retail\\/v1\\/oauth2\\/token**\n\n<br>Following are the request parameters to be passed to the Token endpoint.\n\n<hr />\n\n ##### Parameters\n\n <table>\n  <thead>\n    <tr>\n      <th width='15%'>Key</th>\n      <th width='85%'>Value</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>grant_type</td>\n      <td>Indicates the type of grant being presented in exchange for an access token and possibly a refresh token, for more details, please refer to the table below</td>\n    </tr>\n    <tr>\n      <td>client_id</td>\n      <td>The public identifier for the application, obtained when the caller first registered the application</td>\n    </tr>\n    <tr>\n      <td>client_secret</td>\n      <td>The application's client secret. This ensures that the request to get the access token is made only from the lead, and not from a potential attacker that may have intercepted the authorization code.</td>\n    </tr>\n    </tbody>\n</table>\n\n<hr/>\n\n<table>\n  <thead>\n    <tr>\n      <th width='15%'>Grant Type</th>\n      <th width='85%'>Usage</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Client credentials</td>\n      <td>For the client app to identify itself to the SC API platform, the <code> /token </code> endpoint has to be called with query param <code>grant_type</code> set to <code>client_credentials</code></td>\n    </tr>\n    <tr>\n      <td>Auth-code based grant</td>\n      <td>For the customer and client app to identify itself to the SC API platform, the <code> /token </code> endpoint has to be called with query param <code>grant_type</code> set to <code>auth_code_grant</code></td>\n    </tr>\n  </tbody>\n</table>\n\n<hr />\n\n##### Error Handling\n\nThe API endpoints return an error response whenever the request could not be processed successfully. In such scenarios, API provides the clients with a precise Application Error code and description in the error payload associated with HTTP Status codes 4xx or 5xx.\n <br>The table below provides a list of such possible Lead Errors, for effective error handling of API consumers.\n\n<table>\n  <thead>\n    <tr>\n      <th width='20%'>Response error code</th>\n      <th width='80%'>Detail</th>\n    </tr>\n  </thead>\n <tbody>\n    <tr>\n      <td>E001</td>\n      <td>Field is mandatory</td>\n    </tr>\n     <tr>\n      <td>E002</td>\n      <td>Field value not in valid range</td>\n    </tr>\n    <tr>\n      <td>E003</td>\n      <td>Invalid data</td>\n    </tr>\n    <tr>\n      <td>E004</td>\n      <td>Invalid format</td>\n    </tr>\n     <tr>\n      <td>E005</td>\n      <td>Unexpected error occured</td>\n    </tr>\n      <tr>\n      <td>E006</td>\n      <td>Forbidden</td>\n    </tr>\n      <tr>\n      <td>E007</td>\n      <td>Authentication Failure</td>\n    </tr>\n     <tr>\n      <td>E008</td>\n      <td>Contains invalid characters</td>\n    </tr>\n    <tr>\n      <td>E011</td>\n      <td>Failed to create Record - unexpected error</td>\n    </tr>\n    <tr>\n      <td>E016</td>\n      <td>You will need to accept the Terms and Conditions before starting the application process</td>\n    </tr>\n     <tr>\n      <td>E017</td>\n      <td>Service Unavailable</td>\n    </tr>\n    <tr>\n      <td>E019</td>\n      <td>Bad Gateway</td>\n    </tr>\n    <tr>\n      <td>E020</td>\n      <td>Service Unavailable</td>\n    </tr>\n  </tbody>\n</table>\n",
+    "termsOfService": "https://www.sc.com/en/terms-of-use/",
+    "contact": {
+      "name": "Developer Portal",
+      "url": "https://www.developer.sc.com",
+      "email": "dp@sc.com"
+    },
+    "license": {
+      "name": "Company Licence",
+      "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0",
+    "x-category": "Retail"
+  },
+  "servers": [
+    {
+      "url": "https://api.sc.com/retail/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Leads for BB Current Accounts",
+      "description": "OpenAPI for HK Lead. This is the Leads Model entity which holds all the information related to single lead. Based on received request payload this entity internally will be marshelled.",
+      "x-subcategory": "Lead Generation"
+    }
+  ],
+  "paths": {
+    "/leads": {
+      "post": {
+        "tags": [
+          "Leads for BB Current Accounts"
+        ],
+        "summary": "Capture Leads",
+        "operationId": "saveLeadUsingPOST",
+        "parameters": [
+          {
+            "name": "X-Markets",
+            "in": "header",
+            "description": "It indicates country. Default value is HK.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transaction-id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request",
+            "schema": {
+              "maxLength": 36,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Lead",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Lead"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Resource successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeadResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-markets": "HK",
+        "x-hasguide": "No",
+        "x-icon": "icon-retail-products.svg",
+        "x-sandbox": "Yes",
+        "x-signin": "Yes",
+        "x-codegen-request-body-name": "body"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "title": "Error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "code",
+            "example": "E003"
+          },
+          "detail": {
+            "type": "string",
+            "description": "detail",
+            "example": "Invalid data"
+          },
+          "id": {
+            "type": "string",
+            "description": "id",
+            "example": "UUID"
+          },
+          "source": {
+            "type": "string",
+            "description": "source field name",
+            "example": "full-name"
+          }
+        }
+      },
+      "Lead": {
+        "title": "Lead",
+        "required": [
+          "application-date",
+          "category-name",
+          "consent-flag",
+          "country-code",
+          "email",
+          "full-name",
+          "mobile-country-code",
+          "mobile-number",
+          "product",
+          "product-name"
+        ],
+        "type": "object",
+        "properties": {
+          "additional-info": {
+            "maxLength": 100,
+            "type": "string",
+            "example": "Lead from Partner"
+          },
+          "application-date": {
+            "maxLength": 10,
+            "type": "string",
+            "description": "Date of Submission, format is yyyy-mm-dd",
+            "example": "yyyy-mm-dd"
+          },
+          "campaign": {
+            "maxLength": 40,
+            "type": "string",
+            "description": "Campaign Code",
+            "example": "C00B01"
+          },
+          "category-name": {
+            "maxLength": 100,
+            "type": "string",
+            "description": "Product Category",
+            "example": "BB-Current Accounts"
+          },
+          "channel-ref-number": {
+            "maxLength": 40,
+            "type": "string",
+            "description": "External Reference",
+            "example": "Partner"
+          },
+          "consent-flag": {
+            "maxLength": 20,
+            "type": "string",
+            "description": "TnC Flag",
+            "example": "Recorded"
+          },
+          "country-code": {
+            "maxLength": 2,
+            "type": "string",
+            "description": "Country Code",
+            "example": "HK"
+          },
+          "email": {
+            "maxLength": 70,
+            "type": "string",
+            "description": "Email address",
+            "example": "zheng.roy@yahoo.com"
+          },
+          "full-name": {
+            "maxLength": 110,
+            "type": "string",
+            "example": "Zheng Roy"
+          },
+          "mobile-country-code": {
+            "maxLength": 4,
+            "type": "string",
+            "example": "852"
+          },
+          "mobile-number": {
+            "maxLength": 12,
+            "type": "string",
+            "example": "44443333"
+          },
+          "product": {
+            "$ref": "#/components/schemas/Product"
+          },
+          "product-name": {
+            "maxLength": 100,
+            "type": "string",
+            "example": "Current Account"
+          },
+          "title": {
+            "maxLength": 20,
+            "type": "string",
+            "example": ""
+          }
+        },
+        "example": {
+          "additional-info": "Business Banking Current Accounts",
+          "application-date": 1557878400,
+          "campaign": "C0001BA03",
+          "category-name": "BB-Current Accounts",
+          "channel-ref-number": "SCBHKMONEYHERO",
+          "consent-flag": "SIGNED_FORM_RECEIVED",
+          "country-code": "HK",
+          "email": "zheng.roy@yahoo.com",
+          "full-name": "Zheng Roy",
+          "mobile-country-code": "852",
+          "mobile-number": "44443333",
+          "product-name": "Current Account",
+          "title": "Mr"
+        }
+      },
+      "LeadResponse": {
+        "title": "Response",
+        "type": "object",
+        "properties": {
+          "info": {
+            "type": "string",
+            "description": "Additional Information for the lead"
+          },
+          "product-name": {
+            "type": "string",
+            "description": "Name of the interested Product"
+          },
+          "reference-number": {
+            "type": "string",
+            "description": "Application Reference Number generated for Leads"
+          }
+        },
+        "example": {
+          "info": "SCBHKMONEYHERO Lead for BB Current Accounts",
+          "product-name": "Current Account",
+          "reference-number": "HK_123456_01"
+        }
+      },
+      "Product": {
+        "title": "Product",
+        "required": [
+          "certificate-of-incorporation",
+          "company-name"
+        ],
+        "type": "object",
+        "properties": {
+          "company-name": {
+            "maxLength": 200,
+            "type": "string",
+            "example": "Name of the Company"
+          },
+          "certificate-of-incorporation": {
+            "maxLength": 40,
+            "type": "string",
+            "example": "Certificate Details"
+          }
+        },
+        "description": "This model holds the product specific fields in Lead request."
+      }
+    }
+  },
+  "x-components": []
+}

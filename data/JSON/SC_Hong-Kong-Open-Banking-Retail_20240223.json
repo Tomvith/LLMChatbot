@@ -1,0 +1,2459 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "1.0.0",
+    "title": "HKMA Phase III Banking Open API Standards",
+    "description": "## Introduction\n   <p>\n       The Data standards document sets out the recommended API specifications to enable Customer Data Access process using Phase III Banking Open API read-only functions to retrieve Account Status, Account Balance, Account Transaction and Account Availability. \n   </p>\n\n   <p>\n      The consent journey standards document sets out the recommended API specifications to enable consent orchestration process using Phase III Banking Open API read-only functions to create consent, retrieve consent, authorise consent, retrieving access token, refresh token and user access token, retrieving events.\n   </p>\n\n #### Oauth2 Token API\n  This API is used to retrieve application access token using client credentials, refresh token using authorisation code and user access token using refresh token.\n\n #### Account Consent API\n This API is used to create consent.\n  \n #### Account Consent get API\n This API is used to retrieve consent.\n  \n #### Account consent delete API\n This API is used to delete consent.\n  \n #### OAuth Authorize API\n This API is used to redirect user from TPP page to IBANKING login page after validation consent details.\n  \n #### Events API\n This API is used to retrieve consent events which can be send to to customers. events will be stored whenever consent gets granted / refreshed / updated / revoked.\n  \n #### Retrieve Account Status API\n The retrieve account status Banking Open API is used by Data Requestor to retrieve authorized customer a list of account information including account status\n\n #### Retrieve Account Balance API\n The retrieve account balance Banking Open API is used by Data Requestor to retrieve authorized customer account balance information.\n\n #### Retrieve Account Transaction API\n The retrieve account transaction Banking Open API is used by Data Requestor to retrieve authorized customer account transaction details.\n\n #### Retrieve Account Availability API\n The retrieve account availability Banking Open API is used by Data Requestor to retrieve authorized customer account availability information.\n\n #### Encryption and Signing\n\n Encryption and Signing uses JSON Web Tokens (JWT), an open industry standard\n <a href=\"https://tools.ietf.org/html/rfc7519\">RFC7519</a> method to\n represent claims securely across two parties.\n\n #### Algorithms\n\n SCB provides support for the below-mentioned algorithms, which are specified\n in the JOSE Header, as per <a\n href=\"https://tools.ietf.org/html/rfc7515\">JSON Web Signature</a> (JWS) and\n <a href=\"https://tools.ietf.org/html/rfc7516#section-4.1.12\">JSON Web\n Encryption</a> (JWE) Standards.\n  <table>\n   <thead>\n     <tr>\n       <th width=\"25%\">Standard</th>\n       <th width=\"25%\">Algorithm</th>\n       <th width=\"70%\">JOSE Header</th>\n     </tr>\n   </thead>\n   <tbody>\n     <tr>\n       <td>JSON Web Signature (JWS)</td>\n       <td>ES256</td>\n       <td>\n         kid: (key id)\n         cty: JWS\n         alg: ES256\n       </td>\n     </tr>\n     <tr>\n       <td>JSON Web Encryption (JWE)</td>\n       <td>RSA-OAEP-256 (Asymmetric)</td>\n       <td>\n           kid: (key id)\n           cty: JWT\n           alg: RSA-OAEP-256\n       </td>\n     </tr>\n     </tbody>\n </table>\n\n\n <hr/>\n\n \n \n ## Guide for JWE and JWS\n\n As per SCB API Security standards, SCB uses Compact Serialization for its <a\n href=\"https://tools.ietf.org/html/rfc7515#section-7.1\">JWS</a>/<a\n href=\"https://tools.ietf.org/html/rfc7516#section-3.1\">JWE</a>\n representation. The content to be sent to the client <b>is first signed\n following JWS specifications</b> and <b>then encrypted and sent as a JWE to\n the client</b>. Specifics for creating each component are as shown below:\n\n ### JSON Web Signature\n\n The following describes the structure of our JWS.\n\n\n **Message** : Content to be sent to client\n\n\n **JWS Payload** : BASE64URL-ENCODE(Message)\n\n\n **Signature** : ASCII(BASE64URL-ENCODE(UTF8(JOSE\n Header))‘.’BASE64URL-ENCODE(JWS Payload))\n\n\n **Structure** : BASE64URL(UTF8(JOSE Header))‘.’BASE64URL(JWS\n Payload)‘.’BASE64URL(JWS Signature)\n\n <hr/>\n\n\n ### JSON Web Encryption\n\n The following describes the structure of our JWE. The payload in our JWE is\n the JWS we have created in the steps above. The JOSE header of JWE contains\n both symmetric and asymmetric encryptions. Symmetric encryption to encrypt\n the payload, and assymetric encryption to encrypt the symmetric key. The\n assymetric keypair belongs to the client who will be receiving the JWE.\n\n\n **JWE Payload** : JWS Signature (from above)\n\n\n **JWE Ciphertext** : *ENCRYPT-SYMMETRIC*(JWE Payload)\n\n\n **JWE Encrypted Key** : *ENCRYPT-ASYMMETRIC*(Symmetric Key) - using client\"s\n public key\n\n\n **Structure** : BASE64URL-ENCODE(UTF8(JWE Header))‘.’BASE64URL-ENCODE(JWE\n Encrypted Key)‘.’BASE64URL-ENCODE(JWE Initialization\n Vector)‘.’BASE64URL-ENCODE(JWE Ciphertext)‘.’BASE64URL-ENCODE(JWE\n Auth Tag)\n\n\n ## API Response Codes\n\n\n   <table style=\"border: 0.5px solid; \">\n     <thead>\n       <tr>\n         <th width=\"25%\">Response Code</th>\n         <th width=\"50%\">Response Message</th>\n         <th>HTTP status</th>\n       </tr>\n     </thead>\n     <tbody>\n       <tr>\n         <td>E001</td>\n         <td>Field is mandatory</td>\n         <td>400</td>\n       </tr>\n       <tr>\n         <td>E002</td>\n         <td>Field value not in valid range</td>\n         <td>400</td>\n       </tr>\n       <tr>\n         <td>E003</td>\n         <td>Invalid Format</td>\n         <td>400</td>\n       </tr>\n       <tr>\n         <td>E004</td>\n         <td>Contains invalid characters</td>\n         <td>400</td>\n       </tr>\n       <tr>\n         <td>E005</td>\n         <td>Resource not found</td>\n         <td>404</td>\n       </tr>\n       <tr>\n         <td>E100</td>\n         <td>Unable to decrypt</td>\n         <td>500</td>\n       </tr>\n       <tr>\n         <td>E101</td>\n         <td>Unable to verify signature</td>\n         <td>500</td>\n       </tr>\n       <tr>\n         <td>E102</td>\n         <td>Unable to decrypt or verify signature</td>\n         <td>500</td>\n       </tr>\n       <tr>\n         <td>E103</td>\n         <td>Unable to encrypt</td>\n         <td>500</td>\n       </tr>\n       <tr>\n         <td>E104</td>\n         <td>Unable to sign</td>\n         <td>500</td>\n       </tr>\n       <tr>\n         <td>E105</td>\n         <td>Unable to encrypt or sign</td>\n         <td>500</td>\n       </tr>\n       <tr>\n         <td>E110</td>\n         <td>Invalid MTLS Cert</td>\n         <td>400</td>\n       </tr>\n       <tr>\n         <td>E111</td>\n         <td>Invalid Token Error</td>\n         <td>401</td>\n       </tr>\n       <tr>\n         <td>E112</td>\n         <td>Forbidden</td>\n         <td>403</td>\n       </tr>\n       <tr>\n         <td>E200</td>\n         <td>Downstream System Error</td>\n         <td>500</td>\n       </tr>\n       <tr>\n         <td>E201</td>\n         <td>Internal API Gateway Error</td>\n         <td>500</td>\n       </tr>\n       <tr>\n         <td>E202</td>\n         <td>Timeout Error</td>\n         <td>500</td>\n       </tr>\n       <tr>\n         <td>E300</td>\n         <td>Modify request as message is too large</td>\n         <td>413</td>\n       </tr>\n       <tr>\n         <td>E999</td>\n         <td>Unexpected error occurred</td>\n         <td>500</td>\n       </tr>\n     <tbody>\n   </table>\n"
+  },
+  "servers": [
+    {
+      "url": "https://api.sc.com",
+      "description": "Production Environment",
+      "variables": {
+        "version": {
+          "description": "The Open API endpoints are accessible via https only",
+          "enum": [
+            "v1"
+          ],
+          "default": "v1"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Retail Account Services",
+      "description": "The Hong Kong Open APIs enable Third Party Service Provider (TSP) to securely retrieve Standard Chartered\"s customer account information, balances and transaction details on behalf of customers.",
+      "x-subcategory": "Retail - Hong Kong Open Banking"
+    }
+  ],
+  "paths": {
+    "/retail/ob/hk/v1/accounts": {
+      "get": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "Enables Data Requestor to retrieve a list of account information including account status in bulk",
+        "summary": "Retrieve Account Status API Multi-Accounts",
+        "parameters": [
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "HK"
+              ]
+            },
+            "example": "HK"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Standard HTTP Header that allows credentials to be provided to the Authorisation/ Resource Server. Based on the OAuth 2.0/ OIDC framework, this consists of Basic or Bearer Authentication Schemes.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-auth-date",
+            "in": "header",
+            "description": "Customer last logged-in time with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "Customer IP address when logging in with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-interaction-id",
+            "in": "header",
+            "description": "Unique correlation ID to play-back response for each request.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/accountsLink"
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+                "required": true,
+                "explode": true
+              },
+              "x-fapi-interaction-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Unique correlation ID to play-back response for each request.",
+                "required": false,
+                "explode": true
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Header indicating the time (in seconds) that the Data Requestor is recommended to wait before retrying an operation. Data Provider is recommended to consider including this header along with responses with the HTTP status code of 429 (Too Many Requests).",
+                "required": false,
+                "explode": true
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message schemas etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "HK"
+      }
+    },
+    "/retail/ob/hk/v1/accounts/{accountId}": {
+      "get": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "Enables Data Requestor to retrieve a list of account information including account status for specific Account ID",
+        "summary": "Retrieve Account Status API Single-Account",
+        "parameters": [
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "HK"
+              ]
+            },
+            "example": "HK"
+          },
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "Specific Account ID",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Standard HTTP Header that allows credentials to be provided to the Authorisation/ Resource Server. Based on the OAuth 2.0/ OIDC framework, this consists of Basic or Bearer Authentication Schemes.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-auth-date",
+            "in": "header",
+            "description": "Customer last logged-in time with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "Customer IP address when logging in with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-interaction-id",
+            "in": "header",
+            "description": "Unique correlation ID to play-back response for each request.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/accountsLink"
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+                "required": true,
+                "explode": true
+              },
+              "x-fapi-interaction-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Unique correlation ID to play-back response for each request.",
+                "required": false,
+                "explode": true
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Header indicating the time (in seconds) that the Data Requestor is recommended to wait before retrying an operation. Data Provider is recommended to consider including this header along with responses with the HTTP status code of 429 (Too Many Requests).",
+                "required": false,
+                "explode": true
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message schemas etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "HK"
+      }
+    },
+    "/retail/ob/hk/v1/accounts/balances": {
+      "get": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "Enables Data Requestor to retrieve a list of account balance information in bulk",
+        "summary": "Retrieve Account Balance API Multi-Accounts",
+        "parameters": [
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "HK"
+              ]
+            },
+            "example": "HK"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Standard HTTP Header that allows credentials to be provided to the Authorisation/ Resource Server. Based on the OAuth 2.0/ OIDC framework, this consists of Basic or Bearer Authentication Schemes.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-auth-date",
+            "in": "header",
+            "description": "Customer last logged-in time with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "Customer IP address when logging in with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-interaction-id",
+            "in": "header",
+            "description": "Unique correlation ID to play-back response for each request.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/balancesLink"
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+                "required": true,
+                "explode": true
+              },
+              "x-fapi-interaction-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Unique correlation ID to play-back response for each request.",
+                "required": false,
+                "explode": true
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Header indicating the time (in seconds) that the Data Requestor is recommended to wait before retrying an operation. Data Provider is recommended to consider including this header along with responses with the HTTP status code of 429 (Too Many Requests).",
+                "required": false,
+                "explode": true
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message schemas etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "HK"
+      }
+    },
+    "/retail/ob/hk/v1/accounts/{accountId}/balances": {
+      "get": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "Enables Data Requestor to retrieve account balance for specific Account ID",
+        "summary": "Retrieve Account Balance API Single-Account",
+        "parameters": [
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "HK"
+              ]
+            },
+            "example": "HK"
+          },
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Standard HTTP Header that allows credentials to be provided to the Authorisation/ Resource Server. Based on the OAuth 2.0/ OIDC framework, this consists of Basic or Bearer Authentication Schemes.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-auth-date",
+            "in": "header",
+            "description": "Customer last logged-in time with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "Customer IP address when logging in with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-interaction-id",
+            "in": "header",
+            "description": "Unique correlation ID to play-back response for each request.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/balancesLink"
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+                "required": true,
+                "explode": true
+              },
+              "x-fapi-interaction-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Unique correlation ID to play-back response for each request.",
+                "required": false,
+                "explode": true
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Header indicating the time (in seconds) that the Data Requestor is recommended to wait before retrying an operation. Data Provider is recommended to consider including this header along with responses with the HTTP status code of 429 (Too Many Requests).",
+                "required": false,
+                "explode": true
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message schemas etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "HK"
+      }
+    },
+    "/retail/ob/hk/v1/accounts/transactions": {
+      "get": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "Enables Data Requestor to retrieve a list of account transaction information in bulk",
+        "summary": "Retrieve Account Transaction API Multi-Accounts",
+        "parameters": [
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "HK"
+              ]
+            },
+            "example": "HK"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Standard HTTP Header that allows credentials to be provided to the Authorisation/ Resource Server. Based on the OAuth 2.0/ OIDC framework, this consists of Basic or Bearer Authentication Schemes.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-auth-date",
+            "in": "header",
+            "description": "Customer last logged-in time with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "Customer IP address when logging in with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-interaction-id",
+            "in": "header",
+            "description": "Unique correlation ID to play-back response for each request.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "showLatest",
+            "in": "query",
+            "description": "Indicates whether returns latest transaction records since last statement, blank value will be treated as true.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "boolean",
+              "example": true,
+              "enum": [
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "name": "fromDateTime",
+            "in": "query",
+            "description": "Specifies the start date time for filtering out of the transactions date, blank value will be treated as open end. Time Zone input will be ignored.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "21-11-2020 14:01:27"
+            }
+          },
+          {
+            "name": "toDateTime",
+            "in": "query",
+            "description": "Specifies the end date time for filtering out of the transactions date, blank value will be treated as open end. Time Zone input will be ignored.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "21-11-2020 14:01:27"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transactionsLink"
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+                "required": true,
+                "explode": true
+              },
+              "x-fapi-interaction-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Unique correlation ID to play-back response for each request.",
+                "required": false,
+                "explode": true
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Header indicating the time (in seconds) that the Data Requestor is recommended to wait before retrying an operation. Data Provider is recommended to consider including this header along with responses with the HTTP status code of 429 (Too Many Requests).",
+                "required": false,
+                "explode": true
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message schemas etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "HK"
+      }
+    },
+    "/retail/ob/hk/v1/accounts/{accountId}/transactions": {
+      "get": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "Enables Data Requestor to retrieve a list of account transaction information for specific Account ID",
+        "summary": "Retrieve Account Transaction API Single-Account",
+        "parameters": [
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "HK"
+              ]
+            },
+            "example": "HK"
+          },
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Standard HTTP Header that allows credentials to be provided to the Authorisation/ Resource Server. Based on the OAuth 2.0/ OIDC framework, this consists of Basic or Bearer Authentication Schemes.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-auth-date",
+            "in": "header",
+            "description": "Customer last logged-in time with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "Customer IP address when logging in with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-interaction-id",
+            "in": "header",
+            "description": "Unique correlation ID to play-back response for each request.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "showLatest",
+            "in": "query",
+            "description": "Indicates whether returns latest transaction records since last statement, blank value will be treated as true.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "boolean",
+              "example": true,
+              "enum": [
+                true,
+                false
+              ]
+            }
+          },
+          {
+            "name": "fromDateTime",
+            "in": "query",
+            "description": "Specifies the start date time for filtering out of the transactions date, blank value will be treated as open end. Time Zone input will be ignored.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "21-11-2020 14:01:27"
+            }
+          },
+          {
+            "name": "toDateTime",
+            "in": "query",
+            "description": "Specifies the end date time for filtering out of the transactions date, blank value will be treated as open end. Time Zone input will be ignored.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "21-11-2020 14:01:27"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transactionsLink"
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+                "required": true,
+                "explode": true
+              },
+              "x-fapi-interaction-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Unique correlation ID to play-back response for each request.",
+                "required": false,
+                "explode": true
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Header indicating the time (in seconds) that the Data Requestor is recommended to wait before retrying an operation. Data Provider is recommended to consider including this header along with responses with the HTTP status code of 429 (Too Many Requests).",
+                "required": false,
+                "explode": true
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message schemas etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "HK"
+      }
+    },
+    "/retail/ob/hk/v1/accounts/availability": {
+      "post": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "Enables Data Requestor to check customer personal information against specific account type and return account availability status.",
+        "summary": "Retrieve Account Availability API",
+        "parameters": [
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "HK"
+              ]
+            },
+            "example": "HK"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Standard HTTP Header that allows credentials to be provided to the Authorisation/ Resource Server. Based on the OAuth 2.0/ OIDC framework, this consists of Basic or Bearer Authentication Schemes.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-auth-date",
+            "in": "header",
+            "description": "Customer last logged-in time with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "Customer IP address when logging in with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-interaction-id",
+            "in": "header",
+            "description": "Unique correlation ID to play-back response for each request.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "text/plain": {
+              "schema": {
+                "$ref": "#/components/schemas/encrypted"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/availabilityData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/statusLink"
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+                "required": true,
+                "explode": true
+              },
+              "x-fapi-interaction-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Unique correlation ID to play-back response for each request.",
+                "required": false,
+                "explode": true
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Header indicating the time (in seconds) that the Data Requestor is recommended to wait before retrying an operation. Data Provider is recommended to consider including this header along with responses with the HTTP status code of 429 (Too Many Requests).",
+                "required": false,
+                "explode": true
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message schemas etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "HK"
+      }
+    },
+    "/retail/ob/hk/v1/account-consents": {
+      "post": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "Enables TPP to create consent.",
+        "summary": "Create consent API",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Standard HTTP Header that allows credentials to be provided to the Authorisation/ Resource Server. Based on the OAuth 2.0/ OIDC framework, this consists of Basic or Bearer Authentication Schemes.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "Customer IP address when logging in with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-interaction-id",
+            "in": "header",
+            "description": "Unique correlation ID to play-back response for each request.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createconsentrequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/accessconsent"
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+                "required": true,
+                "explode": true
+              },
+              "x-fapi-interaction-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Unique correlation ID to play-back response for each request.",
+                "required": false,
+                "explode": true
+              }
+            }
+          }
+        },
+        "x-markets": "HK"
+      }
+    },
+    "/retail/ob/hk/v1/account-consents/{consentid}": {
+      "get": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "COnsent data will be retrieved using this API",
+        "summary": "Retrieve Consent data API",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Standard HTTP Header that allows credentials to be provided to the Authorisation/ Resource Server. Based on the OAuth 2.0/ OIDC framework, this consists of Basic or Bearer Authentication Schemes.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "consentid",
+            "in": "path",
+            "description": "consent id",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "Customer IP address when logging in with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-interaction-id",
+            "in": "header",
+            "description": "Unique correlation ID to play-back response for each request.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/accessconsent"
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+                "required": true,
+                "explode": true
+              },
+              "x-fapi-interaction-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Unique correlation ID to play-back response for each request.",
+                "required": false,
+                "explode": true
+              }
+            }
+          }
+        },
+        "x-markets": "HK"
+      },
+      "delete": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "Consent deletion will be done using this API",
+        "summary": "Deleting consent",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Standard HTTP Header that allows credentials to be provided to the Authorisation/ Resource Server. Based on the OAuth 2.0/ OIDC framework, this consists of Basic or Bearer Authentication Schemes.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "consentid",
+            "in": "path",
+            "description": "consent id",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-customer-ip-address",
+            "in": "header",
+            "description": "Customer IP address when logging in with the Data Requestor application.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-fapi-interaction-id",
+            "in": "header",
+            "description": "Unique correlation ID to play-back response for each request.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful.",
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/json.",
+                "required": true,
+                "explode": true
+              },
+              "x-fapi-interaction-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Unique correlation ID to play-back response for each request.",
+                "required": false,
+                "explode": true
+              }
+            }
+          },
+          "x-markets": "HK"
+        }
+      }
+    },
+    "/authorization/hk/v1/oauth2/token": {
+      "post": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "Enables TPP to retreive access token.",
+        "summary": "Retreive access token API",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/x-www-form-urlencoded.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "properties": {
+                  "client_id": {
+                    "description": "TPP clientid",
+                    "type": "string"
+                  },
+                  "grant_type": {
+                    "description": "client_credentials",
+                    "type": "string"
+                  },
+                  "scope": {
+                    "description": "api scope ob_accounts",
+                    "type": "string"
+                  },
+                  "code": {
+                    "description": "authorisation code generated after consent approval.",
+                    "type": "string"
+                  },
+                  "redirect_uri": {
+                    "description": "redirect url of TPP",
+                    "type": "string"
+                  },
+                  "refresh_token": {
+                    "description": "refresh token generated using authorization code.",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/accesstoken"
+                    },
+                    {
+                      "$ref": "#/components/schemas/refreshtoken"
+                    },
+                    {
+                      "$ref": "#/components/schemas/useraccesstoken"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "HK"
+      }
+    },
+    "/authorization/hk/v1/oauth2/authorize": {
+      "get": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "redirects user from TPP to ibanking login page after validation the consent data.",
+        "summary": "Authorise consent and redirecting user to Ibanking page",
+        "parameters": [
+          {
+            "name": "response_type",
+            "in": "query",
+            "description": "code%20id_token",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "client_id",
+            "in": "query",
+            "description": "TPP clientid",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "description": "tpp redirect url",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "description": "accounts and openid for accounts",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "Unique state id",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nonce",
+            "in": "query",
+            "description": "Unique nonce id",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "request",
+            "in": "query",
+            "description": "request jwt token",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "journey",
+            "in": "query",
+            "description": "grant or refresh or update",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Successful.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "redirection url of ibanking",
+                "required": true,
+                "explode": true
+              }
+            }
+          }
+        },
+        "x-markets": "HK"
+      }
+    },
+    "/retail/ob/hk/v1/events": {
+      "post": {
+        "tags": [
+          "Retail Account Services"
+        ],
+        "description": "Enables TPP to retreive notification events.",
+        "summary": "Retreive notification events API",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Standard HTTP Header that allows credentials to be provided to the Authorisation/ Resource Server. Based on the OAuth 2.0/ OIDC framework, this consists of Basic or Bearer Authentication Schemes.",
+            "required": true,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Standard HTTP header indicating the format of the payload provided in the request. Content-type is recommended to be set to application/x-www-form-urlencoded.",
+            "required": false,
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/eventsrequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/eventsresponse"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "HK"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "encrypted": {
+        "type": "string",
+        "example": "eyJraWQiOiI0UTVZMDU1V1NHNFFLMTAxNDcxIiwiZW5jIjoiQTI1NkNCQy1IUzUxMiIsImFsZyI6IlJTQS1PQUVQLTI1NiJ9.kuq6D5pf_cSykPcukL2amWBIyvc6lm49wjuX440CWXvPSXzenwroxpNNfIs8NVuh15xQleXfv8tDwBaamepHQHF8K7xr8BkAoyFYRNLxUpkF4PCG1WbhcQrqVQHYpEXOmReqaiOtZcfHAfE67PxP_ajwnEWoSYyTlUuEM1eQZBRUVg5giOTZpYWjjpfF2nvFxJQY36q-8dHt2AWP2OpQuFcO_NnahC2k3n0X-WuuIUhRlXjvOYgv--KuLC49gvMvVEEqQ041eOTn6t3MLr5Nh48FmD4UxzSF3hePr-DUjK-bZltPW0RnMNCdXzbPGF7OjNm9EPQC6aYtCa-EvKDZmw.XxkayMQH5TT3t4W9zuJtDQ.5-hBIs6mKkSilQuLiofNPYVmdVRmFm0VdNt65qL40jtZG62RDvqUcxw5HeWRWUHt9TIg_GtrLAdVuvt2V0avgqRBeIOj84n5Nx_qphCN1846Dhv-73F5qculYBjdMSFdQoOwmcbIOJKtuF1klRJvIoDc2ebFtkb7YKmrcwDnlBueB-lIDn8G3UcowS9x9z1Cxq4UpkYJjRy-Ak4WuROrJvfHEUpvD7Q7jibIhstKS9oz4kxA5Vc5bzqlRmmjGRn0OiCUeDnUOEwZvCtSG-5WM5W71KI_bUHF9bGNd37-RlRnCsgt0i1ApiNwiI3kOVuHw0nt1bgY5XvXuf5VVjj1dc60yQLPl_VS7I17CgILzRLPS8uFQ8NPrJITGjmZEAvIR7dOxXa16PzRmJUKEE6ioxbKrdnsG1bZqugtx52GCk0gveXtwyH6zH-8h0t9QUdmwtZamZVkjEJlVuPU1SBrrwtHe1CTW9XNIVUMSuIBe_uvF0rcm4k5Jp98gy5ecsI3r81BJn30uLV3Hk4HGoHJ1Hrza9A6q0nEEqQ-XqfSXQEUBVuS8PmQRUIe409isnwdJIQHP3SehVt2nRufh9bDfQ.Yw3C1zME5UShNGZ7oa8eN-Cg3SeM0dKxRWObZwaHdWk",
+        "description": "Encrypted Message base on JWE standard"
+      },
+      "accountId": {
+        "type": "string",
+        "description": "Specifies the unique identifier used internally by Data Provider to identify an account",
+        "example": "441137243039305532394A5553778A"
+      },
+      "accountNumber": {
+        "type": "string",
+        "description": "Specifies the account number assigned by Data Provider to identify an account",
+        "example": "02XXXXX133"
+      },
+      "accountType": {
+        "type": "string",
+        "description": "Specifies the type of account",
+        "example": "Personal",
+        "enum": [
+          "Personal",
+          "Business",
+          "Individual"
+        ]
+      },
+      "accountSubType": {
+        "type": "string",
+        "description": "Specifies the sub type of account",
+        "example": "Savings",
+        "enum": [
+          "CARD",
+          "Current",
+          "Savings"
+        ]
+      },
+      "accountStatus": {
+        "type": "string",
+        "description": "Specifies the status of account",
+        "example": "Active",
+        "enum": [
+          "Active",
+          "Inactive"
+        ]
+      },
+      "amount": {
+        "type": "number",
+        "description": "Amount",
+        "example": 10000.25
+      },
+      "currency": {
+        "type": "string",
+        "description": "Specifies the account currency code",
+        "example": "HKD",
+        "enum": [
+          "HKD",
+          "RMB",
+          "USD"
+        ]
+      },
+      "creditDebitIndicator": {
+        "type": "string",
+        "description": "Specifies whether the account balance is a credit or debit balance",
+        "example": "Debit",
+        "enum": [
+          "Debit",
+          "Credit"
+        ]
+      },
+      "datetime": {
+        "type": "string",
+        "description": "Specifies the date and time of the account balance",
+        "example": "21-12-2020 14:01:27"
+      },
+      "productName": {
+        "type": "string",
+        "description": "Specifies the name of the product",
+        "example": "Staff Saving Account",
+        "enum": [
+          "Staff Saving Account"
+        ]
+      },
+      "transactionCode": {
+        "type": "string",
+        "description": "Specifies the ISO transaction code",
+        "example": "INTR",
+        "enum": [
+          "CHRG",
+          "INTR"
+        ]
+      },
+      "transactionId": {
+        "type": "string",
+        "description": "Specifies the unique identifier for the transaction used by the Data Provider",
+        "example": "MBKFT42508230004073"
+      },
+      "transactionDescription": {
+        "type": "string",
+        "description": "Specifies the description of transaction",
+        "example": "Bill Payment"
+      },
+      "transactionDate": {
+        "type": "string",
+        "description": "Specifies the date and time of the transaction",
+        "example": "21-12-2020 14:01:27"
+      },
+      "statusTxn": {
+        "type": "string",
+        "description": "Specifies the status of the transaction entry",
+        "example": "Booked",
+        "enum": [
+          "Booked",
+          "Pending"
+        ]
+      },
+      "statusAvailable": {
+        "type": "string",
+        "description": "Specifies the status of account availability for the requested parameter.",
+        "example": "Yes",
+        "enum": [
+          "Yes",
+          "No"
+        ]
+      },
+      "self": {
+        "type": "string",
+        "description": "string",
+        "example": "string"
+      },
+      "rate": {
+        "type": "string",
+        "description": "Specifies the exchange rate at the time of foreign currency transaction",
+        "example": 7.75
+      },
+      "type": {
+        "type": "string",
+        "description": "Specifies type of account balance",
+        "example": "OpeningBalance",
+        "enum": [
+          "OpeningBalance",
+          "RunningBalance",
+          "CurrentBalance"
+        ]
+      },
+      "paramName": {
+        "type": "string",
+        "description": "Specifies the parameter name to verify available customer and account type information.",
+        "example": "firstname",
+        "enum": [
+          "fullName",
+          "hkid",
+          "dob",
+          "mobile",
+          "email",
+          "accountTypes"
+        ]
+      },
+      "paramValue": {
+        "type": "string",
+        "description": "Specifies the parameter value against the parameter type",
+        "example": "fullName"
+      },
+      "links": {
+        "type": "object",
+        "properties": {
+          "self": {
+            "$ref": "#/components/schemas/self"
+          }
+        }
+      },
+      "account": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "$ref": "#/components/schemas/accountId"
+          },
+          "accountNumber": {
+            "$ref": "#/components/schemas/accountNumber"
+          },
+          "accountType": {
+            "$ref": "#/components/schemas/accountType"
+          },
+          "accountSubType": {
+            "$ref": "#/components/schemas/accountSubType"
+          },
+          "productName": {
+            "$ref": "#/components/schemas/productName"
+          },
+          "accountStatus": {
+            "$ref": "#/components/schemas/accountStatus"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/currency"
+          }
+        }
+      },
+      "accounts": {
+        "type": "array",
+        "description": "List of Accounts",
+        "items": {
+          "$ref": "#/components/schemas/account"
+        }
+      },
+      "accountsLink": {
+        "type": "object",
+        "description": "List of Accounts",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/accounts"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          }
+        }
+      },
+      "balance": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/type"
+          },
+          "creditDebitIndicator": {
+            "$ref": "#/components/schemas/creditDebitIndicator"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/amount"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/currency"
+          },
+          "datetime": {
+            "$ref": "#/components/schemas/datetime"
+          }
+        }
+      },
+      "balances": {
+        "type": "array",
+        "description": "List of Balances",
+        "items": {
+          "$ref": "#/components/schemas/balance"
+        }
+      },
+      "balancesHolder": {
+        "type": "object",
+        "description": "invidual balance",
+        "properties": {
+          "accountId": {
+            "$ref": "#/components/schemas/accountId"
+          },
+          "balance": {
+            "$ref": "#/components/schemas/balances"
+          }
+        }
+      },
+      "balancesHolderList": {
+        "type": "array",
+        "description": "List",
+        "items": {
+          "$ref": "#/components/schemas/balancesHolder"
+        }
+      },
+      "balancesHolderListBalance": {
+        "type": "object",
+        "description": "List",
+        "properties": {
+          "account": {
+            "$ref": "#/components/schemas/balancesHolderList"
+          }
+        }
+      },
+      "balancesLink": {
+        "type": "object",
+        "description": "List of Accounts",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/balancesHolderListBalance"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          }
+        }
+      },
+      "currencyExchange": {
+        "type": "object",
+        "description": "Currency Exchange Details",
+        "properties": {
+          "amount": {
+            "$ref": "#/components/schemas/accountId"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/currency"
+          },
+          "rate": {
+            "$ref": "#/components/schemas/rate"
+          },
+          "datetime": {
+            "$ref": "#/components/schemas/datetime"
+          }
+        }
+      },
+      "transaction": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "$ref": "#/components/schemas/accountId"
+          },
+          "accountNumber": {
+            "$ref": "#/components/schemas/accountNumber"
+          },
+          "transactionCode": {
+            "$ref": "#/components/schemas/transactionCode"
+          },
+          "transactionId": {
+            "$ref": "#/components/schemas/transactionId"
+          },
+          "transactionDescription": {
+            "$ref": "#/components/schemas/transactionDescription"
+          },
+          "transactionDate": {
+            "$ref": "#/components/schemas/transactionDate"
+          },
+          "creditDebitIndicator": {
+            "$ref": "#/components/schemas/creditDebitIndicator"
+          },
+          "status": {
+            "$ref": "#/components/schemas/statusTxn"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/amount"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/currency"
+          },
+          "currencyExchange": {
+            "$ref": "#/components/schemas/currencyExchange"
+          },
+          "balance": {
+            "$ref": "#/components/schemas/balance"
+          }
+        }
+      },
+      "transactions": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/transaction"
+        }
+      },
+      "transactionsLink": {
+        "type": "object",
+        "description": "List of Accounts",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/transactions"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          }
+        }
+      },
+      "status": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/statusAvailable"
+          }
+        }
+      },
+      "statusLink": {
+        "type": "object",
+        "description": "List of Accounts",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/status"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          }
+        }
+      },
+      "availability": {
+        "type": "object",
+        "properties": {
+          "paramName": {
+            "$ref": "#/components/schemas/paramName"
+          },
+          "paramValue": {
+            "$ref": "#/components/schemas/paramValue"
+          }
+        }
+      },
+      "availabilityArray": {
+        "type": "array",
+        "description": "List of Accounts",
+        "items": {
+          "$ref": "#/components/schemas/availability"
+        }
+      },
+      "availabilityData": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/availabilityArray"
+          }
+        }
+      },
+      "error": {
+        "description": "Error object details",
+        "title": "error",
+        "required": [
+          "id",
+          "code",
+          "detail"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The transaction id from the request header, if the transaction id was not present in the request header, a generated random UUID will shown here for tracking purposes.",
+            "type": "string"
+          },
+          "code": {
+            "description": "An application-specific error code",
+            "type": "string"
+          },
+          "detail": {
+            "description": "A human-readable explanation specific to this occurrence of the problem",
+            "type": "string"
+          },
+          "source": {
+            "description": "Source of the error - denotes the name of parameter name causing the problem",
+            "type": "string"
+          }
+        },
+        "example": {
+          "id": "1234",
+          "code": "E001",
+          "detail": "Field is mandatory",
+          "source": "first-name"
+        }
+      },
+      "errors": {
+        "description": "List of error object",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/error"
+        }
+      },
+      "fail-certificate-mismatch": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Certificate used in API call did not match",
+            "example": "Certificate mismatch"
+          }
+        }
+      },
+      "fail-unexpected": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the transaction-id from the request header"
+          },
+          "code": {
+            "type": "string",
+            "description": "Response Code. Refer to Response Code Table for list of responses."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Details of the error.",
+            "example": "Unexpected error occurred"
+          }
+        },
+        "example": {
+          "id": "86c1d522-efab-479c-9c4a-d51f1c3152d8",
+          "code": "E005",
+          "detail": "Unexpected error occurred"
+        }
+      },
+      "moreAvailable": {
+        "type": "boolean",
+        "description": "it shows whether more events available to read or not",
+        "example": true
+      },
+      "events_request": {
+        "type": "string",
+        "description": "this is base64 encoded request to retrieve events",
+        "example": "ewogICAgICAgImFjayI6IFsiMjY2NTIxZjQtZTQzZi00YTg1LWE3ZmMtZjE5MWRmMmQwZjBhIiwiMmE5Zjc4N2EtZGY3Yi00MTU3LWJhZTktMWY2YmMzNmU5NGEzIiwiZWNmMjEyMWEtMzZlOS00NjM0LThiZGUtNTIwZDk5N2ZjZWEzIiwiNjgzZDdiMjYtY2Q5Yy00MDJjLTk3ZDctZGNiN2FjOWFmY2Q3Il0sCiAgICAgICAic2V0RXJycyI6IHsKICAgICAgICAgIjE3NWRjYmNjLTkyZWItNDdjZi04ZTMwLWE0OTNlZDhlZTU3ZCI6IHsKICAgICAgICAgICAiZXJyIjogImF1dGhlbnRpY2F0aW9uX2ZhaWxlZCIsCiAgICAgICAgICAgImRlc2NyaXB0aW9uIjogIlRoZSBTRVQgY291bGQgbm90IGJlIGF1dGhlbnRpY2F0ZWQiCiAgICAgICAgIH0KICAgICAgIH0sCiAgICAgICAicmV0dXJuSW1tZWRpYXRlbHkiOiB0cnVlLAoibWF4RXZlbnRzIjogNAogfQ=="
+      },
+      "336e6e15-515c-4d9f-9b84-b8f3822d3870": {
+        "type": "string",
+        "description": "events related to consent.",
+        "example": "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ4VDNiTFVJbEJ6R3p3ZGEzTjBFMFhxSkVIU2thIiwiYXVkIjoieFQzYkxVSWxCekd6d2RhM04wRTBYcUpFSFNrYSIsImlzcyI6Ind3dy53c28yLmNvbSIsInR4biI6ImViNThlYmRjLWVhNDctNDM4Ny04NGNhLWMwOTRlY2M3MjQzYSIsInRvZSI6MTY1NTk1NjUyODAwMCwiaWF0IjoxNjU4OTQzOTU4LCJqdGkiOiIzMzZlNmUxNS01MTVjLTRkOWYtOWI4NC1iOGYzODIyZDM4NzAiLCJldmVudHMiOnsiaGtfb3BlbmJhbmtpbmdfZXZlbnRzX3Jlc291cmNlIjp7ImNvbnNlbnRJZCI6IjUwYTg5OTQyLWU4NjUtNDk0NS1hOTM4LTJiZmZiZDIxNjI0NyIsImV2ZW50U291cmNlIjoiIiwiY3JlYXRlZFRpbWUiOiIyMDIyLTA2LTIzVDAzOjU1OjI4LjI2MzczMloiLCJldmVudFR5cGUiOiJncmFudCJ9fX0.h8S2wbzA2YeR4R33LH_f7FWOPsVAY4A_rzi3taUTxefKjRNo-Z-9FKr1kGxjCS2QMb7nDFmDRCvzRCbUHm7vZct3EONOAosppiumxXO1RNGYPabrxajbMN6qD227sM50iuPSPZyuk6_3QLbZKKqjlfpONoEV3E7wX0RNnuSbz-QidL_VoZkmE7Ts1kROqLaEQEgWSxkuhc28mPgNnccDPOKDgVzMuivnvCUk-uybuQMDjKviN5BLlBZz0pO75vQlmF1ki7YhnlOgh12fhPvnkrNNpzhydP_re7E--ZdpsHZifTqeTkQvMQSqgCCmdrr-RR29BXptxraS8PyGBMwNIw"
+      },
+      "06c921fc-56b9-4f2f-98fa-f227ef868080": {
+        "type": "string",
+        "description": "events related to consent.",
+        "example": "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ4VDNiTFVJbEJ6R3p3ZGEzTjBFMFhxSkVIU2thIiwiYXVkIjoieFQzYkxVSWxCekd6d2RhM04wRTBYcUpFSFNrYSIsImlzcyI6Ind3dy53c28yLmNvbSIsInR4biI6Ijk5ZTAwYTYzLTEzZjktNGI3Yy04MjM5LTc5ZDVjYmY4NWI3NyIsInRvZSI6MTY1NTk1NzEzNjAwMCwiaWF0IjoxNjU4OTQzOTU4LCJqdGkiOiIwNmM5MjFmYy01NmI5LTRmMmYtOThmYS1mMjI3ZWY4NjgwODAiLCJldmVudHMiOnsiaGtfb3BlbmJhbmtpbmdfZXZlbnRzX3Jlc291cmNlIjp7ImNvbnNlbnRJZCI6IjUwYTg5OTQyLWU4NjUtNDk0NS1hOTM4LTJiZmZiZDIxNjI0NyIsImV2ZW50U291cmNlIjoiIiwiY3JlYXRlZFRpbWUiOiIyMDIyLTA2LTIzVDA0OjA1OjM2LjAxODQ2NloiLCJldmVudFR5cGUiOiJ1cGRhdGUifX19.KMsdZmFWW60-xX82AOrEjBMnZh4MNkRn5OTD-hNbTMM2_9RVAUUkLr0XyWzWngrCgOZBTDJZfrVKgvvxKVPn9MPoqzWvZcYOHUrlLsY6jk1I3S-vWFCrJKDPx04Fg3rDxv0vz5wc66UfWaLA-VSiutsSXqtNdggYntop7zJ6PC6KqOOjof-PAG6TM4DdWPGq6hiTjAsBeZ16LTSfebON6UzZIKNsFaXuC81tHLA9NwFyKezsCJCLBgxG8fpd7ZYSxNgK-lHa-a4IAgOstNYCLbyYXca4icn8JeLMOPNf1inh72yeWjVhwn_rpyMJHatoX_QlWrYE1y3zkVR9LNHpEw"
+      },
+      "transactionToDate": {
+        "type": "string",
+        "description": "date till when transaction data is needed",
+        "example": 1662336000
+      },
+      "consentId": {
+        "type": "string",
+        "description": "consent id",
+        "example": "c21df8fa-6f6e-4e85-8c6f-6a2720c54e66"
+      },
+      "permissions": {
+        "type": "string",
+        "description": "list of permissions assigned to consent",
+        "example": [
+          "ReadAccountAvailability",
+          "ReadAccountStatus"
+        ]
+      },
+      "statusUpdateDate": {
+        "type": "string",
+        "description": "the date when consent got last updated",
+        "example": 1658209921
+      },
+      "transactionFromDate": {
+        "type": "string",
+        "description": "the date from when transaction are needed",
+        "example": 1650433921
+      },
+      "creationDate": {
+        "type": "string",
+        "description": "date when consent got created",
+        "example": 1662336000
+      },
+      "expirationDate": {
+        "type": "string",
+        "description": "date when consent will get expired",
+        "example": 1662336000
+      },
+      "statusAuthorize": {
+        "type": "string",
+        "description": "consent current status",
+        "example": "PendingAuthorise"
+      },
+      "access_token": {
+        "type": "string",
+        "description": "Application access token",
+        "example": "eyJ4NXQiOiJNbU5oTlRnell6RmlNR0kxWldNd05tUTRNV0prWVRBNVpqZzFPREV3TVRJMFpUTmtaRGs0WkEiLCJraWQiOiJOMk5tWTJKaU1tVmxZemM1T1RsbFlUZG1ZV1ZsTURObVpEUmhOR1F4WmpNeFltVm1ZMlJrWVRkbU9EVm1OVFJpWXpnNFpHVXpOMlUzWTJFek9URmxOd19SUzI1NiIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJoa21hYXBpQHdzbzIuY29tIiwiYXV0IjoiQVBQTElDQVRJT04iLCJhdWQiOiIxUUVhMDhJS0Z6aUxpUW9ZamJMNEZtX0w2R29hIiwibmJmIjoxNjU4OTE5Njc4LCJhenAiOiIxUUVhMDhJS0Z6aUxpUW9ZamJMNEZtX0w2R29hIiwic2NvcGUiOiJvYl9hY2NvdW50cyIsImlzcyI6Imh0dHBzOlwvXC9lYWctaGttYS1rbS1jcC13c28yOjk0NDZcL29hdXRoMlwvdG9rZW4iLCJjbmYiOnsieDV0I1MyNTYiOiJWTjRXZEEzVy1NdFhQLVVRNTIwM19yTnBfc3I0NEcxWEtpRmlEb1MyWDVBIn0sImV4cCI6MTY1ODkyMzI3OCwiaWF0IjoxNjU4OTE5Njc4LCJqdGkiOiJhNGIxZGQyZS1lZDI2LTQzNjQtOWQ5YS05ODA5YzdlZGIxMDEifQ.nh5w9AN1NGi01knIvA2etCt_4nWOFcj2pEIEp_9ckNEPeNp7h06I1iZhx82Bxzr1hs_JKLHTmDqUygP6-qjG1tNh_H4DjcE6qDoeaC60HRjzCtzoS_GgEOdFPVqq92IRe30-fRuHtRoPZxhj39YOIn-QFufZ3uN2W9Nz-4hOYDlS-3Y2aYWl8Rk65XINtBfngsM5l3FQrBTgeWy0L220y6w4NYydQlPiF8T2ud-QQiUWx_MBrNdenPPSFREDGxfRe7KCQ09CAflZAvTKLzBHSrO2Tz_gDMwgXV1rLVq6MdUikbPPxKeLNLBVQgz9sLd-t8vz8JAWxGcI2rnHyTE4cA"
+      },
+      "refresh_token": {
+        "type": "string",
+        "description": "refresh token generated using authorisation code",
+        "example": "9ea65f7f-2c7d-356b-b37a-4b2216c89d1a"
+      },
+      "useraccess_token": {
+        "type": "string",
+        "description": "user access token generated using refresh token",
+        "example": "eyJ4NXQiOiJNbU5oTlRnell6RmlNR0kxWldNd05tUTRNV0prWVRBNVpqZzFPREV3TVRJMFpUTmtaRGs0WkEiLCJraWQiOiJOMk5tWTJKaU1tVmxZemM1T1RsbFlUZG1ZV1ZsTURObVpEUmhOR1F4WmpNeFltVm1ZMlJrWVRkbU9EVm1OVFJpWXpnNFpHVXpOMlUzWTJFek9URmxOd19SUzI1NiIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIwMU0xMjI1NjAiLCJhdXQiOiJBUFBMSUNBVElPTl9VU0VSIiwiYXVkIjoieFQzYkxVSWxCekd6d2RhM04wRTBYcUpFSFNrYSIsIm5iZiI6MTY1ODk0Mjg4NiwiYXpwIjoieFQzYkxVSWxCekd6d2RhM04wRTBYcUpFSFNrYSIsInNjb3BlIjoiYWNjb3VudHMgb3BlbmlkIiwiaXNzIjoiaHR0cHM6XC9cL2VhZy1oa21hLWttLWNwLXdzbzI6OTQ0Nlwvb2F1dGgyXC90b2tlbiIsImNuZiI6eyJ4NXQjUzI1NiI6IlNzYUZiVjE2dHlFSVRLdmFlX1JnN0tuaDV2SXlRTENiWUlhNVFncWh3V2MifSwiZXhwIjoxNjU4OTQ2NTg2LCJpYXQiOjE2NTg5NDI4ODYsImp0aSI6IjVmZDE4ZDhjLTgxYjQtNGE2MC05N2MzLTc0YzE5NTgxMzU0YiIsImNvbnNlbnRfaWQiOiI1MzIwNDY2My0yZjMzLTRjNzUtYjA4Ni1hZGU1MjQ5ZGZiNGEifQ.CcsJy9pEbU4xpt4aE5h1rTi7Lfh7neaARFIZ2MDzSs3dd_BhC6Pthpkj_tf5n6C9jvaKu7MCkMDcrKLZqvMeWHz7ZWsoT8j0Inu__diVhnBNVhClzHDWd4k-ybq6FFw6-IVfqt62y7PJqcCVnIllaDbOAk6s_7AInCdOPi8LH7cywzDRpxGSrlUkV-F1Tkj05gSRZXF2Sr6Mk4KjuhjrNuvABnsvak1Lw1o2_dkAx7RXqioEFIAvSfYTC8-80fU7b4g3BZtv62OENl57c1kPqOR6jCN3jm_P4jjpIe08F8OiRXCSy5HL9B_gycZrnbXm4gzXUvTmbx9Dq9KVjzhOIw"
+      },
+      "id_token": {
+        "type": "string",
+        "description": "id token generated while generating refresh/user access tokens",
+        "example": "eyJ4NXQiOiJNbU5oTlRnell6RmlNR0kxWldNd05tUTRNV0prWVRBNVpqZzFPREV3TVRJMFpUTmtaRGs0WkEiLCJraWQiOiJOMk5tWTJKaU1tVmxZemM1T1RsbFlUZG1ZV1ZsTURObVpEUmhOR1F4WmpNeFltVm1ZMlJrWVRkbU9EVm1OVFJpWXpnNFpHVXpOMlUzWTJFek9URmxOd19SUzI1NiIsImFsZyI6IlJTMjU2In0.eyJhdF9oYXNoIjoiQmlBZHlQaEFybGNBbjl2Y2NDOExRUSIsImF1ZCI6InhUM2JMVUlsQnpHendkYTNOMEUwWHFKRUhTa2EiLCJjX2hhc2giOiI0ZFc1WGYtT3hSQWwzck52YUdTUWJnIiwic3ViIjoiMDFNMTIyNTYwIiwibmJmIjoxNjU4OTQyMjIzLCJhenAiOiJ4VDNiTFVJbEJ6R3p3ZGEzTjBFMFhxSkVIU2thIiwiYW1yIjpbIkJhc2ljQ3VzdG9tQXV0aGVudGljYXRvciJdLCJpc3MiOiJodHRwczpcL1wvZWFnLWhrbWEta20tY3Atd3NvMjo5NDQ2XC9vYXV0aDJcL3Rva2VuIiwiZXhwIjoxNjU4OTQ1ODIzLCJpYXQiOjE2NTg5NDIyMjMsIm5vbmNlIjoiakJYaE9tT0tDQiJ9.SKB9jMDkZSFdd_gPQCxYryDASKls2-ot7fPMz37ZvcKQy6tS1QwOA0u1aqrXfr5BI_AGSlEQ0IGJnZx0G5y1vSaYG9y6tbMyk9KJysbwK0Ns0zgDxzk2VpNH_zY1e7Nte_dN3YaWQkF8FpnrIqNzW6r6XFjI6KqPnu0OEdXvKmLOaFelkweQ3AiSAKOUdTf0G16CaGPQPUWnBQQRmDke39oYf5LjI7OrXl5zsF3caXSBhHN7f6sa0ISZtm0IpFRuaAd5VyWPPAd06kvx_nekOZbvm5wMe0hznOt9UPJ2p2ykfLxOHU5qtMqtQw1nU2kQ4F6kWYtFS61H2vaabHi2lQ"
+      },
+      "scope": {
+        "type": "string",
+        "description": "api scope",
+        "example": "ob_accounts"
+      },
+      "refresh_scope": {
+        "type": "string",
+        "description": "refresh token scopes",
+        "example": "accounts openid"
+      },
+      "token_type": {
+        "type": "string",
+        "description": "the type of token",
+        "example": "Bearer"
+      },
+      "expires_in": {
+        "type": "integer",
+        "description": "token expiry time in seconds",
+        "example": 3600
+      },
+      "eventsrequest": {
+        "type": "object",
+        "properties": {
+          "request": {
+            "$ref": "#/components/schemas/events_request"
+          }
+        }
+      },
+      "eventsresponse": {
+        "type": "object",
+        "properties": {
+          "moreAvailable": {
+            "$ref": "#/components/schemas/moreAvailable"
+          },
+          "sets": {
+            "$ref": "#/components/schemas/events_sets"
+          }
+        }
+      },
+      "events_sets": {
+        "type": "object",
+        "properties": {
+          "336e6e15-515c-4d9f-9b84-b8f3822d3870": {
+            "$ref": "#/components/schemas/336e6e15-515c-4d9f-9b84-b8f3822d3870"
+          },
+          "06c921fc-56b9-4f2f-98fa-f227ef868080": {
+            "$ref": "#/components/schemas/06c921fc-56b9-4f2f-98fa-f227ef868080"
+          }
+        }
+      },
+      "createconsentrequest": {
+        "type": "object",
+        "properties": {
+          "Meta": {
+            "type": "object",
+            "description": "metadata"
+          },
+          "Risk": {
+            "type": "object",
+            "description": "risks"
+          },
+          "data": {
+            "$ref": "#/components/schemas/create_consent"
+          }
+        }
+      },
+      "create_consent": {
+        "type": "object",
+        "properties": {
+          "transactionToDate": {
+            "$ref": "#/components/schemas/transactionToDate"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/permissions"
+          },
+          "transactionFromDate": {
+            "$ref": "#/components/schemas/transactionFromDate"
+          },
+          "expirationDate": {
+            "$ref": "#/components/schemas/expirationDate"
+          }
+        }
+      },
+      "accessconsent": {
+        "type": "object",
+        "properties": {
+          "Meta": {
+            "type": "object",
+            "description": "metadata"
+          },
+          "Risk": {
+            "type": "object",
+            "description": "risks"
+          },
+          "data": {
+            "$ref": "#/components/schemas/access_consent"
+          }
+        }
+      },
+      "access_consent": {
+        "type": "object",
+        "properties": {
+          "transactionToDate": {
+            "$ref": "#/components/schemas/transactionToDate"
+          },
+          "consentId": {
+            "$ref": "#/components/schemas/consentId"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/permissions"
+          },
+          "statusUpdateDate": {
+            "$ref": "#/components/schemas/statusUpdateDate"
+          },
+          "transactionFromDate": {
+            "$ref": "#/components/schemas/transactionFromDate"
+          },
+          "creationDate": {
+            "$ref": "#/components/schemas/creationDate"
+          },
+          "expirationDate": {
+            "$ref": "#/components/schemas/expirationDate"
+          },
+          "status": {
+            "$ref": "#/components/schemas/statusAuthorize"
+          }
+        }
+      },
+      "accesstoken": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "$ref": "#/components/schemas/access_token"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/scope"
+          },
+          "token_type": {
+            "$ref": "#/components/schemas/token_type"
+          },
+          "expires_in": {
+            "$ref": "#/components/schemas/expires_in"
+          }
+        }
+      },
+      "refreshtoken": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "$ref": "#/components/schemas/useraccess_token"
+          },
+          "refresh_token": {
+            "$ref": "#/components/schemas/refresh_token"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/refresh_scope"
+          },
+          "id_token": {
+            "$ref": "#/components/schemas/id_token"
+          },
+          "token_type": {
+            "$ref": "#/components/schemas/token_type"
+          },
+          "expires_in": {
+            "$ref": "#/components/schemas/expires_in"
+          }
+        }
+      },
+      "useraccesstoken": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "$ref": "#/components/schemas/useraccess_token"
+          },
+          "refresh_token": {
+            "$ref": "#/components/schemas/refresh_token"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/refresh_scope"
+          },
+          "id_token": {
+            "$ref": "#/components/schemas/id_token"
+          },
+          "token_type": {
+            "$ref": "#/components/schemas/token_type"
+          },
+          "expires_in": {
+            "$ref": "#/components/schemas/expires_in"
+          }
+        }
+      }
+    }
+  }
+}

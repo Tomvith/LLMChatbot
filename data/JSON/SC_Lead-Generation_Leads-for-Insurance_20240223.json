@@ -1,0 +1,381 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Lead for Insurance",
+    "description": "##### Introduction\nThe Open API for HK Lead serves the business functions associated with **Insurance**\noffered by the bank. The operations and the features supported in this API\nare described in the following sections.\n\n<hr />\n\n##### Authentication\n\nTo make a request to any of the APIs, the Client has to present an Access\nToken, following the OAuth 2.0 specifications. Here is the API endpoint for getting an OAuth 2.0 Token.\n\n**https:\\/\\/api.sc.com\\/retail\\/v1\\/oauth2\\/token**\n\n<br>Following are the request parameters to be passed to the Token endpoint.\n\n<hr />\n\n ##### Parameters\n\n <table>\n  <thead>\n    <tr>\n      <th width='15%'>Key</th>\n      <th width='85%'>Value</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>grant_type</td>\n      <td>Indicates the type of grant being presented in exchange for an access token and possibly a refresh token, for more details, please refer to the table below</td>\n    </tr>\n    <tr>\n      <td>client_id</td>\n      <td>The public identifier for the application, obtained when the caller first registered the application</td>\n    </tr>\n    <tr>\n      <td>client_secret</td>\n      <td>The application's client secret. This ensures that the request to get the access token is made only from the lead, and not from a potential attacker that may have intercepted the authorization code.</td>\n    </tr>\n    </tbody>\n</table>\n\n<hr/>\n\n<table>\n  <thead>\n    <tr>\n      <th width='15%'>Grant Type</th>\n      <th width='85%'>Usage</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Client credentials</td>\n      <td>For the client app to identify itself to the SC API platform, the <code> /token </code> endpoint has to be called with query param <code>grant_type</code> set to <code>client_credentials</code></td>\n    </tr>\n    <tr>\n      <td>Auth-code based grant</td>\n      <td>For the customer and client app to identify itself to the SC API platform, the <code> /token </code> endpoint has to be called with query param <code>grant_type</code> set to <code>auth_code_grant</code></td>\n    </tr>\n  </tbody>\n</table>\n\n<hr />\n\n##### Error Handling\n\nThe API endpoints return an error response whenever the request could not be processed successfully. In such scenarios, API provides the clients with a precise Application Error code and description in the error payload associated with HTTP Status codes 4xx or 5xx.\n <br>The table below provides a list of such possible Lead Errors, for effective error handling of API consumers.\n\n<table>\n  <thead>\n    <tr>\n      <th width='20%'>Response error code</th>\n      <th width='80%'>Detail</th>\n    </tr>\n  </thead>\n <tbody>\n    <tr>\n      <td>E001</td>\n      <td>Field is mandatory</td>\n    </tr>\n     <tr>\n      <td>E002</td>\n      <td>Field value not in valid range</td>\n    </tr>\n    <tr>\n      <td>E003</td>\n      <td>Invalid data</td>\n    </tr>\n    <tr>\n      <td>E004</td>\n      <td>Invalid format</td>\n    </tr>\n     <tr>\n      <td>E005</td>\n      <td>Unexpected error occured</td>\n    </tr>\n      <tr>\n      <td>E006</td>\n      <td>Forbidden</td>\n    </tr>\n      <tr>\n      <td>E007</td>\n      <td>Authentication Failure</td>\n    </tr>\n     <tr>\n      <td>E008</td>\n      <td>Contains invalid characters</td>\n    </tr>\n    <tr>\n      <td>E011</td>\n      <td>Failed to create Record - unexpected error</td>\n    </tr>\n    <tr>\n      <td>E016</td>\n      <td>You will need to accept the Terms and Conditions before starting the application process</td>\n    </tr>\n     <tr>\n      <td>E017</td>\n      <td>Service Unavailable</td>\n    </tr>\n    <tr>\n      <td>E019</td>\n      <td>Bad Gateway</td>\n    </tr>\n    <tr>\n      <td>E020</td>\n      <td>Service Unavailable</td>\n    </tr>\n  </tbody>\n</table>\n",
+    "termsOfService": "https://www.sc.com/en/terms-of-use/",
+    "contact": {
+      "name": "Developer Portal",
+      "url": "https://www.developer.sc.com",
+      "email": "dp@sc.com"
+    },
+    "license": {
+      "name": "Company Licence",
+      "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0",
+    "x-category": "Retail"
+  },
+  "servers": [
+    {
+      "url": "https://api.sc.com/retail/{version}",
+      "variables": {
+        "version": {
+          "description": "The Open API endpoints are accessible via https only",
+          "enum": [
+            "v1"
+          ],
+          "default": "v1"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Leads for Insurance",
+      "description": "OpenAPI for HK Lead. This is the Leads Model entity which holds all the information related to single lead. Based on received request payload this entity internally will be marshelled.",
+      "x-subcategory": "Lead Generation"
+    }
+  ],
+  "paths": {
+    "/leads": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "Leads for Insurance"
+        ],
+        "x-hasguide": "No",
+        "x-signin": "Yes",
+        "x-sandbox": "Yes",
+        "summary": "Capture Leads",
+        "operationId": "saveLeadUsingPOST",
+        "parameters": [
+          {
+            "description": "It indicates country. Default value is HK.",
+            "in": "header",
+            "name": "X-Markets",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "transaction-id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request",
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Lead",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Lead"
+              }
+            }
+          },
+          "required": true
+        },
+        "x-icon": "icon-retail-products.svg",
+        "x-markets": "HK",
+        "responses": {
+          "200": {
+            "description": "Resource successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeadResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Lead": {
+        "title": "Lead",
+        "required": [
+          "application-date",
+          "category-name",
+          "consent-flag",
+          "country-code",
+          "email",
+          "full-name",
+          "mobile-country-code",
+          "mobile-number",
+          "product",
+          "product-name",
+          "tsp-id"
+        ],
+        "type": "object",
+        "properties": {
+          "category-name": {
+            "type": "string",
+            "description": "Product Category",
+            "maxLength": 100,
+            "example": "Insurance"
+          },
+          "country-code": {
+            "type": "string",
+            "description": "Country Code",
+            "maxLength": 2,
+            "example": "HK"
+          },
+          "application-date": {
+            "type": "string",
+            "description": "Date of Submission, format is yyyy-mm-dd",
+            "maxLength": 10,
+            "example": "yyyy-mm-dd"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address",
+            "maxLength": 70,
+            "example": "zheng.roy@yahoo.com"
+          },
+          "full-name": {
+            "type": "string",
+            "maxLength": 110,
+            "example": "Zheng Roy"
+          },
+          "is-existing-customer": {
+            "type": "string",
+            "maxLength": 1,
+            "example": [
+              "Y",
+              "N"
+            ]
+          },
+          "mobile-country-code": {
+            "type": "string",
+            "maxLength": 4,
+            "example": 852
+          },
+          "mobile-number": {
+            "type": "string",
+            "maxLength": 12,
+            "example": 44443333
+          },
+          "product": {
+            "$ref": "#/components/schemas/Product"
+          },
+          "product-name": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "HKD Insurance"
+          },
+          "consent-flag": {
+            "type": "string",
+            "description": "TnC Flag",
+            "maxLength": 20,
+            "example": "Recorded"
+          },
+          "tsp-id": {
+            "type": "string",
+            "description": "Channel Code",
+            "maxLength": 3,
+            "example": "MHY"
+          },
+          "campaign": {
+            "type": "string",
+            "description": "Campaign Code",
+            "maxLength": 40,
+            "example": "C00B01"
+          },
+          "channel-ref-number": {
+            "type": "string",
+            "description": "External Reference",
+            "maxLength": 40,
+            "example": "Partner"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 20,
+            "example": [
+              "Mr",
+              "Mrs",
+              "Ms",
+              "Dr"
+            ]
+          },
+          "id-type": {
+            "type": "string",
+            "maxLength": 40,
+            "example": "National ID"
+          },
+          "id-number": {
+            "type": "string",
+            "maxLength": 11,
+            "example": "H123456"
+          },
+          "other-phone-number": {
+            "type": "string",
+            "description": "Additional Phone Number",
+            "maxLength": 12,
+            "example": 98745321
+          },
+          "preferred-date": {
+            "type": "string",
+            "description": "Preferred Contact Date, format is yyyy-mm-dd",
+            "maxLength": 10,
+            "example": "yyyy-mm-dd"
+          },
+          "preferred-time": {
+            "type": "string",
+            "description": "Preferred Contact Time",
+            "maxLength": 10,
+            "example": 600
+          },
+          "additional-info": {
+            "type": "string",
+            "maxLength": 100,
+            "example": "Lead from Partner"
+          },
+          "gender": {
+            "type": "string",
+            "maxLength": 2,
+            "example": "M"
+          },
+          "dob": {
+            "type": "string",
+            "description": "Date of birth, format is yyyy-mm-dd",
+            "maxLength": 10,
+            "example": "yyyy-mm-dd"
+          }
+        },
+        "example": {
+          "additional-info": "With HKD Insurance, you may enjoy higher interest returns over a savings account.",
+          "campaign": "C0001BA03",
+          "category-name": "Insurance",
+          "channel-ref-number": "SCBHKMONEYHERO",
+          "country-code": "HK",
+          "application-date": "2019-05-15",
+          "dob": "1980-12-12",
+          "email": "zheng.roy@yahoo.com",
+          "full-name": "Zheng Roy",
+          "gender": "M",
+          "id-number": "H123456",
+          "id-type": "National ID",
+          "is-existing-customer": "Y",
+          "mobile-country-code": "852",
+          "mobile-number": "44443333",
+          "other-phone-number": "11112222",
+          "preferred-date": "2100-05-30",
+          "preferred-time": "10:20AM",
+          "product-name": "HKD Insurance",
+          "title": "Mr",
+          "consent-flag": "SIGNED_FORM_RECEIVED",
+          "tsp-id": "MONEYHERO"
+        }
+      },
+      "Product": {
+        "title": "Product",
+        "type": "object",
+        "properties": {
+          "insurance-type": {
+            "type": "string",
+            "maxLength": 20,
+            "example": "Life Insurance"
+          },
+          "preferred-branch-area": {
+            "type": "string",
+            "maxLength": 40,
+            "example": [
+              "HK",
+              "KLN",
+              "NT",
+              "Others"
+            ]
+          },
+          "preferred-branch-district": {
+            "type": "string",
+            "maxLength": 40,
+            "example": "KLN"
+          }
+        },
+        "description": "This model holds the product specific fields in Lead request."
+      },
+      "LeadResponse": {
+        "title": "Response",
+        "type": "object",
+        "properties": {
+          "reference-number": {
+            "type": "string",
+            "description": "Application Reference Number generated for Leads"
+          },
+          "product-name": {
+            "type": "string",
+            "description": "Name of the interested Product"
+          },
+          "info": {
+            "type": "string",
+            "description": "Additional Information for the lead"
+          }
+        },
+        "example": {
+          "reference-number": "HK_123456_01",
+          "product-name": "HKD Insurance",
+          "info": "SCBHKMONEYHERO Lead for Insurance"
+        }
+      },
+      "Error": {
+        "title": "Error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "code",
+            "example": "E003"
+          },
+          "detail": {
+            "type": "string",
+            "description": "detail",
+            "example": "Invalid data"
+          },
+          "id": {
+            "type": "string",
+            "description": "id",
+            "example": "UUID"
+          },
+          "source": {
+            "type": "string",
+            "description": "source field name",
+            "example": "full-name"
+          }
+        }
+      }
+    }
+  }
+}

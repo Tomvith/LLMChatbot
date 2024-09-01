@@ -1,0 +1,170 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking - Open API Scheme",
+        "description": "### PSD2 Consent APIs\n1. Consent Initiate URL for PSU(Server to Server call): POST https://s2b.standardchartered.com/unifiedlogin/api/login/tpp/consent/initiate\n3. Consent creation URL for PSU:\n\n    a. Transaction Banking:\n        \n        https://s2b.standardchartered.com/unifiedlogin/api/login/tpp/consent/validateTPP?tpp_id=tppId&tpp_type=TB&state=1234567&correlationId=1234567\n        \n        state used in this call is returned from the Consent Initiate call. CorrelationId is the random id created by you and is used for request tracking at our end.\n    b. Private Banking:\n      \n        https://s2b.standardchartered.com/unifiedlogin/api/login/tpp/consent/validateTPP?tpp_id=tppId&tpp_type=PB&state=1234567&correlationId=1234567\n        \n        state used in this call is returned from the Consent Initiate call. CorrelationId is the random id created by you and is used for request tracking at our end.\n4. Consent can be revoked by users after login into the S2B Platform<br>Revoke consent is only supported for transaction banking.\n\n    - Login using the following URL: <br> https://s2b.standardchartered.com/unifiedlogin/login/index.html\n    - Once logged Go to Menu -> Third Party Provider -> Manage Consent\n    \n\n### Tech Contacts\nFor any assistance and support, kindly contact: <a href='mailto:PSD2.Information@sc.com'> PSD2.Information@sc.com</a> <br/> <br/>** PB: Private Banking <br/>** TB: Transaction banking\n",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company License",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://s2b.standardchartered.com/unifiedlogin/api/login"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Consent",
+            "description": "Supports Consent Creation.",
+            "x-subcategory": "PSD2"
+        }
+    ],
+    "paths": {
+        "/tpp/consent/initiate": {
+            "post": {
+                "tags": [
+                    "Consent"
+                ],
+                "summary": "Initilize and create state",
+                "description": "Initilize and create state",
+                "operationId": "Initilize and create state",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "X-Wac-Certificate",
+                        "description": "QWAC Certificate must be sent as string format. Note: send entire certificate as string",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "name": "X-Seal-Certificate",
+                        "description": "QSEAL Certificate must be sent as string format. Note: send entire certificate as string",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "name": "authorization",
+                        "description": "authorization- JWT token should be sent through request header. This has 30 seconds expiry",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "header",
+                        "name": "correlationId",
+                        "description": "Unique ID to track the request",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "payloadResponse": {
+                                            "type": "object",
+                                            "properties": {
+                                                "state": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": [
+                                    {
+                                        "payloadResponse": {
+                                            "state": "asdawerwej123"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid input"
+                    }
+                },
+                "x-markets": "DE,GB"
+            }
+        },
+        "/tpp/consent/validateTPP": {
+            "get": {
+                "tags": [
+                    "Consent"
+                ],
+                "summary": "Validate TPP",
+                "description": "Validate TPP",
+                "operationId": "Validate TPP",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "tpp_id",
+                        "description": "TPP ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "tpp_type",
+                        "description": "PB - Private Banking  (OR) TB - Third Party Banking (S2B)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "state",
+                        "description": "Received from /initilize call. Sample - e89512a1-3h41-4h94-94a8-fb13372444e. Mandatory for TB alone",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "correlationId",
+                        "description": "Unique ID to track the request",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Redirect to S2B login page for Authentication"
+                    },
+                    "404": {
+                        "description": "Redirects to TPP error page"
+                    }
+                },
+                "x-markets": "DE,GB"
+            }
+        }
+    }
+}

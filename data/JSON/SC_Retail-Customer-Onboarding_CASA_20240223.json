@@ -1,0 +1,1256 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Onboarding Application for Current and Savings Accounts",
+    "description": "##### Introduction\nThis documents describes the detail of OPEN API FOR HK CASA\nThe Open API for HK CASA serves the business functions associated with **Products and Services**\noffered by the bank. The operations and the features supported in this API\nare described in the following sections.\n\n<hr />\n\n##### Authentication    \nTo make a request to any of the APIs, the client has to\npresent an Access Token, following the OAuth 2.0 specifications.\n<br>The OAuth endpoints are summarized below. \n<a href=\"https://api.sc.com/retail/v1/oauth2/token\">https:\\/\\/api.sc.com\\/retail\\/v1\\/oauth2\\/token</a>\n<hr />\n **Parameters**\n <table>\n  <thead>\n    <tr>\n      <th width='15%'>Key</th>\n      <th width='85%'>Value</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>grant_type</td>\n      <td>Indicates the type of grant being presented in exchange for an access token and possibly a refresh token, for more details, please refer to the table below</td>\n    </tr>\n    <tr>\n      <td>client_id</td>\n      <td>The public identifier for the application, obtained when the caller first registered the application</td>\n    </tr>\n    <tr>\n      <td>client_secret</td>\n      <td>The application’s client secret. This ensures that the request to get the access token is made only from the application, and not from a potential attacker that may have intercepted the authorization code.</td>\n    </tr>\n    </tbody>\n</table>\n\n<hr/>\n\n<table>\n  <thead>\n    <tr>\n      <th width='15%'>Grant Type</th>\n      <th width='85%'>Usage</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Client credentials</td>\n      <td>For the client app to identify itself to the SC API platform, the <code> /token </code> endpoint has to be called with query param <code>grant_type</code> set to <code>client_credentials</code></td>\n    </tr>\n    <tr>\n      <td>Auth-code based grant</td>\n      <td>For the client app to identify itself to the SC API platform, the <code> /token </code> endpoint has to be called with query param <code>grant_type</code> set to <code>auth_code_grant</code></td>\n    </tr>\n  </tbody>\n</table>\n\n<hr />\n\n##### Error Handling\n\nThe API endpoints return an error response whenever the request could not be processed successfully. In such scenarios, API provides the clients with a precise Application Error code and description in the error payload associated with HTTP Status codes 4xx or 5xx.\n <br>The table below provides a list of such possible Application Errors, for effective error handling of API consumers.\n\n<table>\n  <thead>\n    <tr>\n      <th width='20%'>Response error code</th>\n      <th width='80%'>Detail</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>API-CASA-1-100</td>\n      <td>Input data is not valid</td>\n    </tr>\n    <tr>\n      <td>API-CASA-1-101</td>\n      <td>Invalid query parameters</td>\n    </tr>\n    <tr>\n      <td>API-CASA-2-100</td>\n      <td>Requested resource not found</td>\n    </tr>\n  </tbody>\n</table>\n",
+    "contact": {
+      "name": "SC API Support"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://sandbox-api.sc.com/retail/v1/casa",
+      "description": "aXess Sandbox"
+    },
+    {
+      "url": "https://api.sc.com/retail/{version}/casa",
+      "description": "Production",
+      "variables": {
+        "version": {
+          "description": "The Open API endpoints are accessible via **https** only",
+          "enum": [
+            "v1"
+          ],
+          "default": "v1"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Current and Savings Accounts Application",
+      "description": "Application Controller",
+      "x-subcategory": "Retail Customer Onboarding"
+    }
+  ],
+  "x-tagGroups": [
+    {
+      "name": "Onboarding",
+      "tags": [
+        "Current and Savings Accounts Application"
+      ]
+    }
+  ],
+  "paths": {
+    "/applications": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "Current and Savings Accounts Application"
+        ],
+        "summary": "Create an application",
+        "description": "To create application for 1st time, use this POST method with mandatory fields",
+        "x-markets": "HK",
+        "operationId": "createApplicationUsingPOST",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "header",
+            "description": "Country code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transaction-id",
+            "in": "header",
+            "description": "Transaction Id, random alphanumeric value, hyphen or underscore allowed",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tsp-id",
+            "in": "header",
+            "description": "TSP (Partner) ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tsp-name",
+            "in": "header",
+            "description": "TSP(Partner) Name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "application",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createApplication"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Resource successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createApplicationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "patch": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "Current and Savings Accounts Application"
+        ],
+        "summary": "Update an application",
+        "description": "This update is PATCH method, which can be sent multiple times until submit-flag set to Y",
+        "x-markets": "HK",
+        "operationId": "updateApplicationUsingPATCH",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "header",
+            "description": "Country code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transaction-id",
+            "in": "header",
+            "description": "Transaction Id, random alphanumeric value, hyphen or underscore allowed",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tsp-id",
+            "in": "header",
+            "description": "TSP (Partner) ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tsp-name",
+            "in": "header",
+            "description": "TSP(Partner) Name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "application",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateApplication"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "updateApplication": {
+        "title": "updateApplication",
+        "required": [
+          "application-ref-id",
+          "product-code",
+          "product-name",
+          "sub-product-code"
+        ],
+        "type": "object",
+        "properties": {
+          "nationality": {
+            "type": "array",
+            "description": "Valid 2 ISO Country Code, It Should be array",
+            "example": [
+              "HK",
+              "CN",
+              "US"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "account-type": {
+            "type": "string",
+            "description": "Account Type",
+            "example": "SAVINGS",
+            "enum": [
+              "BUSINESS",
+              "SAVINGS",
+              "PAYROLL",
+              "GENERAL/PERSONAL TRANSACTIONS",
+              "INVESTMENT PURCHASES/SALE PROCEEDS",
+              "INSTALMENT/REGULAR PAYMENTS",
+              "INTERNATIONAL PAYMENT/TRANSFERS"
+            ]
+          },
+          "address": {
+            "type": "array",
+            "description": "List of address, residential address and mailing address, please refer to address object",
+            "items": {
+              "$ref": "#/components/schemas/Address"
+            }
+          },
+          "annual-salary-gross": {
+            "type": "string",
+            "description": "should be between 0 and 100,000,000 and integer only",
+            "example": "1000"
+          },
+          "application-ref-id": {
+            "type": "string",
+            "description": "For createApplication Service, This field is not required, For an updateApplication this field is mandatory",
+            "example": "TSPHKMXXXXXXX"
+          },
+          "atm-card-flag": {
+            "type": "string",
+            "description": "atm-card-flag",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "atm-card-sub-type": {
+            "type": "string",
+            "description": "atm-card-sub-type"
+          },
+          "atm-card-type": {
+            "type": "string",
+            "description": "atm-card-type",
+            "example": "UnionPay Personal Banking Privileged Plan ATM Card",
+            "enum": [
+              "Cirrus Personal Banking Privileged Plan ATM Card",
+              "Cirrus Premium programme ATM Card",
+              "Cirrus Priority Banking ATM Card",
+              "Cirrus Standard Chartered ATM Card",
+              "UnionPay Dual Currency Personal Banking Privileged Plan ATM Card",
+              "UnionPay Dual Currency Premium programme ATM Card",
+              "UnionPay Dual Currency Priority Banking ATM Card",
+              "UnionPay Dual Currency Standard Chartered ATM Card",
+              "UnionPay Personal Banking Privileged Plan ATM Card",
+              "UnionPay Premium programme ATM Card",
+              "UnionPay Priority Banking ATM Card",
+              "UnionPay Standard Chartered ATM Card"
+            ]
+          },
+          "atm-language": {
+            "type": "string",
+            "description": "atm-language",
+            "example": "EN",
+            "enum": [
+              "EN",
+              "CN"
+            ]
+          },
+          "banking-relationship": {
+            "type": "string",
+            "description": "banking-relationship",
+            "example": "Priority Banking",
+            "enum": [
+              "Priority Banking",
+              "Premium Banking",
+              "Easy Banking"
+            ]
+          },
+          "campaign": {
+            "type": "string",
+            "description": "Campaign code",
+            "example": "CAMPAIGN CODE"
+          },
+          "channel-ref-number": {
+            "type": "string",
+            "description": "Partner's reference number",
+            "example": "ABC12345"
+          },
+          "consol-statement-flag": {
+            "type": "string",
+            "description": "consol-statement-flag",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "education": {
+            "type": "string",
+            "description": "education",
+            "example": "University",
+            "enum": [
+              "Primary",
+              "Secondary",
+              "Tertiary",
+              "University",
+              "Technical Institute",
+              "Vocational Institute",
+              "GCE O - Levels",
+              "GCE A - Levels",
+              "Diploma Holder",
+              "Professional Qualifications",
+              "Others",
+              "Unknown"
+            ]
+          },
+          "employment-type": {
+            "type": "string",
+            "description": "Employement Type",
+            "example": "Employed - Regular Salaried",
+            "enum": [
+              "Employed - Regular Salaried",
+              "Employed - Non-regular Salaried",
+              "Employed - Temporary",
+              "Part Time",
+              "Self-Employed (Professional)",
+              "Self-Employed (Non-Professional -Sole proprietor)",
+              "Self-Employed (Non-Professional - Limited Company)",
+              "Self-Employed (Non-Professional - Partnership)",
+              "Others",
+              "Home Maker",
+              "Unemployed",
+              "Student",
+              "Retired",
+              "Employed - Salaried (Controller/Owner/Director)"
+            ]
+          },
+          "fatca-confirmation": {
+            "type": "string",
+            "description": "Fatca Confirmation",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "initial-deposit-amount": {
+            "type": "string",
+            "description": "Initial Deposit Amount only Integer, does not accept decimal",
+            "example": "1000"
+          },
+          "initial-deposit-mode": {
+            "type": "string",
+            "description": "Initial Deposit Mode",
+            "example": "Cash",
+            "enum": [
+              "Cheque or Other Monetary Instruments",
+              "Cash",
+              "Cross Border Transfer or Wire",
+              "Local Transfer or Wire"
+            ]
+          },
+          "marital-status": {
+            "type": "string",
+            "description": "marital-status",
+            "example": "Single",
+            "enum": [
+              "Single",
+              "Married",
+              "Divorced",
+              "Others"
+            ]
+          },
+          "marketing-consent-email": {
+            "type": "string",
+            "description": "Marketing Consent Email",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "marketing-consent-mail": {
+            "type": "string",
+            "description": "Marketing Consent Mail",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "marketing-consent-phone": {
+            "type": "string",
+            "description": "Marketing Consent Phone",
+            "example": "OPT-ALL",
+            "enum": [
+              "OPT-ALL",
+              "OPT-RM",
+              "OPT-NONE"
+            ]
+          },
+          "marketing-consent-sms": {
+            "type": "string",
+            "description": "Marketing Consent SMS",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "occupation-code": {
+            "type": "string",
+            "description": "occupation-code",
+            "example": "Worker",
+            "enum": [
+              "AGRICULTURE AND FISHING | Director / Chairman / CEO",
+              "AGRICULTURE AND FISHING | Outdoor Worker/ Life Guard",
+              "AGRICULTURE AND FISHING | Indoor Worker",
+              "AGRICULTURE AND FISHING | Others",
+              "AGRICULTURE AND FISHING | Manager/Executive",
+              "AGRICULTURE AND FISHING | Officer/ Supervisor/ Administrator",
+              "AGRICULTURE AND FISHING | Clerical/Secretarial",
+              "BANKING,ACCOUNTING & FINANCE | Chartered accountant/auditor",
+              "BANKING,ACCOUNTING & FINANCE | Standard Chartered Bank Staff",
+              "BANKING,ACCOUNTING & FINANCE | Director / Chairman / CEO",
+              "BANKING,ACCOUNTING & FINANCE | Personal Financial Consultant/ Investment Consultant/Relationship Officer/Sales Representative",
+              "BANKING,ACCOUNTING & FINANCE | Others",
+              "BANKING,ACCOUNTING & FINANCE | Manager/Executive",
+              "BANKING,ACCOUNTING & FINANCE | Officer/ Supervisor/ Administrator",
+              "BANKING,ACCOUNTING & FINANCE | Clerical/Secretarial",
+              "BUILDING SERVICES & CONSTRUCTION | Architect",
+              "BUILDING SERVICES & CONSTRUCTION | Surveyor/Valuer",
+              "BUILDING SERVICES & CONSTRUCTION | Engineer",
+              "BUILDING SERVICES & CONSTRUCTION | Director / Chairman / CEO",
+              "BUILDING SERVICES & CONSTRUCTION | Electrician/ Technician/ Mechanic",
+              "BUILDING SERVICES & CONSTRUCTION | Construction Worker / Leveller/Contractor / Sub-contractor/ Site Foreman",
+              "BUILDING SERVICES & CONSTRUCTION | Others",
+              "BUILDING SERVICES & CONSTRUCTION | Manager/Executive",
+              "BUILDING SERVICES & CONSTRUCTION | Officer/ Supervisor/ Administrator",
+              "BUILDING SERVICES & CONSTRUCTION | Clerical/Secretarial",
+              "CATERING,RESTAURANT & FOOD SERVICES | Director / Chairman / CEO",
+              "CATERING,RESTAURANT & FOOD SERVICES | Cashier",
+              "CATERING,RESTAURANT & FOOD SERVICES | Waiter/waitress/Captain/Bartender",
+              "CATERING,RESTAURANT & FOOD SERVICES | Others",
+              "CATERING,RESTAURANT & FOOD SERVICES | Manager/Executive",
+              "CATERING,RESTAURANT & FOOD SERVICES | Officer/ Supervisor/ Administrator",
+              "CATERING,RESTAURANT & FOOD SERVICES | Clerical/Secretarial",
+              "CATERING,RESTAURANT & FOOD SERVICES | COOK/ CHEF/ CHEF ASSISTANT",
+              "DEFENCE AND WEAPONS | Director / Chairman / CEO",
+              "DEFENCE AND WEAPONS | Purchaser / Merchandiser",
+              "DEFENCE AND WEAPONS | Retail Sales / Promoter",
+              "DEFENCE AND WEAPONS | Cashier",
+              "DEFENCE AND WEAPONS | Others",
+              "DEFENCE AND WEAPONS | Manager/Executive",
+              "DEFENCE AND WEAPONS | Officer/ Supervisor/ Administrator",
+              "DEFENCE AND WEAPONS | Clerical/Secretarial",
+              "EDUCATIONAL SERVICES | Director / Chairman / CEO",
+              "EDUCATIONAL SERVICES | Lecturer/Professor/Headmaster/Principal",
+              "EDUCATIONAL SERVICES | Teacher(Kindergarten/ Primary and Secondary School)/ Tutorial Class/ Teaching Support Staff",
+              "EDUCATIONAL SERVICES | Unemployed/ Private Tutor",
+              "EDUCATIONAL SERVICES | Coacher/ Athlete/ Trainer",
+              "EDUCATIONAL SERVICES | Others",
+              "EDUCATIONAL SERVICES | Manager/Executive",
+              "EDUCATIONAL SERVICES | Officer/ Supervisor/ Administrator",
+              "EDUCATIONAL SERVICES | Clerical/Secretarial",
+              "EMPLOYMENT AGENCIES | Domestic Helper",
+              "EMPLOYMENT AGENCIES | Others",
+              "FOREIGN GOVTS,INTL./POLITICAL ORGANISATIONS | Consulate / Council Member",
+              "FOREIGN GOVTS,INTL./POLITICAL ORGANISATIONS | Director / Chairman / CEO",
+              "FOREIGN GOVTS,INTL./POLITICAL ORGANISATIONS | Social Worker",
+              "FOREIGN GOVTS,INTL./POLITICAL ORGANISATIONS | Civil Servant- Contract",
+              "FOREIGN GOVTS,INTL./POLITICAL ORGANISATIONS | Civil Servant- Disciplinary",
+              "FOREIGN GOVTS,INTL./POLITICAL ORGANISATIONS | Civil Servant- Non-disciplinary",
+              "FOREIGN GOVTS,INTL./POLITICAL ORGANISATIONS | Others",
+              "FOREIGN GOVTS,INTL./POLITICAL ORGANISATIONS | Air force / Navy",
+              "FOREIGN GOVTS,INTL./POLITICAL ORGANISATIONS | Manager/Executive",
+              "FOREIGN GOVTS,INTL./POLITICAL ORGANISATIONS | Officer/ Supervisor/ Administrator",
+              "FOREIGN GOVTS,INTL./POLITICAL ORGANISATIONS | Clerical/Secretarial",
+              "FORESTRY | Director / Chairman / CEO",
+              "FORESTRY | Outdoor Worker/ Life Guard",
+              "FORESTRY | Indoor Worker",
+              "FORESTRY | Others",
+              "FORESTRY | Manager/Executive",
+              "FORESTRY | Officer/ Supervisor/ Administrator",
+              "FORESTRY | Clerical/Secretarial",
+              "HAWKERS & STALLHOLDERS | Director / Chairman / CEO",
+              "HAWKERS & STALLHOLDERS | Purchaser / Merchandiser",
+              "HAWKERS & STALLHOLDERS | Retail Sales / Promoter",
+              "HAWKERS & STALLHOLDERS | Cashier",
+              "HAWKERS & STALLHOLDERS | Others",
+              "HAWKERS & STALLHOLDERS | Manager/Executive",
+              "HAWKERS & STALLHOLDERS | Officer/ Supervisor/ Administrator",
+              "HAWKERS & STALLHOLDERS | Clerical/Secretarial",
+              "HOSPITALITY & TOURISM | Director / Chairman / CEO",
+              "HOSPITALITY & TOURISM | Tour Guide / Travel Agent",
+              "HOSPITALITY & TOURISM | Others",
+              "HOSPITALITY & TOURISM | Manager/Executive",
+              "HOSPITALITY & TOURISM | Officer/ Supervisor/ Administrator",
+              "HOSPITALITY & TOURISM | Clerical/Secretarial",
+              "INFORMATION TECHNOLOGY | Director / Chairman / CEO",
+              "INFORMATION TECHNOLOGY | Telephone Operator",
+              "INFORMATION TECHNOLOGY | Engineer / Programmer/ System Analyst",
+              "INFORMATION TECHNOLOGY | Computer Operator",
+              "INFORMATION TECHNOLOGY | Others",
+              "INFORMATION TECHNOLOGY | Manager / Executive",
+              "INFORMATION TECHNOLOGY | Officer/ Supervisor/ Administrator",
+              "INFORMATION TECHNOLOGY | Clerical / Secretarial",
+              "INSURANCE | Director / Chairman / CEO",
+              "INSURANCE | Stock Broker/ Stock Dealer /Insurance Agent/ Insurance Broker/ Insurance Sales",
+              "INSURANCE | Personal Financial Consultant/ Investment Consultant/Relationship Officer/Sales Representative",
+              "INSURANCE | Others",
+              "INSURANCE | Manager / Executive",
+              "INSURANCE | Officer/ Supervisor/ Administrator",
+              "INSURANCE | Clerical / Secretarial",
+              "INVESTMENT & SECURITIES | Director / Chairman / CEO",
+              "INVESTMENT & SECURITIES | Stock Broker/ Stock Dealer /Insurance Agent/ Insurance Broker/ Insurance Sales",
+              "INVESTMENT & SECURITIES | Personal Financial Consultant/ Investment Consultant/Relationship Officer/Sales Representative",
+              "INVESTMENT & SECURITIES | Others",
+              "INVESTMENT & SECURITIES | Manager / Executive",
+              "INVESTMENT & SECURITIES | Officer/ Supervisor/ Administrator",
+              "INVESTMENT & SECURITIES | Clerical / Secretarial",
+              "LEGAL SERVICES,ACCOUNTANTS & TRUST | Judge/Lawyer/Barrister/Solicitor",
+              "LEGAL SERVICES,ACCOUNTANTS & TRUST | Director / Chairman / CEO",
+              "LEGAL SERVICES,ACCOUNTANTS & TRUST | Legal / Litigation Clerk",
+              "LEGAL SERVICES,ACCOUNTANTS & TRUST | Others",
+              "LEGAL SERVICES,ACCOUNTANTS & TRUST | Manager/Executive",
+              "LEGAL SERVICES,ACCOUNTANTS & TRUST | Officer/ Supervisor/ Administrator",
+              "LEGAL SERVICES,ACCOUNTANTS & TRUST | Clerical/Secretarial",
+              "LOCAL GOVERNMENT &  PUBLIC UTILITIES | Consulate / Council Member",
+              "LOCAL GOVERNMENT &  PUBLIC UTILITIES | Director / Chairman / CEO",
+              "LOCAL GOVERNMENT &  PUBLIC UTILITIES | Social Worker",
+              "LOCAL GOVERNMENT &  PUBLIC UTILITIES | Civil Servant- Contract",
+              "LOCAL GOVERNMENT &  PUBLIC UTILITIES | Civil Servant- Disciplinary",
+              "LOCAL GOVERNMENT &  PUBLIC UTILITIES | Civil Servant- Non-disciplinary",
+              "LOCAL GOVERNMENT &  PUBLIC UTILITIES | Others",
+              "LOCAL GOVERNMENT &  PUBLIC UTILITIES | Air force / Navy",
+              "LOCAL GOVERNMENT &  PUBLIC UTILITIES | Manager/Executive",
+              "LOCAL GOVERNMENT &  PUBLIC UTILITIES | Officer/ Supervisor/ Administrator",
+              "LOCAL GOVERNMENT &  PUBLIC UTILITIES | Clerical/Secretarial",
+              "LOCAL NON-PROFIT ORGANIZATION | Director / Chairman / CEO",
+              "LOCAL NON-PROFIT ORGANIZATION | Social Worker",
+              "LOCAL NON-PROFIT ORGANIZATION | Others",
+              "LOCAL NON-PROFIT ORGANIZATION | Manager/Executive",
+              "LOCAL NON-PROFIT ORGANIZATION | Officer/ Supervisor/ Administrator",
+              "LOCAL NON-PROFIT ORGANIZATION | Clerical/Secretarial",
+              "LOGGING | Director / Chairman / CEO",
+              "LOGGING | Outdoor Worker/ Life Guard",
+              "LOGGING | Indoor Worker",
+              "LOGGING | Others",
+              "LOGGING | Manager/Executive",
+              "LOGGING | Officer/ Supervisor/ Administrator",
+              "LOGGING | Clerical/Secretarial",
+              "MANUFACTURING / INDUSTRIAL | Engineer",
+              "MANUFACTURING / INDUSTRIAL | Director / Chairman / CEO",
+              "MANUFACTURING / INDUSTRIAL | Electrician/ Technician/ Mechanic",
+              "MANUFACTURING / INDUSTRIAL | Industrial Quality Control Staff/ Warehouse Worker/ Industrial Worker",
+              "MANUFACTURING / INDUSTRIAL | Industrial Foreman/Line Leader",
+              "MANUFACTURING / INDUSTRIAL | Others",
+              "MANUFACTURING / INDUSTRIAL | Manager/Executive",
+              "MANUFACTURING / INDUSTRIAL | Officer/ Supervisor/ Administrator",
+              "MANUFACTURING / INDUSTRIAL | Clerical/Secretarial",
+              "MANUFACTURING TOBACCO/LEATHER/CHEMICAL PRODUCTS | Engineer",
+              "MANUFACTURING TOBACCO/LEATHER/CHEMICAL PRODUCTS | Director / Chairman / CEO",
+              "MANUFACTURING TOBACCO/LEATHER/CHEMICAL PRODUCTS | Electrician/ Technician/ Mechanic",
+              "MANUFACTURING TOBACCO/LEATHER/CHEMICAL PRODUCTS | Industrial Quality Control Staff/ Warehouse Worker/ Industrial Worker",
+              "MANUFACTURING TOBACCO/LEATHER/CHEMICAL PRODUCTS | Industrial Foreman/Line Leader",
+              "MANUFACTURING TOBACCO/LEATHER/CHEMICAL PRODUCTS | Others",
+              "MANUFACTURING TOBACCO/LEATHER/CHEMICAL PRODUCTS | Manager/Executive",
+              "MANUFACTURING TOBACCO/LEATHER/CHEMICAL PRODUCTS | Officer/ Supervisor/ Administrator",
+              "MANUFACTURING TOBACCO/LEATHER/CHEMICAL PRODUCTS | Clerical/Secretarial",
+              "MARKETING | Director / Chairman / CEO",
+              "MARKETING | Journalist / Reporter / Editor / Translator",
+              "MARKETING | Film Producer/ Film Director/Camera Man/ Light Board Operator/Backstage Staff/Photographer/ Camera Man/ Photographer",
+              "MARKETING | Marketing Executive",
+              "MARKETING | Others",
+              "MARKETING | Manager/Executive",
+              "MARKETING | Officer/ Supervisor/ Administrator",
+              "MARKETING | Clerical/Secretarial",
+              "MEDIA & COMMUNICATION | Director / Chairman / CEO",
+              "MEDIA & COMMUNICATION | Journalist / Reporter / Editor / Translator",
+              "MEDIA & COMMUNICATION | Film Producer/ Film Director/Camera Man/ Light Board Operator/Backstage Staff/Photographer/ Camera Man/ Photographer",
+              "MEDIA & COMMUNICATION | Marketing Executive",
+              "MEDIA & COMMUNICATION | Others",
+              "MEDIA & COMMUNICATION | Manager/Executive",
+              "MEDIA & COMMUNICATION | Officer/ Supervisor/ Administrator",
+              "MEDIA & COMMUNICATION | Clerical/Secretarial",
+              "MEDICAL & HEALTH CARE SERVICES | Doctor/Dentist/Medical and Healthcare Specialist/ Medical Officer",
+              "MEDICAL & HEALTH CARE SERVICES | Director / Chairman / CEO",
+              "MEDICAL & HEALTH CARE SERVICES | Nurse",
+              "MEDICAL & HEALTH CARE SERVICES | Optician/Pharmacist/Laboratory Operator/Radiographer/Chemist",
+              "MEDICAL & HEALTH CARE SERVICES | Others",
+              "MEDICAL & HEALTH CARE SERVICES | Manager/Executive",
+              "MEDICAL & HEALTH CARE SERVICES | Officer/ Supervisor/ Administrator",
+              "MEDICAL & HEALTH CARE SERVICES | Clerical/Secretarial",
+              "MONEY SERVICES AND INSURANCE AGENTS | Director / Chairman / CEO",
+              "MONEY SERVICES AND INSURANCE AGENTS | Stock Broker/ Stock Dealer /Insurance Agent/ Insurance Broker/ Insurance Sales",
+              "MONEY SERVICES AND INSURANCE AGENTS | Personal Financial Consultant/ Investment Consultant/Relationship Officer/Sales Representative",
+              "MONEY SERVICES AND INSURANCE AGENTS | Others",
+              "MONEY SERVICES AND INSURANCE AGENTS | Manager/Executive",
+              "MONEY SERVICES AND INSURANCE AGENTS | Officer/ Supervisor/ Administrator",
+              "MONEY SERVICES AND INSURANCE AGENTS | Clerical/Secretarial",
+              "NIGHTLIFE,GAMING AND GAMBLING | Director / Chairman / CEO",
+              "NIGHTLIFE,GAMING AND GAMBLING | Outdoor Worker/ Life Guard",
+              "NIGHTLIFE,GAMING AND GAMBLING | Artist/Actor/Entertainer/Model",
+              "NIGHTLIFE,GAMING AND GAMBLING | Film Producer/ Film Director/Camera Man/ Light Board Operator/Backstage Staff/Photographer/ Camera Man/ Photographer",
+              "NIGHTLIFE,GAMING AND GAMBLING | Coacher/ Athlete/ Trainer",
+              "NIGHTLIFE,GAMING AND GAMBLING | Others",
+              "NIGHTLIFE,GAMING AND GAMBLING | Manager/Executive",
+              "NIGHTLIFE,GAMING AND GAMBLING | Officer/ Supervisor/ Administrator",
+              "NIGHTLIFE,GAMING AND GAMBLING | Clerical/Secretarial",
+              "NIGHTLIFE,GAMING AND GAMBLING | Night Club/ Sauna / Mah-jong House/Game Centre Staff",
+              "PERSONAL SERVICES,RETAIL & WHOLESALE | Director / Chairman / CEO",
+              "PERSONAL SERVICES,RETAIL & WHOLESALE | Purchaser / Merchandiser",
+              "PERSONAL SERVICES,RETAIL & WHOLESALE | Retail Sales / Promoter",
+              "PERSONAL SERVICES,RETAIL & WHOLESALE | Cashier",
+              "PERSONAL SERVICES,RETAIL & WHOLESALE | Others",
+              "PERSONAL SERVICES,RETAIL & WHOLESALE | Manager / Executive",
+              "PERSONAL SERVICES,RETAIL & WHOLESALE | Officer/ Supervisor/ Administrator",
+              "PERSONAL SERVICES,RETAIL & WHOLESALE | Clerical / Secretarial",
+              "PRECIOUS METALS AND DIAMONDS | Director / Chairman / CEO",
+              "PRECIOUS METALS AND DIAMONDS | Purchaser / Merchandiser",
+              "PRECIOUS METALS AND DIAMONDS | Retail Sales / Promoter",
+              "PRECIOUS METALS AND DIAMONDS | Cashier",
+              "PRECIOUS METALS AND DIAMONDS | Others",
+              "PRECIOUS METALS AND DIAMONDS | Manager / Executive",
+              "PRECIOUS METALS AND DIAMONDS | Officer/ Supervisor/ Administrator",
+              "PRECIOUS METALS AND DIAMONDS | Clerical / Secretarial",
+              "PROPERTY MANAGEMENT & REAL ESTATE | Director / Chairman / CEO",
+              "PROPERTY MANAGEMENT & REAL ESTATE | Security Guard / Watchman",
+              "PROPERTY MANAGEMENT & REAL ESTATE | Real Estate Agent",
+              "PROPERTY MANAGEMENT & REAL ESTATE | Others",
+              "PROPERTY MANAGEMENT & REAL ESTATE | Manager / Executive",
+              "PROPERTY MANAGEMENT & REAL ESTATE | Officer/ Supervisor/ Administrator",
+              "PROPERTY MANAGEMENT & REAL ESTATE | Clerical / Secretarial",
+              "PUBLIC TRANSPORTATION & LOGISTIC | Pilot/ Aircraft Captain/ Ship Captain",
+              "PUBLIC TRANSPORTATION & LOGISTIC | Director / Chairman / CEO",
+              "PUBLIC TRANSPORTATION & LOGISTIC | Cabin Crew/Ground Staff",
+              "PUBLIC TRANSPORTATION & LOGISTIC | Taxi Driver/ Minibus Driver",
+              "PUBLIC TRANSPORTATION & LOGISTIC | Driver/ Transportation Worker/ Delivery Worker/ Courier",
+              "PUBLIC TRANSPORTATION & LOGISTIC | Others",
+              "PUBLIC TRANSPORTATION & LOGISTIC | Manager / Executive",
+              "PUBLIC TRANSPORTATION & LOGISTIC | Officer/ Supervisor/ Administrator",
+              "PUBLIC TRANSPORTATION & LOGISTIC | Clerical / Secretarial",
+              "RETAIL JEWELRY,TOBACCO IMPORT AND EXPORT | Director / Chairman / CEO",
+              "RETAIL JEWELRY,TOBACCO IMPORT AND EXPORT | Purchaser / Merchandiser",
+              "RETAIL JEWELRY,TOBACCO IMPORT AND EXPORT | Retail Sales / Promoter",
+              "RETAIL JEWELRY,TOBACCO IMPORT AND EXPORT | Cashier",
+              "RETAIL JEWELRY,TOBACCO IMPORT AND EXPORT | Others",
+              "RETAIL JEWELRY,TOBACCO IMPORT AND EXPORT | Manager / Executive",
+              "RETAIL JEWELRY,TOBACCO IMPORT AND EXPORT | Officer/ Supervisor/ Administrator",
+              "RETAIL JEWELRY,TOBACCO IMPORT AND EXPORT | Clerical / Secretarial",
+              "TELECOMMUNICATION | Director / Chairman / CEO",
+              "TELECOMMUNICATION | Telephone Operator",
+              "TELECOMMUNICATION | Engineer / Programmer/ System Analyst",
+              "TELECOMMUNICATION | Computer Operator",
+              "TELECOMMUNICATION | Others",
+              "TELECOMMUNICATION | Manager / Executive",
+              "TELECOMMUNICATION | Officer/ Supervisor/ Administrator",
+              "TELECOMMUNICATION | Clerical / Secretarial",
+              "TRAVEL AGENTS | Director / Chairman / CEO",
+              "TRAVEL AGENTS | Tour Guide / Travel Agent",
+              "TRAVEL AGENTS | Others",
+              "TRAVEL AGENTS | Manager / Executive",
+              "TRAVEL AGENTS | Officer/ Supervisor/ Administrator",
+              "TRAVEL AGENTS | Clerical / Secretarial",
+              "OIL,GAS AND MINING INDUSTRY | Engineer",
+              "OIL,GAS AND MINING INDUSTRY | Director / Chairman / CEO",
+              "OIL,GAS AND MINING INDUSTRY | Electrician/ Technician/ Mechanic",
+              "OIL,GAS AND MINING INDUSTRY | Industrial Quality Control Staff/ Warehouse Worker/ Industrial Worker",
+              "OIL,GAS AND MINING INDUSTRY | Industrial Foreman/Line Leader",
+              "OIL,GAS AND MINING INDUSTRY | Others",
+              "OIL,GAS AND MINING INDUSTRY | Manager / Executive",
+              "OIL,GAS AND MINING INDUSTRY | Officer/ Supervisor/ Administrator",
+              "OIL,GAS AND MINING INDUSTRY | Clerical / Secretarial",
+              "ENTERTAINMENT,RECREATION and SPORTS | Director / Chairman / CEO",
+              "ENTERTAINMENT,RECREATION and SPORTS | Outdoor Worker/ Life Guard",
+              "ENTERTAINMENT,RECREATION and SPORTS | Artist/Actor/Entertainer/Model",
+              "ENTERTAINMENT,RECREATION and SPORTS | Film Producer/ Film Director/Camera Man/ Light Board Operator/Backstage Staff/Photographer/ Camera Man/ Photographer",
+              "ENTERTAINMENT,RECREATION and SPORTS | Coacher/ Athlete/ Trainer",
+              "ENTERTAINMENT,RECREATION and SPORTS | Others",
+              "ENTERTAINMENT,RECREATION and SPORTS | Manager / Executive",
+              "ENTERTAINMENT,RECREATION and SPORTS | Officer/ Supervisor/ Administrator",
+              "ENTERTAINMENT,RECREATION and SPORTS | Clerical / Secretarial",
+              "ENTERTAINMENT,RECREATION and SPORTS | Night Club/ Sauna / Mah-jong House/Game Centre Staff",
+              "BEAUTY,FITNESS,HAIR SALON | Director / Chairman / CEO",
+              "BEAUTY,FITNESS,HAIR SALON | Beauty Consultant/ Hair Stylist",
+              "BEAUTY,FITNESS,HAIR SALON | Others",
+              "BEAUTY,FITNESS,HAIR SALON | Manager / Executive",
+              "BEAUTY,FITNESS,HAIR SALON | Officer/ Supervisor/ Administrator",
+              "BEAUTY,FITNESS,HAIR SALON | Clerical / Secretarial",
+              "ART AND DESIGN | Director / Chairman / CEO",
+              "ART AND DESIGN | Designer/Draftman",
+              "ART AND DESIGN | Others",
+              "ART AND DESIGN | Manager/Executive",
+              "ART AND DESIGN | Officer/ Supervisor/ Administrator",
+              "ART AND DESIGN | Clerical/Secretarial",
+              "NON-EMPLOYED | Student",
+              "NON-EMPLOYED | Homemaker/ Retiree",
+              "NON-EMPLOYED | Unemployed/ Private Tutor",
+              "NON-EMPLOYED | Others"
+            ]
+          },
+          "pref-branch": {
+            "type": "string",
+            "description": "pref-branch",
+            "example": "Preferred Branch",
+            "enum": [
+              "292 - CANTON ROAD BRANCH",
+              "301 - LOK FU SHOPPING CENTRE",
+              "304 - YUEN LONG FUNG NIN ROAD BRANCH",
+              "307 - CHUNG ON STREET",
+              "308 - CITYPLAZA",
+              "313 - TELFORD GARDENS",
+              "314 - TAI ON BUILDING",
+              "317 - ADMIRALTY BRANCH",
+              "329 - 828 CHEUNG SHA WAN ROAD",
+              "330 - EIGHTLAND GARDEN PFC",
+              "338 - SHATIN PLAZA BRANCH",
+              "350 - TAI WAI BRANCH",
+              "351 - FO TAN",
+              "354 - TUEN MUN TOWN PLAZA BR",
+              "359 - TIN SHUI WAI BRANCH",
+              "366 - TSEUNG KWAN O BRANCH",
+              "368 - DES VOEUX ROAD BRANCH",
+              "372 - MA ON SHAN BRANCH",
+              "377 - TSIMSHATSUI EAST BRANCH",
+              "398 - EXCHANGE SQUARE BRANCH",
+              "402 - TSUEN WAN",
+              "405 - YAUMATI",
+              "406 - SAN PO KONG",
+              "407 - KWUN TONG",
+              "409 - SAI KUNG",
+              "410 - QUEEN'S ROAD EAST BRANCH",
+              "413 - TSIM SHA TSUI",
+              "415 - CAUSEWAY BAY (SUGAR ST)",
+              "418 - SHEK TONG TSUI BRANCH",
+              "419 - ABERDEEN",
+              "420 - KOWLOON CITY",
+              "424 - MEI FOO STAGE I",
+              "428 - WO YI HOP ROAD",
+              "429 - 88 DES VOEUX ROAD BRANCH",
+              "438 - WHAMPOA ESTATE",
+              "440 - NEW JADE GARDEN",
+              "446 - KWAI CHUNG",
+              "447 - CENTRAL BRANCH",
+              "451 - NORTH POINT ISLAND PLACE",
+              "456 - HAPPY VALLEY BRANCH",
+              "561 - ARGYLE CENTRE BRANCH",
+              "562 - WANCHAI SOUTHORN",
+              "570 - MONGKOK BRANCH",
+              "571 - HUNG HOM COMMERCIAL CENTRE",
+              "573 - METROPLAZA BRANCH",
+              "574 - 68 NATHAN ROAD BRANCH",
+              "580 - WANCHAI GREAT EAGLE BRANCH",
+              "581 - MARITIME SQUARE",
+              "582 - OLYMPIAN CITY BRANCH",
+              "956 - NORTH POINT CENTRE",
+              "958 - YUEN LONG",
+              "959 - PRINCE EDWARD ROAD BRANCH",
+              "971 - WATERLOO ROAD",
+              "973 - SHEUNG SHUI",
+              "978 - TAI PO",
+              "984 - TUEN MUN BRANCH",
+              "578 - HOI YUEN ROAD BRANCH",
+              "869 - WEST KOWLOON STATION EXPRESS BANKING CENTRE"
+            ]
+          },
+          "product-code": {
+            "type": "string",
+            "description": "Product id of offering product",
+            "example": "DDA",
+            "enum": [
+              "DDA"
+            ]
+          },
+          "product-name": {
+            "type": "string",
+            "description": "product name of offering product",
+            "example": "current account",
+            "enum": [
+              "current account"
+            ]
+          },
+          "source-of-funds": {
+            "type": "string",
+            "description": "source-of-funds",
+            "example": "Salary",
+            "enum": [
+              "Salary",
+              "Business Income",
+              "Inheritance or Gift",
+              "Investments or Property Income",
+              "Others"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "description": "Application status, DRAFT: application not yet complete, INCOMPLETE: submit-flag set to Y, which will not accept any more request",
+            "example": "DRAFT/INCOMPLETE"
+          },
+          "sub-product-code": {
+            "type": "string",
+            "description": "Subproduct code of offering product",
+            "example": "RM",
+            "enum": [
+              "RM"
+            ]
+          },
+          "submit-flag": {
+            "type": "string",
+            "description": "submit-flag",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "tax-id": {
+            "type": "string",
+            "example": "A123456(0)",
+            "enum": [
+              "HongKong ID"
+            ]
+          },
+          "tax-residency-flag": {
+            "type": "string",
+            "description": "Tax Residency flag",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "tax-residency-flag-others": {
+            "type": "string",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "us-citizen-flag": {
+            "type": "string",
+            "description": "US Citizen flag",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "us-pr-flag": {
+            "type": "string",
+            "description": "US Permanent Residency flag",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "us-resident-flag": {
+            "type": "string",
+            "description": "US Citizen flag",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          }
+        },
+        "example": {
+          "account-type": "SAVINGS,",
+          "address": "[{address-country:HONGKONG, address-line-1: #13-13 Block A, address-line-2: Kowoon road, address-line-3: 23 happy drive, address-line-4: Hongkong, S123456 address-line-4: res}]",
+          "annual-salary-gross": 1000,
+          "application-ref-id": "TSPHKMXXXXXXX",
+          "atm-card-flag": "Y",
+          "atm-card-sub-type": "string",
+          "atm-card-type": "UnionPay Personal Banking Privileged Plan ATM Card",
+          "atm-language": "EN,",
+          "banking-relationship": "Priority Banking",
+          "campaign": "CAMPAIGN CODE",
+          "channel-ref-number": "ABC12345",
+          "consol-statement-flag": "Y",
+          "education": "University",
+          "employment-type": "Employed - Regular Salaried",
+          "fatca-confirmation": "Y",
+          "initial-deposit-amount": 1000,
+          "initial-deposit-mode": "Cash",
+          "marital-status": "Single",
+          "marketing-consent-email": "Y",
+          "marketing-consent-mail": "Y",
+          "marketing-consent-phone": "OPT-ALL",
+          "marketing-consent-sms": "Y",
+          "occupation-code": "Worker",
+          "pref-branch": "Preferred Branch",
+          "product-code": "DDA",
+          "product-name": "current account",
+          "source-of-funds": "Salary",
+          "status": "DRAFT/INCOMPLETE",
+          "sub-product-code": "RM",
+          "submit-flag": "Y",
+          "tax-id": "A123456(0)",
+          "tax-residency-flag": "Y",
+          "tax-residency-flag-others": "Y",
+          "us-citizen-flag": "Y",
+          "us-pr-flag": "Y",
+          "us-resident-flag": "Y"
+        }
+      },
+      "Address": {
+        "title": "Address",
+        "type": "object",
+        "properties": {
+          "address-country": {
+            "type": "string",
+            "description": "Address country",
+            "example": "HongKong"
+          },
+          "address-line-1": {
+            "type": "string",
+            "description": "Address Line 1",
+            "example": "#13-39 Block A"
+          },
+          "address-line-2": {
+            "type": "string",
+            "description": "Address Line 2",
+            "example": "Kowoon road"
+          },
+          "address-line-3": {
+            "type": "string",
+            "description": "Address Line 3",
+            "example": "23 happy drive"
+          },
+          "address-line-4": {
+            "type": "string",
+            "description": "Address Line 4",
+            "example": "Hongkong, S123456"
+          },
+          "address-type": {
+            "type": "string",
+            "description": "Address type ",
+            "example": "res",
+            "enum": [
+              "res",
+              "mail",
+              "work",
+              "others"
+            ]
+          },
+          "city": {
+            "type": "string",
+            "description": "city",
+            "example": "Kowloon City",
+            "enum": [
+              "HK",
+              "KLN",
+              "NT",
+              "Others"
+            ]
+          },
+          "postal-code": {
+            "type": "string",
+            "description": "Postal Code",
+            "example": "S123456"
+          }
+        },
+        "example": "Address"
+      },
+      "createApplication": {
+        "title": "createApplication",
+        "required": [
+          "customer-consent",
+          "dob",
+          "email",
+          "full-name",
+          "gender",
+          "id-number",
+          "id-type",
+          "mobile-country-code",
+          "mobile-number",
+          "permanent-residence-flag",
+          "preferred-language",
+          "product-code",
+          "product-name",
+          "sub-product-code"
+        ],
+        "type": "object",
+        "properties": {
+          "campaign": {
+            "type": "string",
+            "description": "Campaign code",
+            "example": "CAMPAIGN CODE"
+          },
+          "country-of-birth": {
+            "type": "string",
+            "description": "country-of-birth",
+            "example": "HK",
+            "enum": [
+              "HK"
+            ]
+          },
+          "customer-consent": {
+            "type": "string",
+            "description": "Customer consent flag",
+            "example": "RECORDED",
+            "enum": [
+              "SIGNED_FORM_RECEIVED",
+              "PRINT_AND_SIGN",
+              "RECORDED"
+            ]
+          },
+          "dob": {
+            "type": "string",
+            "description": "Date of birth, format is yyyy-mm-dd",
+            "example": "yyyy-mm-dd"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address",
+            "example": "myemail@company.com"
+          },
+          "full-name": {
+            "type": "string",
+            "description": "Customer full name",
+            "example": "Jason Bourne"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "example": "M",
+            "enum": [
+              "M",
+              "F"
+            ]
+          },
+          "id-number": {
+            "type": "string",
+            "description": "Hongkong id including checkdigit",
+            "example": "C688688(E)"
+          },
+          "id-type": {
+            "type": "string",
+            "description": "Hongkong id should be HKID",
+            "example": "HKID",
+            "enum": [
+              "HKID"
+            ]
+          },
+          "mobile-country-code": {
+            "type": "string",
+            "description": "Mobile country code",
+            "example": "852",
+            "enum": [
+              "852"
+            ]
+          },
+          "mobile-number": {
+            "type": "string",
+            "description": "Mobile number without country code",
+            "example": "12345678"
+          },
+          "permanent-residence-flag": {
+            "type": "string",
+            "description": "Hongkong permanent residency indicator",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "preferred-language": {
+            "type": "string",
+            "description": "Preferred language",
+            "example": "en",
+            "enum": [
+              "EN",
+              "CN"
+            ]
+          },
+          "product-code": {
+            "type": "string",
+            "description": "Product id of offering product",
+            "example": "DDA",
+            "enum": [
+              "DDA"
+            ]
+          },
+          "product-name": {
+            "type": "string",
+            "description": "product name of offering product",
+            "example": "current account",
+            "enum": [
+              "current account"
+            ]
+          },
+          "sub-product-code": {
+            "type": "string",
+            "description": "Subproduct code of offering product",
+            "example": "RM",
+            "enum": [
+              "RM"
+            ]
+          },
+          "submit-flag": {
+            "type": "string",
+            "description": "submit-flag",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          }
+        },
+        "example": {
+          "campaign": "CAMPAIGN CODE",
+          "country-of-birth": "HK",
+          "customer-consent": "RECORDED",
+          "dob": "yyyy-mm-dd",
+          "email": "myemail@company.com",
+          "full-name": "Jason Bourne",
+          "gender": "M",
+          "id-number": "C688688(E)",
+          "id-type": "HKID",
+          "mobile-country-code": 852,
+          "mobile-number": 12345678,
+          "nationality": [
+            "HK",
+            "CN"
+          ],
+          "permanent-residence-flag": "Y",
+          "preferred-language": "en",
+          "product-code": "DDA",
+          "product-name": "current account",
+          "sub-product-code": "RM",
+          "submit-flag": "Y"
+        }
+      },
+      "Error": {
+        "title": "Error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "code",
+            "example": "API_CASA_001"
+          },
+          "detail": {
+            "type": "string",
+            "description": "detail",
+            "example": "customer-consent field should be present"
+          },
+          "id": {
+            "type": "string",
+            "description": "id",
+            "example": "abcd-1234-qwer"
+          },
+          "source": {
+            "type": "string",
+            "description": "source",
+            "example": "customer-consent"
+          }
+        }
+      },
+      "createApplicationSuccess": {
+        "title": "createApplicationSuccess",
+        "type": "object",
+        "properties": {
+          "application-ref-id": {
+            "type": "string",
+            "description": "application reference number",
+            "example": "TSPABC123456"
+          }
+        }
+      }
+    }
+  }
+}

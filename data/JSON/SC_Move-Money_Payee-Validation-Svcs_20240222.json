@@ -1,0 +1,875 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking – Payee Validation Services APIs",
+        "description": "**API Banking – Payee Validation Services APIs** <br>Payee Validation Services APIs enable you to validate account details such as account and account name of beneficiaries/suppliers/vendors accounts",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company License",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.standardchartered.com/openapi"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Payee Validation Services",
+            "description": "Payee Validation Services APIs enable you to perform pre-payment validation of the payee details including payee name or account related details (account number, account holder name etc)",
+            "x-subcategory": "Move Money"
+        }
+    ],
+    "paths": {
+        "/pvs/v2/napas/bene-name/validate": {
+            "post": {
+                "tags": [
+                    "Payee Validation Services"
+                ],
+                "summary": "Vietnam – Payee Enquiry",
+                "description": "The Vietnam – Payee Enquiry allows you to initiate a payee validation independently prior to performing payment transaction. Validation happens across Vietnam using the central banks National Payment Corporation of Vietnam (NAPAS) platform. This API supports Payee validation for both paying to account and paying to bank card number. For paying to account, this API supports Payee name matching also based on creditor account ID and creditor name provided in the API request against the NAPAS responded Payee full name. Upon successful validation, status message will be received.",
+                "operationId": "validateVNBeneName_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiVNBeneNameEnqRq"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiVNBeneNameEnqRs"
+                                },
+                                "example": {
+                                    "messageId": "afdf11211sss23",
+                                    "creditor": {
+                                        "fullName": "John Doe"
+                                    },
+                                    "statusCode": "100",
+                                    "statusDesc": "Beneficiary Name matched",
+                                    "timestamp": "2020-04-06T10:00:36.439Z",
+                                    "additionalInformation": ""
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiExceptionRes"
+                                },
+                                "example": {
+                                    "errorMessage": "Account type invalid",
+                                    "errorCode": "AER-0001"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "VN"
+            }
+        },
+        "/pvs/v2/npci/account/validate/{accountId}/{ifsc}": {
+            "get": {
+                "tags": [
+                    "Payee Validation Services"
+                ],
+                "summary": "Account Details Validation (NPCI)",
+                "description": "The Account Details Validation API helps to perform account details verification through National Payment Corporation of India (NPCI). Response is a representation of acknowledgment that validation request received successfully. Upon validation, account details such as account type, account status and account holder name will be received via two separate webhook notifications. If account number is not valid, failure notification with an error description will be received by the client. This enables client to check all required details before performing an actual financial transaction.",
+                "operationId": "enquireAccountDetails_1",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Account Number for which validation is requested.",
+                        "required": true,
+                        "schema": {
+                            "pattern": "[0-9]{1,35}",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ifsc",
+                        "in": "path",
+                        "description": "Ifsc code for the account number for which validation is requested.",
+                        "required": true,
+                        "schema": {
+                            "pattern": "^[A-Z]{4}0[A-Z0-9]{6}$",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with acknowledgment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiAccountEnquiryAck"
+                                },
+                                "example": {
+                                    "id": "1234567",
+                                    "status": "Accepted"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "IN"
+            }
+        },
+        "/pvs/v2/npci/account/validate/account-holder/{accountId}/{ifsc}": {
+            "get": {
+                "tags": [
+                    "Payee Validation Services"
+                ],
+                "summary": "Account Holder Validation (NPCI)",
+                "description": "The Account Holder Validation API provides an ability to request verification of the account holder name for a given account number This verification is made through National Payment Corporation of India (NPCI). Response is a representation of acknowledgment that validation request received successfully. Upon validation, client will receive account holder name or a list of names in case of a joint account. If account number is not valid, failure notification with an error description will be received by the client.",
+                "operationId": "enquireAccountHolder_1",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Account Number for which validation is requested.",
+                        "required": true,
+                        "schema": {
+                            "pattern": "[0-9]{1,35}",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ifsc",
+                        "in": "path",
+                        "description": "Ifsc code for the account number for which validation is requested.",
+                        "required": true,
+                        "schema": {
+                            "pattern": "^[A-Z]{4}0[A-Z0-9]{6}$",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with acknowledgment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiAccountEnquiryAck"
+                                },
+                                "example": {
+                                    "id": "1234567",
+                                    "status": "Accepted"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "IN"
+            }
+        },
+        "/pvs/v2/npci/account/validate/status/{accountId}/{ifsc}": {
+            "get": {
+                "tags": [
+                    "Payee Validation Services"
+                ],
+                "summary": "Account Status Validation (NPCI)",
+                "description": "The Account Status Validation API exposes the ability to enquire account status for a given account number and IFSC number through National Payment Corporation of India (NPCI). This will allow to check whether account is active without a need to perform financial transaction. Response is a representation of acknowledgment that validation request received successfully. Upon validation, type and status of the account will be sent to the client via webhook notification. If account number is not valid, failure notification with an error description will be received by the client.",
+                "operationId": "enquireAccountStatus_1",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Account Number for which validation is requested.",
+                        "required": true,
+                        "schema": {
+                            "pattern": "[0-9]{1,35}",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ifsc",
+                        "in": "path",
+                        "description": "Ifsc code for the account number for which validation is requested.",
+                        "required": true,
+                        "schema": {
+                            "pattern": "^[A-Z]{4}0[A-Z0-9]{6}$",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with acknowledgment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiAccountEnquiryAck"
+                                },
+                                "example": {
+                                    "id": "1234567",
+                                    "status": "Accepted"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "IN"
+            }
+        },
+        "/pvs/v2/account/verification": {
+            "post": {
+                "tags": [
+                    "Payee Validation Services"
+                ],
+                "summary": "Payment Pre-Validation Service",
+                "description": "The Payment Pre-Validation Service API exposes the ability to do a beneficiary enquiry and determine if the specified beneficiary account is able to receive funds. Upon successful submission it returns a status of the inquiry, whether the account was found as able to receive funds, and whether the provided beneficiary name matches the Account Name on record. This service will assess whether the bank holding the account can be reached to respond to this enquiry.",
+                "operationId": "verifyAccount_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPreValReq"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPreValRes"
+                                },
+                                "example": {
+                                    "messageId": "SG9020010070008101",
+                                    "referenceId": "PAY2021OCT000007",
+                                    "uetr": "ABCD2021OCT000007",
+                                    "accountNumber": "12345678901",
+                                    "creditorName": "John Doe",
+                                    "accountStatus": "PASS",
+                                    "requestStatus": "00",
+                                    "requestStatusDescription": "Account found and can receive funds",
+                                    "nameMatchStatus": "MTCH",
+                                    "validationSource": "ACSV"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiExceptionRes"
+                                },
+                                "example": {
+                                    "errorMessage": "Account type invalid",
+                                    "errorCode": "AER-0001"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "NP"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "OpenApiCreditorName": {
+                "required": [
+                    "fullName"
+                ],
+                "type": "object",
+                "properties": {
+                    "fullName": {
+                        "type": "string",
+                        "description": "Creditor full name as per bank details",
+                        "example": "John Doe"
+                    }
+                },
+                "description": "Creditor name details"
+            },
+            "OpenApiVNBeneNameEnqRs": {
+                "required": [
+                    "creditor",
+                    "messageId",
+                    "statusCode",
+                    "statusDesc",
+                    "timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "messageId": {
+                        "type": "string",
+                        "description": "Message ID echoed back from request",
+                        "example": "123456781234"
+                    },
+                    "creditor": {
+                        "$ref": "#/components/schemas/OpenApiCreditorName"
+                    },
+                    "statusCode": {
+                        "type": "string",
+                        "description": "Transaction status code",
+                        "example": "100"
+                    },
+                    "statusDesc": {
+                        "type": "string",
+                        "description": "Transaction status description",
+                        "example": "Beneficiary Name matched"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "Timestamp of the transaction",
+                        "format": "date-time",
+                        "example": "2020-04-06T10:00:36.439Z"
+                    },
+                    "additionalInformation": {
+                        "type": "string",
+                        "description": "More details of the transaction",
+                        "example": "Account is invalid-102"
+                    }
+                }
+            },
+            "OpenApiExceptionRes": {
+                "type": "object",
+                "properties": {
+                    "errorMessage": {
+                        "type": "string",
+                        "description": "Root cause/error description",
+                        "example": "Invalid message"
+                    },
+                    "errorCode": {
+                        "type": "string",
+                        "description": "Application error code",
+                        "example": "AER-1000"
+                    }
+                }
+            },
+            "OpenApiBeneEnquiry": {
+                "required": [
+                    "creditor",
+                    "creditorAccount",
+                    "creditorAgent",
+                    "debtor",
+                    "debtorAccount",
+                    "debtorAgent"
+                ],
+                "type": "object",
+                "properties": {
+                    "creditor": {
+                        "$ref": "#/components/schemas/OpenApiCreditor"
+                    },
+                    "creditorAccount": {
+                        "$ref": "#/components/schemas/OpenApiCreditorAccount"
+                    },
+                    "creditorAgent": {
+                        "$ref": "#/components/schemas/OpenApiCreditorAgent"
+                    },
+                    "debtor": {
+                        "$ref": "#/components/schemas/OpenApiDebtor"
+                    },
+                    "debtorAccount": {
+                        "$ref": "#/components/schemas/OpenApiDebtorAccount"
+                    },
+                    "debtorAgent": {
+                        "$ref": "#/components/schemas/OpenApiDebtorAgent"
+                    }
+                },
+                "description": "VN Bene Enquiry Request Details"
+            },
+            "OpenApiCreditor": {
+                "required": [
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9()/?:,.'+ -]+$",
+                        "type": "string",
+                        "description": "Creditor name",
+                        "example": "John Doe"
+                    },
+                    "identity": {
+                        "$ref": "#/components/schemas/OpenApiIdentity"
+                    }
+                },
+                "description": "Creditor Details"
+            },
+            "OpenApiCreditorAccount": {
+                "required": [
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "maxLength": 34,
+                        "minLength": 1,
+                        "pattern": "^[a-zA-Z0-9]+$",
+                        "type": "string",
+                        "description": "Unique Account Number",
+                        "example": "SCB11111111111"
+                    }
+                },
+                "description": "Creditor Account Details"
+            },
+            "OpenApiCreditorAgent": {
+                "required": [
+                    "clearingSystemId",
+                    "financialInstitution"
+                ],
+                "type": "object",
+                "properties": {
+                    "financialInstitution": {
+                        "$ref": "#/components/schemas/OpenApiFinancialInstitution"
+                    },
+                    "clearingSystemId": {
+                        "maxLength": 34,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9]*$",
+                        "type": "string",
+                        "description": "Local clearing bank code",
+                        "example": "970410"
+                    }
+                },
+                "description": "Creditor Bank Details"
+            },
+            "OpenApiDebtor": {
+                "required": [
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9()/?:,.'+ -]+$",
+                        "type": "string",
+                        "description": "Debtor name",
+                        "example": "John Doe"
+                    }
+                },
+                "description": "Debtor Details"
+            },
+            "OpenApiDebtorAccount": {
+                "required": [
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "maxLength": 34,
+                        "minLength": 0,
+                        "pattern": "^[0-9]+$",
+                        "type": "string",
+                        "description": "Unique Account Number",
+                        "example": "11111111111111"
+                    }
+                },
+                "description": "Debtor Account Details"
+            },
+            "OpenApiDebtorAgent": {
+                "required": [
+                    "clearingSystemId",
+                    "financialInstitution"
+                ],
+                "type": "object",
+                "properties": {
+                    "financialInstitution": {
+                        "$ref": "#/components/schemas/OpenApiFinancialInstitution"
+                    },
+                    "clearingSystemId": {
+                        "maxLength": 34,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9]*$",
+                        "type": "string",
+                        "description": "Local clearing bank code",
+                        "example": "970410"
+                    }
+                },
+                "description": "Debtor Bank Details"
+            },
+            "OpenApiFinancialInstitution": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "Clearing System Code",
+                        "example": "SW"
+                    },
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiPostalAddress"
+                    },
+                    "BIC": {
+                        "pattern": "^[A-Z0-9]{4,4}[A-Z]{2,2}[A-Z0-9]{2,2}([A-Z0-9]{3,3}){0,1}$",
+                        "type": "string",
+                        "description": "Financial Institution, BIC code of branch",
+                        "example": "SCBLVNVXXXX"
+                    }
+                },
+                "description": "Details of the financial institution"
+            },
+            "OpenApiHeader": {
+                "required": [
+                    "countryCode",
+                    "messageId",
+                    "messageSender",
+                    "timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "messageSender": {
+                        "maxLength": 246,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9()/?:,.'+ -]+$",
+                        "type": "string",
+                        "description": "Message Sender - Defaulted as Client Registered Name",
+                        "example": "Corp Inc."
+                    },
+                    "messageId": {
+                        "maxLength": 33,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9()/?:,.'+ -]+$",
+                        "type": "string",
+                        "description": "Message ID",
+                        "example": "afdf11211sss23"
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "description": "ISO Country Code of client",
+                        "example": "VN"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "Message Timestamp",
+                        "format": "date-time",
+                        "example": "2019-01-14T02:41:58.119Z"
+                    }
+                },
+                "description": "Header details in client's request body"
+            },
+            "OpenApiIdentity": {
+                "required": [
+                    "identityType"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9()/?:,.'+ -]+$",
+                        "type": "string",
+                        "description": "Creditor Card Number",
+                        "example": "123456781234"
+                    },
+                    "identityType": {
+                        "type": "string",
+                        "description": "Mode of payment like Account to Account or Account to Card",
+                        "example": "A2A",
+                        "enum": [
+                            "A2A",
+                            "A2C"
+                        ]
+                    }
+                },
+                "description": "Identity details"
+            },
+            "OpenApiPostalAddress": {
+                "required": [
+                    "country"
+                ],
+                "type": "object",
+                "properties": {
+                    "country": {
+                        "type": "string",
+                        "description": "ISO Country Code of client",
+                        "example": "HK"
+                    }
+                },
+                "description": "Postal address"
+            },
+            "OpenApiVNBeneNameEnqRq": {
+                "required": [
+                    "beneEnquiry",
+                    "header"
+                ],
+                "type": "object",
+                "properties": {
+                    "header": {
+                        "$ref": "#/components/schemas/OpenApiHeader"
+                    },
+                    "beneEnquiry": {
+                        "$ref": "#/components/schemas/OpenApiBeneEnquiry"
+                    }
+                }
+            },
+            "OpenApiAccountEnquiryAck": {
+                "required": [
+                    "id",
+                    "status"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "maxLength": 36,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The reference ID for this request",
+                        "example": "123456789"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Status of the request Accepted or Rejected or Error",
+                        "example": "accepted"
+                    }
+                }
+            },
+            "OpenApiPreValRes": {
+                "type": "object",
+                "properties": {
+                    "messageId": {
+                        "type": "string",
+                        "description": "Message ID echoed back from request",
+                        "example": "SG9020010070008101"
+                    },
+                    "referenceId": {
+                        "type": "string",
+                        "description": "Reference ID echoed back from request",
+                        "example": "PAY2021OCT000007"
+                    },
+                    "uetr": {
+                        "type": "string",
+                        "description": "UETR",
+                        "example": "ABCD2021OCT000007"
+                    },
+                    "accountNumber": {
+                        "type": "string",
+                        "description": "Creditor Account number",
+                        "example": "12345678901"
+                    },
+                    "creditorName": {
+                        "type": "string",
+                        "description": "Creditor Name ",
+                        "example": "John Doe"
+                    },
+                    "accountStatus": {
+                        "type": "string",
+                        "description": "PPVS Account Status",
+                        "example": "PASS/FAIL"
+                    },
+                    "nameMatchStatus": {
+                        "type": "string",
+                        "description": "Bene Name Matching Status",
+                        "example": "NMTC/MTCH/PART"
+                    },
+                    "requestStatus": {
+                        "type": "string",
+                        "description": "Request Status",
+                        "example": "00/02/03/04/05/06/99",
+                        "enum": [
+                            "00:Account found and can receive funds",
+                            "01:Account found and is closed",
+                            "02:Account not found at branch",
+                            "03:Account not found or cannot receive funds",
+                            "04:Bank may accept funds",
+                            "05:Account found but historical Data inconsistent or not able to receive funds. Investigate account",
+                            "06:Account not found in historical payment database",
+                            "99:BIC or ClearingSystemId not supported"
+                        ]
+                    },
+                    "requestStatusDescription": {
+                        "type": "string",
+                        "description": "Status Description",
+                        "example": "Account found and can receive funds",
+                        "enum": [
+                            "00:Account found and can receive funds",
+                            "01:Account found and is closed",
+                            "02:Account not found at branch",
+                            "03:Account not found or cannot receive funds",
+                            "04:Bank may accept funds",
+                            "05:Account found but historical Data inconsistent or not able to receive funds. Investigate account",
+                            "06:Account not found in historical payment database",
+                            "99:BIC or ClearingSystemId not supported"
+                        ]
+                    },
+                    "validationSource": {
+                        "type": "string",
+                        "description": "Request Validation Source",
+                        "example": "ACSV/OBSP/HIST"
+                    }
+                }
+            },
+            "OpenApiPVSCreditor": {
+                "required": [
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Creditor name",
+                        "example": "John Doe"
+                    },
+                    "identity": {
+                        "$ref": "#/components/schemas/OpenApiIdentity"
+                    }
+                },
+                "description": "Creditor name details"
+            },
+            "OpenApiPreValInstruction": {
+                "required": [
+                    "creditor",
+                    "creditorAccount",
+                    "creditorAgent"
+                ],
+                "type": "object",
+                "properties": {
+                    "uetr": {
+                        "maxLength": 36,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9()/?:,.'+ -]+$",
+                        "type": "string"
+                    },
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9()/?:,.'+ -]+$",
+                        "type": "string",
+                        "description": "This is the unique client reference Id",
+                        "example": "ABC123DEF456"
+                    },
+                    "creditorAgent": {
+                        "$ref": "#/components/schemas/OpenApiCreditorAgent"
+                    },
+                    "creditorAccount": {
+                        "$ref": "#/components/schemas/OpenApiCreditorAccount"
+                    },
+                    "creditor": {
+                        "$ref": "#/components/schemas/OpenApiPVSCreditor"
+                    },
+                    "context": {
+                        "pattern": "PAYM|BENR",
+                        "type": "string",
+                        "description": "Request Context",
+                        "example": "PAYM|BENR"
+                    },
+                    "debtorAccount": {
+                        "$ref": "#/components/schemas/OpenApiDebtorAccount"
+                    },
+                    "debtorAgent": {
+                        "$ref": "#/components/schemas/OpenApiDebtorAgent"
+                    }
+                },
+                "description": "Pre-validation Request Details"
+            },
+            "OpenApiPreValReq": {
+                "required": [
+                    "header",
+                    "instruction"
+                ],
+                "type": "object",
+                "properties": {
+                    "header": {
+                        "$ref": "#/components/schemas/OpenApiHeader"
+                    },
+                    "instruction": {
+                        "$ref": "#/components/schemas/OpenApiPreValInstruction"
+                    }
+                }
+            }
+        }
+    }
+}

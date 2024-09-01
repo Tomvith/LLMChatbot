@@ -1,0 +1,3589 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking - Payments",
+        "description": "**API Banking - Payments**\r\n\r\n Facilitates domestic and cross border transactions. Move Money APIs help to facilitate your finance operations such as cross border payment initiation, instant domestic payments, retrieval of payments details and statuses.\r\n\r\n",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company Licence",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.standardchartered.com/openapi"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Payment Initiation",
+            "description": "Facilitates domestic or cross border transactions. Move Money APIs help to facilitate your finance operations such as domestic or cross border payment initiation",
+            "x-subcategory": "Move Money"
+        },
+        {
+            "name": "Proxy",
+            "description": "Facilitates instant domestic transactions using proxies. A proxy allows you to instruct payments by identifying beneficiaries using secondary identifier such as mobile number, NRIC, Business Registration Number, etc.\nMove Money APIs help to facilitate your finance operations such as instant domestic payments.",
+            "x-subcategory": "Move Money"
+        },
+        {
+            "name": "Inquiry",
+            "description": "Inquiry APIs enables you to retrieve payment details and statuses for both domestic and cross border transactions",
+            "x-subcategory": "Move Money"
+        }
+    ],
+    "paths": {
+        "/payments/v2/fast/initiate": {
+            "post": {
+                "tags": [
+                    "Payment Initiation"
+                ],
+                "summary": "Singapore - FAST Account Transfer",
+                "description": "The FAST Initiation API exposes the ability to initiate an Instant account to account payment instruction across Singapore, upon successful submission it returns a payment reference identifier. The Payment currency supported - SGD.<br/><br/>The response is a representation or acknowledgment that an instruction was received successfully. To check the status of a specific payment, you are required to use the Payment Status Inquiry API which provides the current state of the payment.",
+                "operationId": "fastInitiate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentId"
+                                },
+                                "example": {
+                                    "paymentIdentifier": "Q4594051",
+                                    "internalTrackingId": "62869bda-1aca-4316-b3b1-a996d507b436",
+                                    "clientReferenceId": "INTERNAL1234567893",
+                                    "referenceId": "INTERNAL1234567893",
+                                    "statusString": "Pending",
+                                    "timestamp": "2020-11-25T12:59:43.989Z"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "SG"
+            }
+        },
+        "/payments/v2/fps/bank-transfer/initiate": {
+            "post": {
+                "tags": [
+                    "Payment Initiation"
+                ],
+                "summary": "Hong Kong - FPS Account Transfer",
+                "description": "The FAST Initiation API exposes the ability to initiate an Instant account to account payment instruction across Hong Kong, upon successful submission it returns a payment reference identifier. The Payment currency will remain as HKD.<br/><br/>The response is a representation or acknowledgment that an instruction was received successfully. To check the status of a specific payment, you are required to use the Payment Status Inquiry API which provides the current state of the payment.",
+                "operationId": "fpsInitiate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentId"
+                                },
+                                "example": {
+                                    "paymentIdentifier": "Q4594051",
+                                    "internalTrackingId": "62869bda-1aca-4316-b3b1-a996d507b436",
+                                    "clientReferenceId": "INTERNAL1234567893",
+                                    "referenceId": "INTERNAL1234567893",
+                                    "statusString": "Pending",
+                                    "timestamp": "2020-11-25T12:59:43.989Z"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK"
+            }
+        },
+        "/payments/v2/fps/proxy/initiate": {
+            "post": {
+                "tags": [
+                    "Proxy"
+                ],
+                "summary": "Hong Kong - FPS Initiation",
+                "description": "The Faster Payment Systems (FPS) Proxy Payment Initiation API exposes the ability to initiate a payment instruction, upon successful submission it returns a payment reference identifier.<br/><br/>The response is a representation or acknowledgment that an instruction was received successfully. To check the status of a specific payment, you are required to use the Payment Status Inquiry API which provides the current state of the payment.<br/><br/>The FPS mandates the population of the proxy identifier. The proxy identifier is the Hong Kong handle for a beneficiary.",
+                "operationId": "fpsProxyPaymentInitiate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentId"
+                                },
+                                "example": {
+                                    "paymentIdentifier": "ff3b490361864d8083d4ddcf32734d31",
+                                    "internalTrackingId": "62869bda-1aca-4316-b3b1-a996d507b436",
+                                    "clientReferenceId": "ff3b490361864d8083d4ddcf32734d31",
+                                    "referenceId": "ff3b490361864d8083d4ddcf32734d31",
+                                    "statusString": "Pending",
+                                    "timestamp": "2020-05-15T07:53:50.347Z"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK"
+            }
+        },
+        "/payments/v2/fps/proxy/initiate-with-validation": {
+            "post": {
+                "tags": [
+                    "Proxy"
+                ],
+                "summary": "Hong Kong - FPS Proxy with Name Validation",
+                "description": "Initiate a Payment Instruction across Instant payments to a Proxy ID or Address post a Successful validation of the Payee Name against the Actual Name of the Payee with the creditor bank. To check the status of a specific payment, you are required to use the Payment Status Inquiry API which provides the current state of the payment.<br/><br/>The FPS Proxy mandates the population of the proxy identifier. The proxy identifier is the Hong Kong handle for a beneficiary.",
+                "operationId": "fpsProxyPaymentInitiateProxyValidation_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentId"
+                                },
+                                "example": {
+                                    "paymentIdentifier": "ff3b490361864d8083d4ddcf32734d31",
+                                    "internalTrackingId": "62869bda-1aca-4316-b3b1-a996d507b436",
+                                    "clientReferenceId": "ff3b490361864d8083d4ddcf32734d31",
+                                    "referenceId": "ff3b490361864d8083d4ddcf32734d31",
+                                    "statusString": "Pending",
+                                    "timestamp": "2020-05-15T07:53:50.347Z"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK"
+            }
+        },
+        "/payments/v2/imps/initiate": {
+            "post": {
+                "tags": [
+                    "Payment Initiation"
+                ],
+                "summary": "India - IMPS Account Transfer",
+                "description": "The Payment Initiation IMPS API exposes the ability to initiate an instant fund transfer in India. Upon success it returns a payment reference identifier. The response is a representation or acknowledgment that an instruction was received successfully. To check the status of a specific payment, you are required to use the Payment Status Inquiry API which provides the current state of the payment.",
+                "operationId": "impsInitiate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentId"
+                                },
+                                "example": {
+                                    "paymentIdentifier": "P2P1112323123123",
+                                    "internalTrackingId": "62869bda-1aca-4316-b3b1-a996d507b436",
+                                    "clientReferenceId": "P2P1112323123123",
+                                    "referenceId": "P2P1112323123123",
+                                    "statusString": "Pending",
+                                    "timestamp": "2020-09-03T13:49:34.673Z"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "IN"
+            }
+        },
+        "/payments/v2/imps/proxy/initiate": {
+            "post": {
+                "tags": [
+                    "Proxy"
+                ],
+                "summary": "India - IMPS Initiation",
+                "description": "The IMPS Proxy Payment Initiation API exposes the ability to initiate a payment instruction, upon successful submission it returns a payment reference identifier. The Payment currency supported - INR. The response is a representation or acknowledgment that an instruction was received successfully. To check the status of a specific payment, you are required to use the Payment Status Inquiry API which provides the current state of the payment. The proxy identifier is the MMID for a beneficiary.",
+                "operationId": "impsProxyInitiate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentId"
+                                },
+                                "example": {
+                                    "paymentIdentifier": "P2P1112323123123",
+                                    "internalTrackingId": "62869bda-1aca-4316-b3b1-a996d507b436",
+                                    "clientReferenceId": "P2P1112323123123",
+                                    "referenceId": "P2P1112323123123",
+                                    "statusString": "Pending",
+                                    "timestamp": "2020-09-03T13:49:34.673Z"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "IN"
+            }
+        },
+        "/payments/v2/mwp/initiate": {
+            "post": {
+                "tags": [
+                    "Payment Initiation"
+                ],
+                "summary": "Mobile Wallet Payment Initiation",
+                "description": "The Mobile Wallet Payment API exposes the ability to initiate domestic fund transfer from the Bank to a Mobile Wallet Account. Mobile Number is used to initiate the payment.\nUpon a successful transaction a payment reference identifier is generated. The response is a representation or acknowledgment that an instruction was received successfully.\nTo check the status of a specific payment, you are required to use the Payment Status Inquiry API which provides the current state of the payment.",
+                "operationId": "mobileWalletPaymentInitiate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentId"
+                                },
+                                "example": {
+                                    "paymentIdentifier": "Q4594051",
+                                    "internalTrackingId": "62869bda-1aca-4316-b3b1-a996d507b436",
+                                    "clientReferenceId": "INTERNAL1234567893",
+                                    "referenceId": "INTERNAL1234567893",
+                                    "statusString": "Pending",
+                                    "timestamp": "2020-11-25T12:59:43.989Z"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "KE,UG,TZ,BD,PK,NG,GH,ZM,VN,CN"
+            }
+        },
+        "/payments/v2/initiate": {
+            "post": {
+                "tags": [
+                    "Payment Initiation"
+                ],
+                "x_api_category_tags": [
+                    "Financial Institutions"
+                ],
+                "summary": "Payment Initiation",
+                "description": "<p>The Payment Initiation API exposes the ability to initiate a payment instruction, upon success it returns a payment reference identifier.</p><p>The response is a representation or acknowledgment that an instruction was received successfully. To check the status of a specific payment, you are required to use the Payment Status Inquiry API which provides the current state of the payment.</p><p>Note: In this generic endpoint, the field instruction.creditor.identity should only be used when initiating a Proxy payment.</p>",
+                "operationId": "nonFastPaymentInitiate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentId"
+                                },
+                                "example": {
+                                    "paymentIdentifier": "Q4594051",
+                                    "internalTrackingId": "62869bda-1aca-4316-b3b1-a996d507b436",
+                                    "clientReferenceId": "INTERNAL1234567893",
+                                    "referenceId": "INTERNAL1234567893",
+                                    "statusString": "Pending",
+                                    "timestamp": "2020-11-25T12:59:43.989Z"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,QA,NG,ZA,KE,UG,TZ,GH,ZM,CI,SA,MU,GB,US"
+            }
+        },
+        "/payments/v2/payee/initiate": {
+            "post": {
+                "tags": [
+                    "Payment Initiation"
+                ],
+                "summary": "Payment Initiation with Payee ID",
+                "description": "The Payment Initiation with Payee ID API provides you the ability to initiate a payment based on a given Payee ID. As a response upon success it returns a payment reference identifier. The response is a representation or acknowledgment that an instruction was received successfully.<br/><br/>",
+                "operationId": "payeesInitiate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPayeeInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentId"
+                                },
+                                "example": {
+                                    "paymentIdentifier": "Q4594051",
+                                    "internalTrackingId": "62869bda-1aca-4316-b3b1-a996d507b436",
+                                    "clientReferenceId": "INTERNAL1234567893",
+                                    "referenceId": "INTERNAL1234567893",
+                                    "statusString": "Pending",
+                                    "timestamp": "2020-11-25T12:59:43.989Z"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "SG,IN"
+            }
+        },
+        "/payments/v2/{referenceId}": {
+            "get": {
+                "tags": [
+                    "Inquiry"
+                ],
+                "x_api_category_tags": [
+                    "Financial Institutions"
+                ],
+                "summary": "Payment Retrieval",
+                "description": "<p>The Payment Retrieval API exposes the ability to query a given payment instruction, based on your payment reference identifier .</p><p>The response is a complete reproduction of the initiation message with the addition of internal identifiers used for internal reporting and tracking.</p><p>A successful response indicates that the payment was found, a 404 response indicates that the payment reference identifier was not received by the Bank.</p>",
+                "operationId": "paymentRetrieve_1",
+                "parameters": [
+                    {
+                        "name": "referenceId",
+                        "in": "path",
+                        "description": "Reference ID to retrieve payment details",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentInstruction"
+                                },
+                                "example": {
+                                    "header": {
+                                        "messageSender": "",
+                                        "messageId": "OPENAPI4GMLLRJ7494249",
+                                        "countryCode": "IN",
+                                        "timestamp": "2018-10-18T14:59:23Z"
+                                    },
+                                    "instruction": {
+                                        "paymentTimestamp": "2018-10-18T14:59:23Z",
+                                        "paymentTypePreference": "Explicit",
+                                        "requiredExecutionDate": "2020-06-22",
+                                        "amount": {
+                                            "currencyCode": "INR",
+                                            "amount": 4098
+                                        },
+                                        "referenceId": "2020051504561235311",
+                                        "purpose": "OTHR",
+                                        "paymentType": "IBFT",
+                                        "chargerBearer": "DEBT",
+                                        "debtor": {
+                                            "legalEntityId": "SCB-1054xxxxx",
+                                            "name": "1054xxxxx"
+                                        },
+                                        "debtorAccount": {
+                                            "id": "22510603706",
+                                            "identifierType": "BBAN",
+                                            "accountType": "CACC"
+                                        },
+                                        "debtorAgent": {
+                                            "financialInstitution": {
+                                                "postalAddress": {
+                                                    "line_1": "105455address2 xxxxx",
+                                                    "line_2": "105455address3 xxxxx",
+                                                    "city": "",
+                                                    "state": "",
+                                                    "postcode": "999",
+                                                    "country": "IN"
+                                                },
+                                                "branchCode": "225",
+                                                "name": "STANDARD CHARTERED BK",
+                                                "BIC": "SCBLINBBXXX"
+                                            },
+                                            "clearingSystemId": "MCP",
+                                            "clearingSystemCode": "",
+                                            "branchCode": "225"
+                                        },
+                                        "creditor": {
+                                            "name": "test",
+                                            "identity": {
+                                                "id": "",
+                                                "identityType": ""
+                                            }
+                                        },
+                                        "creditorAgent": {
+                                            "financialInstitution": {
+                                                "postalAddress": {
+                                                    "line_1": "",
+                                                    "line_2": "",
+                                                    "line_3": "",
+                                                    "city": "",
+                                                    "state": "",
+                                                    "postcode": "",
+                                                    "country": "IN"
+                                                },
+                                                "branchCode": "",
+                                                "name": "XXXX",
+                                                "BIC": "SPSL0000001"
+                                            },
+                                            "clearingSystemId": "",
+                                            "clearingSystemCode": "",
+                                            "branchCode": ""
+                                        },
+                                        "creditorAccount": {
+                                            "id": "S119551457071",
+                                            "identifierType": "BBAN",
+                                            "accountType": "CASH"
+                                        },
+                                        "batchId": "A0560302",
+                                        "channelId": "N0560302"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,QA,NG,ZA,KE,UG,TZ,GH,ZM,CI,SA,MU,GB,US"
+            }
+        },
+        "/payments/v2/bulk/initiate": {
+            "post": {
+                "tags": [
+                    "Payment Initiation"
+                ],
+                "summary": "Bulk Transfer Initiation",
+                "description": "The Bulk Transfer initiation API exposes the ability to initiate single or multiple instructions in 1 message with message size less than 1 MB (approximate 400 instructions). This API supports both cross border and domestic transactions with the same debiting country in a single bulk request. Upon successful submission it returns a payment reference identifier for each instruction. The response is a representation or acknowledgment that an instruction was received successfully. To check the status of a specific payment, you are required to use the Payment Status Inquiry API which provides the current state of the payment.",
+                "operationId": "paymentsBulkInitiate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiBulkPaymentInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiBulkPaymentIds"
+                                },
+                                "example": {
+                                    "accepted": [
+                                        "PAYMENT4594051",
+                                        "PAYMENT4594052",
+                                        "PAYMENT4594053"
+                                    ],
+                                    "rejected": [
+                                        {
+                                            "referenceId": "PAYMENT4594055",
+                                            "errorCode": "AER-1105",
+                                            "errorMessage": "Invalid value for debtorAccount.id"
+                                        },
+                                        {
+                                            "referenceId": "PAYMENT4594057",
+                                            "errorCode": "AER-1174",
+                                            "errorMessage": "Creditor Account Id exceeds maximum length (34 characters)"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,QA,NG,ZA,KE,UG,TZ,GH,ZM,CI,SA,MU,GB,US"
+            }
+        },
+        "/payments/v2/status": {
+            "post": {
+                "tags": [
+                    "Inquiry"
+                ],
+                "x_api_category_tags": [
+                    "Financial Institutions"
+                ],
+                "summary": "Payment Status Inquiry",
+                "description": "<p>The Payment Status Inquiry API provides the ability to retrieve the payment status for a given set of payment reference IDs. The payment status returned will be the status at the point in time indicated by the timestamp within the message.</p><p>To determine if a payment has completed processing, you can either poll the API at reasonable frequencies until the payment has reached its final status or you can use the webhook capability to receive push notifications.</p><p>For optimal performance, it is recommended that you are aware of the payment's final status for your use cases and stop pulling the API once the payment has reached its final status, and make small sets of calls concurrently instead of making a call for a large set of payment reference IDs at one go.</p><p>Note: Some booking locations, such as India, are subject to local data regulations. Ensure that you retrieve the status for payments of these particular booking locations individually, i.e., do not combine them with payments where the booking locations are not subject to such regulations. For more information, refer to the API Implementation Guide on how to use the \"Routing-Identifier\" header parameter.</p>",
+                "operationId": "paymentsStatus_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentClientReferences"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentStatuses"
+                                },
+                                "example": {
+                                    "statuses": [
+                                        {
+                                            "groupId": "APINTST1",
+                                            "endToEndId": "INTERNAL1234567890",
+                                            "clientIdentifier": "INTERNAL1234567890",
+                                            "paymentContainerId": "112255148",
+                                            "statusString": "Completed",
+                                            "statusCode": "69",
+                                            "lastAssignee": "SCPay",
+                                            "reasonCode": "69",
+                                            "reasonIsoCode": "",
+                                            "timestamp": "2024-01-24T09:37:24.626Z",
+                                            "originalTransactionId": "INTERNAL1234567890",
+                                            "clearingSystemReference": "402415078363",
+                                            "limitBreachIndicator": "",
+                                            "reasonInformation": "Credited to Beneficiary",
+                                            "instructionIdentifier": "62869bda-1aca-4316-b3b1-a996d507b436",
+                                            "creditorName": "John Doe",
+                                            "cheque": {},
+                                            "referenceId": "INTERNAL1234567890",
+                                            "paymentType": "IBFT",
+                                            "valueDate": "2024-01-24",
+                                            "debitDate": "2024-01-24"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,QA,NG,ZA,KE,UG,TZ,GH,ZM,CI,SA,MU,GB,US"
+            }
+        },
+        "/payments/v2/paynow/initiate": {
+            "post": {
+                "tags": [
+                    "Proxy"
+                ],
+                "x_api_category_tags": [
+                    "Financial Institutions"
+                ],
+                "summary": "Singapore - PayNow Initiation",
+                "description": "<p>The PayNow Initiation API exposes the ability to initiate a payment instruction, upon success it returns a payment reference identifier.</p><p>The response is a representation or acknowledgment that an instruction was received successfully. To check the status of a specific payment, you are required to use the Paynow Status Inquiry API which provides the current state of the payment.</p><p>Unlike Payment Initiation API, the PayNow API mandates the population of the proxy identifier. The proxy identifier is the Singapore handle for a beneficiary.</p>",
+                "operationId": "paynowInitiate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentId"
+                                },
+                                "example": {
+                                    "paymentIdentifier": "ff3b490361864d8083d4ddcf32734d31",
+                                    "internalTrackingId": "62869bda-1aca-4316-b3b1-a996d507b436",
+                                    "clientReferenceId": "ff3b490361864d8083d4ddcf32734d31",
+                                    "referenceId": "ff3b490361864d8083d4ddcf32734d31",
+                                    "statusString": "Pending",
+                                    "timestamp": "2020-05-15T07:53:50.347Z"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "SG"
+            }
+        },
+        "/payments/v2/paynow/initiatewithproxyvalidation": {
+            "post": {
+                "tags": [
+                    "Proxy"
+                ],
+                "summary": "Singapore - PayNow Proxy with Name Validation",
+                "description": "The PayNow Proxy with Name Validation API allows to initiate a Payment Instruction across Instant payments to a Proxy ID or Address after a successful validation of the Payee Name against the Actual Name of the Payee with the creditor bank. To check the status of a specific payment, you are required to use the Payment Status Inquiry API which provides the current state of the payment.",
+                "operationId": "paynowInitiateProxyValidation_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentId"
+                                },
+                                "example": {
+                                    "paymentIdentifier": "ff3b490361864d8083d4ddcf32734d31",
+                                    "internalTrackingId": "62869bda-1aca-4316-b3b1-a996d507b436",
+                                    "clientReferenceId": "ff3b490361864d8083d4ddcf32734d31",
+                                    "referenceId": "ff3b490361864d8083d4ddcf32734d31",
+                                    "statusString": "Pending",
+                                    "timestamp": "2020-05-15T07:53:50.347Z"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "SG"
+            }
+        },
+        "/payments/v2/paynow/status": {
+            "post": {
+                "tags": [
+                    "Inquiry"
+                ],
+                "x_api_category_tags": [
+                    "Financial Institutions"
+                ],
+                "summary": "Singapore - PayNow Status Inquiry",
+                "description": "<p>The PayNow Status Inquiry API provides the ability to retrieve the payment status for a given set of payment reference IDs. The payment status returned will be the status at the point in time indicated by the timestamp within the message.</p><p>To determine if a payment has completed processing, you can either poll the API at reasonable frequencies until the payment has reached its final status or you can use the webhook capability to receive push notifications.</p><p>For optimal performance, it is recommended that you are aware of the payment's final status for your use cases and stop pulling the API once the payment has reached its final status, and make small sets of calls concurrently instead of making a call for a large set of payment reference IDs at one go.</p><p>Note: This API only supports the status inquiry of Singapore PayNow proxy payments.",
+                "operationId": "paynowStatus_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentStatusRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentStatuses"
+                                },
+                                "example": {
+                                    "statuses": [
+                                        {
+                                            "groupId": "APINTST1",
+                                            "endToEndId": "INTERNAL123456789P",
+                                            "clientIdentifier": "INTERNAL123456789P",
+                                            "paymentContainerId": "579135",
+                                            "statusString": "Completed",
+                                            "statusCode": "69",
+                                            "lastAssignee": "SCPay",
+                                            "reasonCode": "69",
+                                            "reasonIsoCode": "",
+                                            "timestamp": "2024-01-23T14:00:10.557Z",
+                                            "originalTransactionId": "INTERNAL123456789P",
+                                            "limitBreachIndicator": "",
+                                            "reasonInformation": "Credited to Beneficiary",
+                                            "instructionIdentifier": "a73c6029-c05c-4624-8d6b-cf8b3e48518a",
+                                            "creditorName": "John Doe",
+                                            "cheque": {},
+                                            "referenceId": "INTERNAL123456789P",
+                                            "paymentType": "IBFT",
+                                            "valueDate": "2024-01-23",
+                                            "debitDate": "2024-01-23"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "SG"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "OpenApiPaymentId": {
+                "required": [
+                    "clientReferenceId",
+                    "internalTrackingId",
+                    "referenceId",
+                    "timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "paymentIdentifier": {
+                        "type": "string",
+                        "description": "The internal payment reference assigned by the Bank",
+                        "example": "Q4594051"
+                    },
+                    "internalTrackingId": {
+                        "maxLength": 36,
+                        "type": "string",
+                        "description": "The unique end-to-end transaction reference (UETR) assigned by the Bank for tracking the payment.",
+                        "example": "62869bda-1aca-4316-b3b1-a996d507b436"
+                    },
+                    "clientReferenceId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Your company reference (endToEndId) shall be mapped here.",
+                        "example": "INTERNAL1234567893"
+                    },
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Your company reference generated in reference field of payment initiation to be mapped here",
+                        "example": "A999999999999"
+                    },
+                    "statusString": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Status assigned by the Bank. At HTTPS response, this status will always be Pending or Rejected.",
+                        "example": "Pending"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "Timestamp when the transaction is received by the Bank",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "Address": {
+                "required": [
+                    "addressLines",
+                    "buildingNumber",
+                    "country",
+                    "postCode",
+                    "streetName"
+                ],
+                "type": "object",
+                "properties": {
+                    "addressType": {
+                        "type": "string",
+                        "description": "Address Type",
+                        "example": "BIZZ",
+                        "enum": [
+                            "ADDR",
+                            "PBOX",
+                            "HOME",
+                            "BIZZ",
+                            "MLTO",
+                            "DLVY"
+                        ]
+                    },
+                    "department": {
+                        "maxLength": 70,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Department"
+                    },
+                    "subDepartment": {
+                        "maxLength": 70,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Sub-Department"
+                    },
+                    "streetName": {
+                        "maxLength": 70,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Street"
+                    },
+                    "buildingNumber": {
+                        "maxLength": 16,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Building Number"
+                    },
+                    "townName": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Town"
+                    },
+                    "postCode": {
+                        "maxLength": 16,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Postcode"
+                    },
+                    "countrySubDivision": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Country Subdivision"
+                    },
+                    "country": {
+                        "$ref": "#/components/schemas/Country"
+                    },
+                    "addressLines": {
+                        "type": "array",
+                        "description": "Address Line",
+                        "items": {
+                            "type": "string",
+                            "description": "Address Line"
+                        }
+                    }
+                }
+            },
+            "Country": {
+                "required": [
+                    "isoCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "isoCode": {
+                        "maxLength": 2,
+                        "minLength": 2,
+                        "type": "string",
+                        "description": "ISO Country Code"
+                    }
+                }
+            },
+            "DenominatedAmount": {
+                "required": [
+                    "amount",
+                    "currencyCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "currencyCode": {
+                        "maxLength": 3,
+                        "minLength": 3,
+                        "type": "string",
+                        "description": "Debit account currency to be populated (ISO currency code). If the currency code differs from the debtor account currency, the FXConversion object is mandatory.",
+                        "example": "EUR"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "Mandatory field describing the payment amount in payment currency units",
+                        "example": 12000.12
+                    },
+                    "priority": {
+                        "maxLength": 1,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Applicable for cross border payments in certain countries. Priority can be given to either Debit date or Payment (Credit) value date. This will be taken into account during date calculation. Possible Values D - Debit, C - Credit. Default is C. This flag indicates that value of requiredExecutionDate to be treated as Debit Date or Credit Date",
+                        "example": "C"
+                    }
+                }
+            },
+            "OpenApiAddress": {
+                "type": "object",
+                "properties": {
+                    "line_1": {
+                        "maxLength": 70,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Address Line 1"
+                    },
+                    "line_2": {
+                        "maxLength": 70,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Address Line 2"
+                    },
+                    "line_3": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Address Line 3"
+                    },
+                    "city": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "City"
+                    },
+                    "state": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "State"
+                    },
+                    "postcode": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Postal Code"
+                    },
+                    "country": {
+                        "maxLength": 2,
+                        "minLength": 0,
+                        "pattern": "^[A-Z]*$",
+                        "type": "string",
+                        "description": "Country"
+                    }
+                }
+            },
+            "OpenApiBankParty": {
+                "required": [
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 140,
+                        "minLength": 1,
+                        "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]+$",
+                        "type": "string",
+                        "description": "Company Name",
+                        "example": "Client Corp Inc."
+                    },
+                    "contact": {
+                        "$ref": "#/components/schemas/OpenApiContact"
+                    }
+                }
+            },
+            "OpenApiContact": {
+                "type": "object",
+                "properties": {
+                    "phoneNumber": {
+                        "maxLength": 30,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Contact Phone Number",
+                        "example": "+001-11111111"
+                    },
+                    "mobileNumber": {
+                        "maxLength": 30,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Contact Mobile Number",
+                        "example": "+001-11111111"
+                    },
+                    "emailAddress": {
+                        "maxLength": 150,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9&()/\\-@,.;+_'*\" ]*$",
+                        "type": "string",
+                        "description": "Contact Email Address"
+                    },
+                    "faxNumber": {
+                        "maxLength": 30,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Contact Fax Number"
+                    },
+                    "name": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+                        "type": "string",
+                        "description": "Contact Full Name"
+                    }
+                }
+            },
+            "OpenApiCreditorAgent": {
+                "required": [
+                    "financialInstitution"
+                ],
+                "type": "object",
+                "properties": {
+                    "clearingSystemId": {
+                        "maxLength": 34,
+                        "minLength": 1,
+                        "pattern": "^[a-zA-Z0-9]*$",
+                        "type": "string",
+                        "description": "Clearing System Identifier. <br>Either instruction.creditorAgent.financialInstitution.BIC or instruction.creditorAgent.clearingSystemId is required per market nuances. Mandatory for IBFT in Hong Kong, Nepal, Thailand, Vietnam Account Transfer and NAPAS Pay to Card, and Mobile Wallet Payment. "
+                    },
+                    "subBranchCode": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Sub Branch Code"
+                    },
+                    "financialInstitution": {
+                        "$ref": "#/components/schemas/OpenApiFinancialInstitution"
+                    },
+                    "clearingSystemCode": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Clearing System Branch Code"
+                    },
+                    "branchCode": {
+                        "maxLength": 5,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Branch Code"
+                    },
+                    "instructions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiCreditorAgentInstructions"
+                        }
+                    }
+                }
+            },
+            "OpenApiCreditorAgentInstructions": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "description": "Code<br>Please refer to the supported Instruction Codes in Swift MT103 Fields Specifications.",
+                        "enum": [
+                            "ACC",
+                            "INS",
+                            "INT",
+                            "REC",
+                            "CONT",
+                            "CHQB",
+                            "CORT",
+                            "HOLD",
+                            "INTC",
+                            "PHOB",
+                            "PHON",
+                            "PHOI",
+                            "REPA",
+                            "SDVA",
+                            "TELE",
+                            "TELB",
+                            "TELI"
+                        ]
+                    },
+                    "details": {
+                        "maxLength": 33,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Additional information<br>Please refer to the additional information inputs in Swift MT103 Fields Specifications."
+                    }
+                },
+                "description": "Please only use when needs to populate Field 23E Instruction Code and Field 72 Sender to Receiver Information in MT103 (applicable for GB and US market only)."
+            },
+            "OpenApiDebtorAgent": {
+                "required": [
+                    "financialInstitution"
+                ],
+                "type": "object",
+                "properties": {
+                    "financialInstitution": {
+                        "$ref": "#/components/schemas/OpenApiDebtorAgentFinancialInstitution"
+                    },
+                    "clearingSystemCode": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Clearing System Branch Code"
+                    },
+                    "branchCode": {
+                        "maxLength": 5,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Branch Code"
+                    }
+                }
+            },
+            "OpenApiDebtorAgentAddress": {
+                "required": [
+                    "country"
+                ],
+                "type": "object",
+                "properties": {
+                    "line_1": {
+                        "maxLength": 70,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Address Line 1"
+                    },
+                    "line_2": {
+                        "maxLength": 70,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Address Line 2"
+                    },
+                    "line_3": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Address Line 3"
+                    },
+                    "city": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "<p>City<br>Please refer to SCB PAYMENTS_Supplementary document for the list of City Code and input for Mobile Wallet Payment initiation.</p>"
+                    },
+                    "state": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "State"
+                    },
+                    "postcode": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Postal Code"
+                    },
+                    "country": {
+                        "maxLength": 2,
+                        "minLength": 0,
+                        "pattern": "^[A-Z]*$",
+                        "type": "string",
+                        "description": "Country"
+                    }
+                }
+            },
+            "OpenApiDebtorAgentFinancialInstitution": {
+                "required": [
+                    "postalAddress"
+                ],
+                "type": "object",
+                "properties": {
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiDebtorAgentAddress"
+                    },
+                    "branchCode": {
+                        "maxLength": 6,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Branch Code"
+                    },
+                    "name": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Financial Institution Name. Default to Standard Chartered Bank"
+                    },
+                    "BIC": {
+                        "maxLength": 11,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9]*$",
+                        "type": "string",
+                        "description": "<p>Financial Institution, SWIFT Business Identifier Code<br>Please refer to SCB PAYMENTS_Supplementary document for the list of Debit Bank BIC.</p>",
+                        "example": "SCBLSGSGXXX"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Financial Institution Type",
+                        "example": "SW",
+                        "enum": [
+                            "CH",
+                            "AC",
+                            "SW",
+                            "CP",
+                            "FW",
+                            "SC",
+                            "TX",
+                            "LC"
+                        ]
+                    }
+                }
+            },
+            "OpenApiDocuments": {
+                "type": "object",
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "description": "Required only for payments which require supporting documents",
+                        "format": "int32"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Document Name"
+                    },
+                    "referenceId": {
+                        "type": "string",
+                        "description": "Document reference ID"
+                    },
+                    "sequence": {
+                        "type": "integer",
+                        "description": "Document Sequence",
+                        "format": "int32"
+                    }
+                }
+            },
+            "OpenApiFinancialInstitution": {
+                "type": "object",
+                "properties": {
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiAddress"
+                    },
+                    "branchCode": {
+                        "maxLength": 5,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Branch Code"
+                    },
+                    "name": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Financial Institution Name. Default to Standard Chartered Bank"
+                    },
+                    "BIC": {
+                        "maxLength": 11,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9]*$",
+                        "type": "string",
+                        "description": "SWIFT Business Identifier Code.<br>Either instruction.creditorAgent.financialInstitution.BIC or instruction.creditorAgent.clearingSystemId is required per market nuances.",
+                        "example": "SCBLSGSGXXX"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Financial Institution type. Mandatory for creditorAgent(paymentType = TT) if creditorAgent.clearingSystemId is not specified. Possible values are SW - SWIFT (default), CH  - CHIPS Universal Identifier, AC - Account, CP - CHIPS Participant Identifier, FW - Fedwire Routing Number, SC - UK Domestic Sort Code, TX - Free Text.",
+                        "example": "SW",
+                        "enum": [
+                            "CH",
+                            "AC",
+                            "SW",
+                            "CP",
+                            "FW",
+                            "SC",
+                            "TX",
+                            "LC"
+                        ]
+                    }
+                }
+            },
+            "OpenApiFxConversion": {
+                "required": [
+                    "fxType"
+                ],
+                "type": "object",
+                "properties": {
+                    "fxType": {
+                        "type": "string",
+                        "description": "Applicable only if payment and debit account currencies are different. Indicates which FX rate needs to applied. For Deal @ Best, other fxconversion fields are not applicable. C - Contract Rate, D - Deal @ Best, H - Held rate (RFQ - prebooked deal)",
+                        "example": "H",
+                        "enum": [
+                            "C",
+                            "D",
+                            "H",
+                            "S",
+                            "Q"
+                        ]
+                    },
+                    "quoteRefId": {
+                        "type": "string",
+                        "description": "Reserved field"
+                    },
+                    "quoteRefFXRate": {
+                        "type": "number",
+                        "description": "Reserved field"
+                    },
+                    "contractId": {
+                        "type": "string",
+                        "description": "FX Contract number for FX Deal. Applicable when fx type is C or H."
+                    },
+                    "contractFXRate": {
+                        "type": "number",
+                        "description": "FX Rate of FX Contract. Applicable when fx type is C or H."
+                    },
+                    "contractFXAmount": {
+                        "type": "number",
+                        "description": "FX Amount of FX Contract. Applicable when fx type is C or H."
+                    },
+                    "fxRateIndicator": {
+                        "type": "string",
+                        "description": "Reserved field"
+                    },
+                    "deliveryOption": {
+                        "type": "string",
+                        "description": "Applicable only for MCP (Cross Border) payment types such as XTT, XRTS, XACH, XBT, XPAY which indicates the delivery option of the fx rate. Delivery Options can be 'N' (Not Applicable), 'S' (Spot) , 'T' (Next Day), or 'D' (Same Day). If Debit and Payment currencies are the same, then only 'N' (Not Applicable) is allowed. Options 'S','T','D' are based on Debit and Payment currency pair."
+                    },
+                    "dealerName": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Dealer Name"
+                    },
+                    "maturityDate": {
+                        "type": "string",
+                        "description": "Maturity date of FX contract",
+                        "format": "date"
+                    }
+                }
+            },
+            "OpenApiIdentity": {
+                "required": [
+                    "id"
+                ],
+                "type": "object",
+                "description": "This should only be used when initiating a Proxy payment.",
+                "properties": {
+                    "id": {
+                        "maxLength": 117,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Identification Number. Validations for id <table> <tr> <th>Value</th> <th>Validation</th> </tr> <tr> <td>FIEMAIL</td> <td>minLength 6, maxLength 117</td> </tr> <tr> <td>FIMSISDN</td> <td>maxLength 30</td> </tr> <tr> <td>BILLERID</td> <td>maxLength 20</td> </tr> <tr> <td>Other</td> <td>maxLength 18</td> </tr> </table>",
+                        "example": "FPS123456"
+                    },
+                    "identityType": {
+                        "maxLength": 12,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Possible values for Identification Type. <table> <tr> <th>Country</th> <th>Proxy Type</th> </tr> <tr> <td>HK</td> <td>EMAL - Pay to Email, MOBN - Pay to Mobile Number, SVID - Pay to FPS ID, HKID - Pay to HK ID</td> </tr> <tr> <td>SG</td> <td>RetNRIC - Pay to NRIC, RetVPA - Pay to Virtual payment address, RetUEN - Business Registration No, RetMSISDN - Pay to Mobile Number</td> </tr> <tr> <td>TH</td> <td>RetMSISDN - Pay to Mobile Number, RetNRIC - Pay to NRIC</td> </tr> <tr> <td>PH</td> <td>FIMSISDN - Pay to Mobile Number, FIEMAIL - Pay to Email, BILLERID  - Pay to Biller ID</td> </tr> <tr> <td>MY</td> <td>RetUEN -  Pay Business Registration No, RetMSISDN - Pay to Mobile Number, RetNRIC - Pay to NRIC, RetPSPT - Pay to Passport Number, RetPOAN -  Pay to Police or Army No</td> </tr> </table>",
+                        "example": "RetNRIC"
+                    }
+                }
+            },
+            "OpenApiInstructions": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Instructions code"
+                    },
+                    "details": {
+                        "maxLength": 105,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Instruction Details"
+                    }
+                }
+            },
+            "OpenApiReportingInstructions": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "description": "Code represents statutory/regulatory information required by authorities in the country of the receiver or sender",
+                        "example": "NARR",
+                        "enum": [
+                            "NARR",
+                            "BENEFRES",
+                            "ORDERRES",
+                            "CONT"
+                        ]
+                    },
+                    "details": {
+                        "type": "string",
+                        "description": "Instruction Details of the statutory/regulatory information required by authorities in the country of the receiver or sender"
+                    }
+                }
+            },
+            "OpenApiIntermediaryAgent": {
+                "type": "object",
+                "properties": {
+                    "financialInstitution": {
+                        "$ref": "#/components/schemas/OpenApiFinancialInstitution"
+                    }
+                }
+            },
+            "OpenApiInvoice": {
+                "type": "object",
+                "properties": {
+                    "reference": {
+                        "maxLength": 12,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Invoice Reference"
+                    },
+                    "date": {
+                        "type": "string",
+                        "description": "Invoice Date",
+                        "format": "date"
+                    },
+                    "description": {
+                        "maxLength": 75,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Invoice Description. Supports Thai for TH specific payments"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "Invoice Amount"
+                    }
+                },
+                "description": "Invoice details"
+            },
+            "OpenApiOboAddressCode": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "description": "OBO Address Code"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "OBO Address Description"
+                    }
+                }
+            },
+            "OpenApiOnBehalfOfAccount": {
+                "required": [
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "maxLength": 34,
+                        "minLength": 1,
+                        "pattern": "^[a-zA-Z0-9]+$",
+                        "type": "string",
+                        "description": "On Behalf Of Account Number<br>The original ordering party's account number is mandatory for initiating OBO payment",
+                        "example": "11111111111111"
+                    }
+                }
+            },
+            "OpenApiOnBehalfOfAddress": {
+                "required": [
+                    "country",
+                    "line_1"
+                ],
+                "type": "object",
+                "properties": {
+                    "line_1": {
+                        "maxLength": 70,
+                        "minLength": 1,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "On Behalf Of Address Line 1<br>The original ordering party's address is mandatory for initiating OBO payment"
+                    },
+                    "line_2": {
+                        "maxLength": 70,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "On Behalf Of Address Line 2"
+                    },
+                    "line_3": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "On Behalf Of Address Line 3"
+                    },
+                    "city": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "On Behalf Of Address City Code"
+                    },
+                    "state": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "On Behalf Of Address State"
+                    },
+                    "postcode": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "On Behalf Of Address Postal Code"
+                    },
+                    "country": {
+                        "maxLength": 2,
+                        "minLength": 2,
+                        "pattern": "^[A-Z]*$",
+                        "type": "string",
+                        "description": "On Behalf Of Address Country Code<br>The original ordering party's country code is mandatory for initiating OBO payment"
+                    }
+                }
+            },
+            "OpenApiOnBehalfOfInfo": {
+                "required": [
+                    "account",
+                    "name",
+                    "oboType",
+                    "postalAddress"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "On Behalf Of Name<br>The original ordering party's name is mandatory for initiating OBO payment",
+                        "example": "John Doe"
+                    },
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiOnBehalfOfAddress"
+                    },
+                    "account": {
+                        "$ref": "#/components/schemas/OpenApiOnBehalfOfAccount"
+                    },
+                    "oboType": {
+                        "type": "string",
+                        "description": "On Behalf Of Address Type<br>The original ordering party's address type is mandatory for initiating OBO payment<br>K - Unstructured Address",
+                        "example": "K",
+                        "enum": [
+                            "K"
+                        ]
+                    }
+                },
+                "description": "This should only be used when initiating an on-behalf-of (OBO) payment."
+            },
+            "OpenApiParty": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Full Name<br/>Creditor Name is mandatory for<br/> <table> <tr> <td>Country</td> <td>API Category / API Name</td> </tr> <tr> <td>All</td> <td>Account Transfer</td> </tr> <tr> <td>HK, SG, PH</td> <td>Proxy with Name Validation</td> </tr> <tr> <td>IN</td> <td>IMPS Initiation</td> </tr> <tr> <td>TH</td> <td>PromptPay Initiation</td> </tr> <tr> <td>ID</td> <td>BI-FAST Initiation</td> </tr> </table>",
+                        "example": "John Doe"
+                    },
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiAddress"
+                    },
+                    "contact": {
+                        "$ref": "#/components/schemas/OpenApiContact"
+                    },
+                    "identity": {
+                        "$ref": "#/components/schemas/OpenApiIdentity"
+                    },
+                    "jointBeneficiaryName": {
+                        "maxLength": 32,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Name of the secondary beneficiary"
+                    },
+                    "jointBeneficiaryIdentity": {
+                        "type": "string",
+                        "description": "Identity of the secondary beneficiary"
+                    },
+                    "jointBeneficiaryIdentityType": {
+                        "type": "string",
+                        "description": "Identity type of the secondary beneficiary"
+                    }
+                }
+            },
+            "OpenApiPartyExtension": {
+                "type": "object",
+                "properties": {
+                    "addressLinesLocalLanguage": {
+                        "type": "array",
+                        "description": "Address Details in local language",
+                        "items": {
+                            "type": "string",
+                            "description": "Address Details in local language"
+                        }
+                    },
+                    "emailLinesLocalLanguage": {
+                        "type": "array",
+                        "description": "Email Details in local language",
+                        "items": {
+                            "type": "string",
+                            "description": "Email Details in local language"
+                        }
+                    },
+                    "nameLocalLanguage": {
+                        "type": "array",
+                        "description": "Name in local language",
+                        "items": {
+                            "type": "string",
+                            "description": "Name in local language"
+                        }
+                    }
+                }
+            },
+            "OpenApiPaymentAccount": {
+                "required": [
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "maxLength": 34,
+                        "minLength": 1,
+                        "pattern": "^[a-zA-Z0-9]+$",
+                        "type": "string",
+                        "description": "Your Unique Account Number",
+                        "example": "11111111111111"
+                    },
+                    "identifierType": {
+                        "type": "string",
+                        "description": "Account Identifier Type, defaulted as BBAN",
+                        "example": "IBAN",
+                        "enum": [
+                            "BBAN",
+                            "IBAN",
+                            "Other"
+                        ]
+                    },
+                    "accountType": {
+                        "type": "string",
+                        "description": "Account Type. Please consult with SCB team before selecting this value",
+                        "example": "CASH",
+                        "enum": [
+                            "CACC",
+                            "CASH",
+                            "CHAR",
+                            "CISH",
+                            "COMM",
+                            "CPAC",
+                            "LLSV",
+                            "LOAN",
+                            "MGLD",
+                            "MOMA",
+                            "NREX",
+                            "ODFT",
+                            "ONDP",
+                            "OTHR",
+                            "SACC",
+                            "SLRY",
+                            "SVGS",
+                            "TAXE",
+                            "TRAN",
+                            "TRAS"
+                        ]
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "ISO standard currency code"
+                    },
+                    "city": {
+                        "type": "string",
+                        "description": "If not provided, default city will be used"
+                    }
+                }
+            },
+            "OpenApiPaymentInstruction": {
+                "required": [
+                    "header",
+                    "instruction"
+                ],
+                "type": "object",
+                "properties": {
+                    "header": {
+                        "$ref": "#/components/schemas/OpenApiPaymentInstructionHeader"
+                    },
+                    "instruction": {
+                        "$ref": "#/components/schemas/OpenApiPaymentInstructionInstruction"
+                    }
+                }
+            },
+            "OpenApiPaymentInstructionHeader": {
+                "required": [
+                    "countryCode",
+                    "messageSender"
+                ],
+                "type": "object",
+                "properties": {
+                    "messageSender": {
+                        "maxLength": 246,
+                        "minLength": 1,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "This should be a constant tag to identify the senders system, it is used for audit and diagnostics. Defaulted as your corporate registered name",
+                        "example": "Corp Inc."
+                    },
+                    "messageId": {
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -=]*$",
+                        "type": "string",
+                        "description": "Unique Identifier for the transaction. This should be a unique tracking value (GUID) to identify the request, it is used for audit & support",
+                        "example": "111111-1111111"
+                    },
+                    "countryCode": {
+                        "maxLength": 2,
+                        "minLength": 2,
+                        "type": "string",
+                        "description": "ISO Country Code - Used to identify the country of request origination",
+                        "example": "SG"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "Timestamp of creating the payment instruction. Must be a valid ISO format timestamp of this message, i.e. time message was generated in the form YYYY-MM-DD'T'HH:mm:SS.SSSZ (UTC), e.g. 2019-01-01T13:30:32.010Z OR The value must be a Numeric Date[10 digits] and represented in seconds",
+                        "format": "date-time"
+                    },
+                    "batchId": {
+                        "type": "string",
+                        "description": "Unique Identifier for the batch of bulk transactions. Required only for batch transactions",
+                        "example": "BAPI213322"
+                    },
+                    "batchCount": {
+                        "type": "integer",
+                        "description": "Number of transactions. Required only for batch transactions",
+                        "format": "int32"
+                    }
+                }
+            },
+            "OpenApiPaymentInstructionInstruction": {
+                "required": [
+                    "amount",
+                    "creditor",
+                    "debtor",
+                    "debtorAccount",
+                    "debtorAgent",
+                    "referenceId"
+                ],
+                "type": "object",
+                "properties": {
+                    "paymentTimestamp": {
+                        "type": "string",
+                        "description": "Timestamp of creating the payment instruction. Must be a valid ISO format timestamp of the payment, i.e. time payment was requested in the form YYYY-MM-DD'T'HH:mm:SS.SSSZ (UTC), e.g. 2019-01-01T13:30:32.010Z or the value must be a Numeric Date[10 digits] and represented in seconds.",
+                        "format": "date-time"
+                    },
+                    "paymentTypePreference": {
+                        "type": "string",
+                        "description": "Indicates whether to use the fastest or cheapest or explicit payment type, this is currently based on predefined payment templates. Use fastest only for IBFT transfers, use explicit for all types of transactions. Recommendation is to default to explicit.",
+                        "example": "Explicit",
+                        "enum": [
+                            "Fastest",
+                            "Cheapest",
+                            "Explicit"
+                        ]
+                    },
+                    "requiredExecutionDate": {
+                        "type": "string",
+                        "description": "Required Execution Date of the payment",
+                        "format": "date",
+                        "example": "2021-04-19"
+                    },
+                    "amount": {
+                        "$ref": "#/components/schemas/DenominatedAmount"
+                    },
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Your Unique Reference ID for the payment. For ACH, BT & RTGS maxLength is 16. For IBFT - 35",
+                        "example": "A999999999999"
+                    },
+                    "thirdPartyId": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Unique Client third party ID for the payment"
+                    },
+                    "thirdPartyIdApprover": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Unique Client third party Approver for the payment"
+                    },
+                    "purposeCode": {
+                        "maxLength": 3,
+                        "minLength": 3,
+                        "type": "string",
+                        "description": "Purpose Code"
+                    },
+                    "purpose": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Purpose code that is required by the country's clearing house<table> <tr> <th>Country/Service</th> <th>MaxLength</th> <th>Possible Values</th> </tr> <tr> <td>ID BIFAST</td> <td>2</td> <td>01-Investment, 02-Transfer of Wealth, 03-Purchase,99=Others</td> </tr> </table><br/>Defaults to CASH if not specified",
+                        "example": "CASH"
+                    },
+                    "paymentType": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Payment type of the transaction, e.g. IBFT, BT, ACH, RTGS, TT, XBT, XACH",
+                        "example": "IBFT"
+                    },
+                    "chargerBearer": {
+                        "type": "string",
+                        "description": "Charge Indicator - DEBT, CRED, SHAR, SLEV, will default from payment template if defined.",
+                        "example": "SHAR",
+                        "enum": [
+                            "DEBT",
+                            "CRED",
+                            "SHAR",
+                            "SLEV"
+                        ]
+                    },
+                    "debtor": {
+                        "$ref": "#/components/schemas/OpenApiBankParty"
+                    },
+                    "debtorAddress": {
+                        "$ref": "#/components/schemas/Address"
+                    },
+                    "debtorAccount": {
+                        "$ref": "#/components/schemas/OpenApiPaymentAccount"
+                    },
+                    "debtorAgent": {
+                        "$ref": "#/components/schemas/OpenApiDebtorAgent"
+                    },
+                    "creditor": {
+                        "$ref": "#/components/schemas/OpenApiParty"
+                    },
+                    "creditorExtension": {
+                        "$ref": "#/components/schemas/OpenApiPartyExtension"
+                    },
+                    "creditorAgent": {
+                        "$ref": "#/components/schemas/OpenApiCreditorAgent"
+                    },
+                    "creditorAccount": {
+                        "$ref": "#/components/schemas/OpenApiPaymentAccount"
+                    },
+                    "remittanceInfo": {
+                        "$ref": "#/components/schemas/OpenApiRemittanceInfo"
+                    },
+                    "onBehalfOfInfo": {
+                        "$ref": "#/components/schemas/OpenApiOnBehalfOfInfo"
+                    },
+                    "batchId": {
+                        "type": "string",
+                        "description": "Batch ID"
+                    },
+                    "channelId": {
+                        "type": "string",
+                        "description": "Channel ID"
+                    },
+                    "serviceType": {
+                        "maxLength": 2,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Mandatory for Thailand ACH and PAY. Optional for Thailand IBFT. Supported values - 01 - Salary Wage Pension; 02 - Dividend; 03 - Interest; 04 - Goods Services; 05 - Buying Securities; 06 - Tax Refund",
+                        "example": "1"
+                    },
+                    "subPaymentType": {
+                        "maxLength": 5,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Pay Sub Product Type, e.g. CDWL, CDVY",
+                        "example": "CDWL"
+                    },
+                    "sourceOfFund": {
+                        "maxLength": 70,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Source of Fund"
+                    },
+                    "datePriority": {
+                        "maxLength": 1,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Applicable for cross border payments in certain countries. Priority can be given to either Debit date or Payment (Credit) value date. This will be taken into account during date calculation. Possible Values D - Debit, C - Credit. Default is C. This flag indicates that value of requiredExecutionDate to be treated as Debit Date or Credit Date",
+                        "example": "C"
+                    },
+                    "receivingCountryPurpose": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Purpose of Payment that is required by the beneficiary country clearing house to be provided here"
+                    },
+                    "casIndicator": {
+                        "type": "string",
+                        "description": "Indicates as CAS payment. Possible Value, Y - CAS Payment",
+                        "enum": [
+                            "Y"
+                        ]
+                    },
+                    "regulatoryReporting": {
+                        "$ref": "#/components/schemas/OpenApiRegulatoryReporting"
+                    },
+                    "paymentSubProductType": {
+                        "type": "string",
+                        "description": "Sub Payment Type for IBFT payment.<br>Please refer to SCB PAYMENTS_Supplementary document for the required Sub Payment Type.",
+                        "example": "CDVY"
+                    },
+                    "chargeAccount": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9]*$",
+                        "type": "string",
+                        "description": "Indicates Account Number from which the charges to be deducted",
+                        "example": "11111111111111"
+                    },
+                    "documents": {
+                        "$ref": "#/components/schemas/OpenApiDocuments"
+                    },
+                    "intermediaryAgent": {
+                        "$ref": "#/components/schemas/OpenApiIntermediaryAgent"
+                    },
+                    "fxConversion": {
+                        "$ref": "#/components/schemas/OpenApiFxConversion"
+                    },
+                    "discountType": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Represents certain percentage (%) which will be applied on Invoice amount to compute the value for Discount Amount"
+                    },
+                    "vatType": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Represents certain percentage (%) which will be applied on Invoice amount to compute the value for VAT Amount"
+                    },
+                    "vatAmount": {
+                        "type": "number",
+                        "description": "Indicates VAT for mentioned Invoice amount"
+                    },
+                    "whtPrintingLocation": {
+                        "maxLength": 1,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Indicates whether WHT form needs to be printed at Bank"
+                    },
+                    "whtFormID": {
+                        "maxLength": 2,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Indicates type of beneficiary"
+                    },
+                    "whtTaxID": {
+                        "maxLength": 13,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Tax ID of Beneficiary"
+                    },
+                    "whtRefNo": {
+                        "maxLength": 6,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Running sequence number to identify WHT"
+                    },
+                    "wht": {
+                        "type": "array",
+                        "description": "Indicator for withholding tax",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiWHT"
+                        }
+                    },
+                    "discountAmount": {
+                        "type": "number",
+                        "description": "Discount Amount which will be reduced from Invoice amount to compute payment amount"
+                    },
+                    "invoice": {
+                        "type": "array",
+                        "description": "Invoice details",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiInvoice"
+                        }
+                    }
+                }
+            },
+            "OpenApiRegulatoryReporting": {
+                "type": "object",
+                "properties": {
+                    "instructions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiReportingInstructions"
+                        }
+                    },
+                    "bopCode1": {
+                        "maxLength": 6,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "BOP Transaction Code1 <br> Required for cross border payments regulatory reporting for China "
+                    },
+                    "bopCode2": {
+                        "maxLength": 6,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "BOP Transaction Code2 <br> Required for cross border payments regulatory reporting for China "
+                    },
+                    "natureOfPayment": {
+                        "maxLength": 5,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Nature of Payment <br> Required for cross border payments regulatory reporting for China "
+                    },
+                    "residentCountry": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Resident Country / Region Name and Code <br> Required for cross border payments regulatory reporting for China ",
+                        "example": "CHN"
+                    },
+                    "transactionRemarks1": {
+                        "type": "string",
+                        "description": "Regulatory Reporting Transaction Remarks 1 <br> Required for cross border payments regulatory reporting for China <br> English - 1 byte per character, Chinese - 3 bytes per character, Max - 256 bytes "
+                    },
+                    "transactionRemarks2": {
+                        "type": "string",
+                        "description": "Regulatory Reporting Transaction Remarks 2 <br> Required for cross border payments regulatory reporting for China <br> English - 1 byte per character, Chinese - 3 bytes per character, Max - 256 bytes "
+                    },
+                    "contractNumber": {
+                        "type": "string",
+                        "description": "Regulatory Reporting Contract Number <br> Required for cross border payments regulatory reporting for China <br> English - 1 byte per character, Chinese - 3 bytes per character, Max - 128 bytes "
+                    },
+                    "invoiceNumber": {
+                        "type": "string",
+                        "description": "Regulatory Reporting Invoice Number <br> Required for cross border payments regulatory reporting for China <br> English - 1 byte per character, Chinese - 3 bytes per character, Max - 128 bytes "
+                    },
+                    "currency1": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "BOP Transaction Currency1 <br> Required for cross border payments regulatory reporting for China "
+                    },
+                    "amount1": {
+                        "type": "number",
+                        "description": "BOP Transaction Amount1 <br> Required for cross border payments regulatory reporting for China "
+                    },
+                    "currency2": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "BOP Transaction Currency2 <br> Required for cross border payments regulatory reporting for China "
+                    },
+                    "amount2": {
+                        "type": "number",
+                        "description": "BOP Transaction Amount2 <br> Required for cross border payments regulatory reporting for China "
+                    },
+                    "referenceId": {
+                        "maxLength": 20,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Safe Approval/Filing Number/Reference Number <br> Required for cross border payments regulatory reporting for China "
+                    },
+                    "overseasOrDomesticPayment": {
+                        "maxLength": 1,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Overseas / Domestic Payment <br> Required for cross border payments regulatory reporting for China ",
+                        "example": "D"
+                    },
+                    "unitCode": {
+                        "maxLength": 9,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Unit Code <br> Required for cross border payments regulatory reporting for China "
+                    },
+                    "paymentUnderBondedGoods": {
+                        "maxLength": 1,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Payment under Bonded Goods <br> Required for cross border payments regulatory reporting for China ",
+                        "example": "Y"
+                    },
+                    "paymentTerm": {
+                        "type": "string",
+                        "description": "Payment Term <br> Required for cross border payments regulatory reporting for China ",
+                        "example": "A",
+                        "enum": [
+                            "A",
+                            "P",
+                            "R",
+                            "O"
+                        ]
+                    }
+                }
+            },
+            "OpenApiRemittanceInfo": {
+                "type": "object",
+                "properties": {
+                    "unstructured": {
+                        "maxLength": 70,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/\\-?:().,\\\\'\\\\+ ]*$",
+                        "type": "string",
+                        "description": "Payment details can be shared in this field"
+                    },
+                    "structured": {
+                        "$ref": "#/components/schemas/OpenApiStructureRemittanceInfo"
+                    },
+                    "multiUnstructured": {
+                        "type": "array",
+                        "description": "Unstructured Remittance Information<br>Please input max 2 lines of remittance information for your payment. <table> <tr> <th>Element</th> <th>Length Validation</th> <th>Allowed characters</th> </tr> <tr> <th>Payment detail line 1</th> <th>minLength = 0, maxLength = 70</th> <th>a-z A-Z 0-9 /?().,'+:-</th> </tr> <tr> <th>Payment detail line 2</th> <th>minLength = 0, maxLength = 70</th> <th>a-z A-Z 0-9 /?().,'+:-</th> </tr>",
+                        "items": {
+                            "type": "string",
+                            "description": "multiUnstructured is an optional field available to clients to enter two(2) lines of details for a transaction. <table> <tr> <th>Element</th> <th>Length Validation</th> <th>Allowed characters</th> </tr> <tr> <th>Payment detail line 1</th> <th>minLength = 0, maxLength = 70</th> <th>a-z A-Z 0-9 /?().,'+:-</th> </tr> <tr> <th>Payment detail line 2</th> <th>minLength = 0, maxLength = 70</th> <th>a-z A-Z 0-9 /?().,'+:-</th> </tr>"
+                        }
+                    }
+                }
+            },
+            "OpenApiRemittanceInfoStructured": {
+                "type": "object",
+                "properties": {
+                    "creditorReferenceType": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/\\-?:().,\\\\'\\\\+ ]*$",
+                        "type": "string",
+                        "description": "Creditor Reference Type"
+                    },
+                    "creditorReferenceId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/\\-?:().,\\\\'\\\\+ ]*$",
+                        "type": "string",
+                        "description": "Creditor Reference ID"
+                    },
+                    "creditorReferenceDetails": {
+                        "type": "string",
+                        "description": "Creditor Reference Details"
+                    }
+                }
+            },
+            "OpenApiStructureRemittanceInfo": {
+                "type": "object",
+                "properties": {
+                    "creditorReferenceId": {
+                        "type": "string",
+                        "description": "Code used in Remittance Information<br>Please refer to the supported codes in Swift MT103 Fields Specifications.",
+                        "enum": [
+                            "Narr",
+                            "INV",
+                            "IPI",
+                            "RFB",
+                            "ROC"
+                        ]
+                    },
+                    "creditorReferenceDetails": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Details used in Remittance Information<br>Please refer to Swift MT103 Fields Specifications for more details."
+                    }
+                },
+                "description": "Please only use when needs to populate Field 70 Remittance Information in MT103 (applicable for TT payment type in GB and US only)."
+            },
+            "OpenApiWHT": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Indicator for withholding tax type"
+                    },
+                    "description": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Description of WHT type. Supports Thai for TH specific payments."
+                    },
+                    "grossAmount": {
+                        "type": "number",
+                        "description": "WHT Gross Amount. The entered amount will be printed on the WHT Certificate and might be different from the payment amount"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "WHT Amount"
+                    }
+                },
+                "description": "Indicator for withholding tax"
+            },
+            "OpenApiPayee": {
+                "required": [
+                    "nickName"
+                ],
+                "type": "object",
+                "properties": {
+                    "nickName": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "pattern": "^[\\w\\s<>,./:;\\\\\"\\'{}\\[\\]?|]+$",
+                        "type": "string",
+                        "description": "Unique Payee ID"
+                    }
+                }
+            },
+            "OpenApiPayeeInstruction": {
+                "required": [
+                    "header",
+                    "instruction"
+                ],
+                "type": "object",
+                "properties": {
+                    "header": {
+                        "$ref": "#/components/schemas/OpenApiPaymentInstructionHeader"
+                    },
+                    "instruction": {
+                        "$ref": "#/components/schemas/OpenApiPayeeInstructionBody"
+                    }
+                }
+            },
+            "OpenApiPayeeInstructionBody": {
+                "required": [
+                    "amount",
+                    "creditor",
+                    "debtor",
+                    "debtorAccount",
+                    "debtorAgent",
+                    "paymentType",
+                    "referenceId"
+                ],
+                "type": "object",
+                "properties": {
+                    "paymentTimestamp": {
+                        "type": "string",
+                        "description": "Timestamp of creating the payment instruction. Must be a valid ISO format timestamp of the payment, i.e. time payment was requested in the form YYYY-MM-DD'T'HH:mm:SS.SSSZ (UTC), e.g. 2019-01-01T13:30:32.010Z or the value must be a Numeric Date[10 digits] and represented in seconds.",
+                        "format": "date-time"
+                    },
+                    "requiredExecutionDate": {
+                        "type": "string",
+                        "description": "Required Execution Date of the payment",
+                        "format": "date"
+                    },
+                    "amount": {
+                        "$ref": "#/components/schemas/DenominatedAmount"
+                    },
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Your Unique Reference ID for the payment. For ACH, BT & RTGS maxLength is 16. For IBFT - 35",
+                        "example": "A999999999999"
+                    },
+                    "purpose": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Purpose of the payment, defaults to CASH if not specified",
+                        "example": "CASH"
+                    },
+                    "paymentType": {
+                        "maxLength": 4,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Payment type of the transaction, e.g. IBFT, BT, ACH, RTGS, TT, XBT, XACH",
+                        "example": "IBFT"
+                    },
+                    "chargerBearer": {
+                        "type": "string",
+                        "description": "Charge Indicator - DEBT, CRED, SHAR, SLEV, will default from payment template if defined.",
+                        "example": "SHAR",
+                        "enum": [
+                            "DEBT",
+                            "CRED",
+                            "SHAR",
+                            "SLEV"
+                        ]
+                    },
+                    "debtor": {
+                        "$ref": "#/components/schemas/OpenApiBankParty"
+                    },
+                    "debtorAddress": {
+                        "$ref": "#/components/schemas/Address"
+                    },
+                    "debtorAccount": {
+                        "$ref": "#/components/schemas/OpenApiPaymentAccount"
+                    },
+                    "debtorAgent": {
+                        "$ref": "#/components/schemas/OpenApiDebtorAgent"
+                    },
+                    "creditor": {
+                        "$ref": "#/components/schemas/OpenApiPayee"
+                    },
+                    "remittanceInfo": {
+                        "$ref": "#/components/schemas/OpenApiRemittanceInfo"
+                    },
+                    "fxConversion": {
+                        "$ref": "#/components/schemas/OpenApiFxConversion"
+                    }
+                }
+            },
+            "OpenApiBulkPaymentId": {
+                "required": [
+                    "referenceId"
+                ],
+                "type": "object",
+                "properties": {
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Unique Reference ID",
+                        "example": "A999999999999"
+                    },
+                    "errorCode": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Error code",
+                        "example": "AER-013"
+                    },
+                    "errorMessage": {
+                        "type": "string",
+                        "description": "Error Message",
+                        "example": "Duplicate payment initiation request detected"
+                    }
+                },
+                "description": "Rejected list of bulk payment reference IDs",
+                "example": []
+            },
+            "OpenApiBulkPaymentIds": {
+                "type": "object",
+                "properties": {
+                    "accepted": {
+                        "type": "array",
+                        "description": "Accepted list of bulk payment reference IDs",
+                        "example": [
+                            "PAYMENT4594051",
+                            "PAYMENT4594052",
+                            "PAYMENT4594053"
+                        ],
+                        "items": {
+                            "type": "string",
+                            "description": "Accepted list of bulk payment reference IDs",
+                            "example": "[\"PAYMENT4594051\",\"PAYMENT4594052\",\"PAYMENT4594053\"]"
+                        }
+                    },
+                    "rejected": {
+                        "type": "array",
+                        "description": "Rejected list of bulk payment reference IDs",
+                        "example": [],
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiBulkPaymentId"
+                        }
+                    }
+                },
+                "description": "List of Bulk Payment Status Details"
+            },
+            "OpenApiBulkPaymentInstruction": {
+                "required": [
+                    "header",
+                    "instructions"
+                ],
+                "type": "object",
+                "properties": {
+                    "header": {
+                        "$ref": "#/components/schemas/OpenApiPaymentInstructionHeader"
+                    },
+                    "instructions": {
+                        "type": "array",
+                        "description": "List of Bulk Payment Instructions",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiPaymentInstructionInstruction"
+                        }
+                    }
+                }
+            },
+            "OpenApiCheque": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "string",
+                        "description": "Cheque Number"
+                    },
+                    "clearingDate": {
+                        "type": "string",
+                        "description": "Cheque Clearing Date",
+                        "format": "date"
+                    },
+                    "transactionReference": {
+                        "type": "string",
+                        "description": "Transaction Reference"
+                    },
+                    "batchNumber": {
+                        "type": "string",
+                        "description": "Batch Number"
+                    }
+                },
+                "description": "(Not in use) The cheque information."
+            },
+            "OpenApiPaymentStatus": {
+                "required": [
+                    "groupId",
+                    "instructionIdentifier",
+                    "lastAssignee",
+                    "paymentContainerId",
+                    "referenceId",
+                    "statusString",
+                    "timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "groupId": {
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Your registered group ID with the Bank.",
+                        "example": "APINTST1"
+                    },
+                    "endToEndId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Your reference ID/end-to-end ID of the payment initiation request.",
+                        "example": "INTERNAL1234567890"
+                    },
+                    "clientIdentifier": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Your reference ID provided in the payment initiation request.",
+                        "example": "INTERNAL1234567890"
+                    },
+                    "paymentContainerId": {
+                        "type": "string",
+                        "description": "An internal reference ID assigned by the API banking channel.",
+                        "example": "112255148"
+                    },
+                    "statusString": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "<p>The description of the status code.<br>Possible values: Pending, Processed, Completed, Rejected, Returned, Stopped</p>",
+                        "example": "Completed"
+                    },
+                    "statusCode": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The payment status code assigned by the Bank.",
+                        "example": "69"
+                    },
+                    "lastAssignee": {
+                        "maxLength": 20,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "<p>The last assigned interface application of the payment.<br>Possible values: API, CCSAgent, SCPay</p>",
+                        "example": "SCPay"
+                    },
+                    "reasonCode": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The reason code assigned by the Bank.",
+                        "example": "69"
+                    },
+                    "reasonIsoCode": {
+                        "type": "string",
+                        "description": "(Not in use) The reason ISO code in case of rejection."
+                    },
+                    "additionalInformation": {
+                        "type": "string",
+                        "description": "The additional information of the payment updated by the product processing system if available."
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "The UTC timestamp of the status record creation time.",
+                        "format": "date-time",
+                        "example": "2024-01-24T09:37:24.626Z"
+                    },
+                    "originalTransactionId": {
+                        "type": "string",
+                        "description": "Your reference ID provided in the payment initiation request.",
+                        "example": "INTERNAL1234567890"
+                    },
+                    "clearingSystemReference": {
+                        "type": "string",
+                        "description": "The clearing reference number assigned by the product processing system if available.",
+                        "example": "402415078363"
+                    },
+                    "limitBreachIndicator": {
+                        "type": "string",
+                        "description": "(Not in use) The limit breach indicator."
+                    },
+                    "reasonInformation": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The payment status information assigned by the Bank.",
+                        "example": "Credited to Beneficiary"
+                    },
+                    "instructionIdentifier": {
+                        "maxLength": 36,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The unique end-to-end transaction reference (UETR) which is automatically assigned by the Bank during payment initiation.",
+                        "example": "62869bda-1aca-4316-b3b1-a996d507b436"
+                    },
+                    "creditorName": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The creditor’s name."
+                    },
+                    "cheque": {
+                        "$ref": "#/components/schemas/OpenApiCheque"
+                    },
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Your reference ID provided in the payment initiation request.",
+                        "example": "INTERNAL1234567890"
+                    },
+                    "paymentType": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The payment type of the transaction."
+                    },
+                    "requiredExecutionDate": {
+                        "type": "string",
+                        "description": "The execution date of the payment.",
+                        "format": "date"
+                    },
+                    "amountCurrencyCode": {
+                        "type": "string",
+                        "description": "The ISO 3-character currency code."
+                    },
+                    "debtorAccountCurrency": {
+                        "type": "string",
+                        "description": "The ISO 3-character currency code of the debtor account currency."
+                    },
+                    "debitAmount": {
+                        "type": "string",
+                        "description": "The debit amount."
+                    },
+                    "debtorAccountId": {
+                        "type": "string",
+                        "description": "The debtor account number."
+                    },
+                    "creditorAccountId": {
+                        "type": "string",
+                        "description": "The creditor account number."
+                    },
+                    "contractFXRate": {
+                        "type": "string",
+                        "description": "The FX conversion rate."
+                    },
+                    "fxContractNo": {
+                        "type": "string",
+                        "description": "The FX contract number."
+                    },
+                    "customerFxRate": {
+                        "type": "string",
+                        "description": "(Not in use) The customer FX Rate."
+                    },
+                    "valueDate": {
+                        "type": "string",
+                        "description": "The value date (processing date) of the payment.",
+                        "format": "date"
+                    },
+                    "creditorAddress": {
+                        "$ref": "#/components/schemas/OpenApiPostalAddress"
+                    },
+                    "debitDate": {
+                        "type": "string",
+                        "description": "The debit date of the payment.",
+                        "format": "date"
+                    }
+                },
+                "description": "The payment status details per transaction based on clientReferenceId."
+            },
+            "OpenApiPaymentStatuses": {
+                "type": "object",
+                "properties": {
+                    "statuses": {
+                        "type": "array",
+                        "description": "The payment status details for single and multiple transaction(s).",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiPaymentStatus"
+                        }
+                    }
+                }
+            },
+            "OpenApiPostalAddress": {
+                "type": "object",
+                "properties": {
+                    "line_1": {
+                        "maxLength": 70,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Address Line 1"
+                    },
+                    "line_2": {
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Address Line 2"
+                    },
+                    "line_3": {
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Address Line 3"
+                    },
+                    "line_4": {
+                        "type": "string",
+                        "description": "Address Line 4"
+                    },
+                    "city": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "City"
+                    },
+                    "postcode": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Postal Code"
+                    },
+                    "country": {
+                        "maxLength": 2,
+                        "minLength": 0,
+                        "pattern": "^[A-Z]*$",
+                        "type": "string",
+                        "description": "Country"
+                    }
+                },
+                "description": "(Not in use) The creditor’s address information."
+            },
+            "OpenApiPaymentClientReferences": {
+                "required": [
+                    "clientReferenceIds"
+                ],
+                "type": "object",
+                "properties": {
+                    "clientReferenceIds": {
+                        "type": "array",
+                        "description": "Client Reference IDs",
+                        "items": {
+                            "type": "string",
+                            "description": "Client Reference IDs"
+                        }
+                    }
+                }
+            },
+            "OpenApiPaymentStatusRequest": {
+                "type": "object",
+                "properties": {
+                    "clientReferenceIds": {
+                        "type": "array",
+                        "description": "Client Reference IDs",
+                        "items": {
+                            "type": "string",
+                            "description": "Client Reference IDs"
+                        }
+                    },
+                    "fromDateTime": {
+                        "type": "string",
+                        "description": "Date (From)",
+                        "format": "date-time"
+                    },
+                    "toDateTime": {
+                        "type": "string",
+                        "description": "Date (To)",
+                        "format": "date-time"
+                    },
+                    "statusType": {
+                        "type": "string",
+                        "description": "Status Type",
+                        "enum": [
+                            "StatusOnly",
+                            "StatusWithPayment"
+                        ]
+                    },
+                    "reasonCodes": {
+                        "type": "string",
+                        "description": "Reason Code"
+                    }
+                }
+            }
+        }
+    }
+}

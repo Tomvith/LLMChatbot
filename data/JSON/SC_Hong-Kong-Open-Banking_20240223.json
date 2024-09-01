@@ -1,0 +1,895 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking - Hong Kong Open Banking",
+        "description": "**API Banking - Hong Kong Open Banking**\r\n\r\nEnables Third Party Service Provider (TSP) to securely retrieve Standard Chartered's customer account information, balances and transaction details on behalf of customers.",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company Licence",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.standardchartered.com/openapi"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Account Services",
+            "description": "The Hong Kong Open APIs enable Third Party Service Provider (TSP) to securely retrieve Standard Chartered's customer account information, balances and transaction details on behalf of customers.",
+            "x-subcategory": "Hong Kong Open Banking"
+        }
+    ],
+    "paths": {
+        "/hkopenbanking/accounts/v2/transactions": {
+            "get": {
+                "tags": [
+                    "Account Services"
+                ],
+                "summary": "Hong Kong – Account Transaction",
+                "description": "The Hong Kong - Account Transaction API enables the registered Third-Party Service Provider (TSP) to securely retrieve authorised Standard Chartered’s customer account transaction details information. It allows user to retrieve account transaction details using different filtering criteria - latest records since the last statement or a time frame with start and/or end date. This API will provide details for a list of accounts for a specified date range.",
+                "operationId": "account-transactions",
+                "parameters": [
+                    {
+                        "name": "showLatest",
+                        "in": "query",
+                        "description": "Indicates to retrieve the latest transaction records since the last statement. If it is set as True, fromDateTime and toDateTime will not be applicable",
+                        "required": false,
+                        "default": true,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "fromDateTime",
+                        "in": "query",
+                        "description": "Start date and time for filtering out the transactions. Applicable only if showLatest is False. ISO format of DD-MM-YYYY'T'HH24:MI:SS (HKT)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "toDateTime",
+                        "in": "query",
+                        "description": "End date and time for filtering out the transactions. Mandatory if fromDateTime is not blank. ISO format of DD-MM-YYYY'T'HH24:MI:SS (HKT)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiAccountTransactionResponse"
+                                },
+                                "example": "{\n   \"data\": {\n      \"transaction\": [\n         {\n            \"accountId\": \"34313130393239313130353A5343424C484B48485858583A484B44\",\n            \"accountNumber\": \"01XXXXX188\",\n            \"transactionCode\": \"PYMT\",\n            \"transactionId\": \" PBKBP62508440005099\",\n            \"transactionDescription\": \"Bill Payment\",\n            \"transactionDate\": \"2020-12-22\",\n            \"creditDebitIndicator\": \"Debit\",\n            \"status\": \"Booked\",\n            \"amount\": \"10079.36\",\n            \"currency\": \"HKD\",\n            \"currencyExchange\": {\n               \"amount\": \"1300\",\n               \"currency\": \"USD\",\n               \"rate\": \"7.75\",\n               \"date\": \"2020-12-22\"\n            },\n            \"balance\": {\n               \"type\": \"OpeningBalance\",\n               \"creditDebitIndicator\": \"Debit\",\n               \"amount\": \"1920.64\",\n               \"currency\": \"HKD\",\n               \"datetime\": \"2020-12-22T07:06:20\"\n            }\n         },\n         {\n            \"accountId\": \"34313130393239313130353A5343424C484B48485858583A484B44\",\n            \"accountNumber\": \"01XXXXX188\",\n            \"transactionCode\": \"INTR\",\n            \"transactionId\": \" MBKFT42508230004073\",\n            \"transactionDescription\": \"Fund Transfer\",\n            \"transactionDate\": \"2020-12-22\",\n            \"creditDebitIndicator\": \"Debit\",\n            \"status\": \"Booked\",\n            \"amount\": \"1000\",\n            \"currency\": \"HKD\",\n            \"balance\": {\n               \"type\": \"CurrentBalance\",\n               \"creditDebitIndicator\": \"Debit\",\n               \"amount\": \"920.64\",\n               \"currency\": \"HKD\",\n               \"datetime\": \"2020-12-22T07:06:20\"\n            }\n         }\n      ]\n   },\n   \"links\": {\n      \"self\": \"string\"\n   }\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created"
+                    },
+                    "202": {
+                        "description": "Success. Data accepted"
+                    },
+                    "204": {
+                        "description": "Success. No data returned"
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data"
+                    },
+                    "401": {
+                        "description": "Unauthorised request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning"
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server"
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later"
+                    }
+                },
+                "x-codegen-request-body-name": "body",
+                "x-markets": "HK"
+            }
+        },
+        "/hkopenbanking/accounts/v2/{accountId}/transactions": {
+            "get": {
+                "tags": [
+                    "Account Services"
+                ],
+                "summary": "Hong Kong – Account Transaction by Account Number",
+                "description": "The Hong Kong - Account Transaction by Account Number API enables the registered Third-Party Service Provider (TSP) to securely retrieve authorised Standard Chartered’s customer account transaction details information based on the indicated Account Number. It allows user to retrieve account transaction details using different filtering criteria - latest records since the last statement or a time frame with start and/or end date. This API will provide details for a specific account  for a specified date range.",
+                "operationId": "account-transactions-by-accountId",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Account Number for which transaction history is requested",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "showLatest",
+                        "in": "query",
+                        "description": "Indicates to retrieve the latest transaction records since the last statement. If it is set as True, fromDateTime and toDateTime will not be applicable",
+                        "required": false,
+                        "default": true,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "fromDateTime",
+                        "in": "query",
+                        "description": "Start date and time for filtering out the transactions. Applicable only if showLatest is False. ISO format of DD-MM-YYYY'T'HH24:MI:SS (HKT)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "toDateTime",
+                        "in": "query",
+                        "description": "End date and time for filtering out the transactions. Mandatory if fromDateTime is not blank. ISO format of DD-MM-YYYY'T'HH24:MI:SS (HKT)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiAccountTransactionResponse"
+                                },
+                                "example": "{\n   \"data\": {\n      \"transaction\": [\n         {\n            \"accountId\": \"34313130393239313130353A5343424C484B48485858583A484B44\",\n            \"accountNumber\": \"01XXXXX188\",\n            \"transactionCode\": \"PYMT\",\n            \"transactionId\": \" PBKBP62508440005099\",\n            \"transactionDescription\": \"Bill Payment\",\n            \"transactionDate\": \"2020-12-22\",\n            \"creditDebitIndicator\": \"Debit\",\n            \"status\": \"Booked\",\n            \"amount\": \"10079.36\",\n            \"currency\": \"HKD\",\n            \"currencyExchange\": {\n               \"amount\": \"1300\",\n               \"currency\": \"USD\",\n               \"rate\": \"7.75\",\n               \"date\": \"2020-12-22\"\n            },\n            \"balance\": {\n               \"type\": \"CurrentBalance\",\n               \"creditDebitIndicator\": \"Debit\",\n               \"amount\": \"1920.64\",\n               \"currency\": \"HKD\",\n               \"datetime\": \"2020-12-22T07:06:20\"\n            }\n         },\n         {\n            \"accountId\": \"34313130393239313130353A5343424C484B48485858583A484B44\",\n            \"accountNumber\": \"01XXXXX188\",\n            \"transactionCode\": \"INTR\",\n            \"transactionId\": \" MBKFT42508230004073\",\n            \"transactionDescription\": \"Fund Transfer\",\n            \"transactionDate\": \"2020-12-22\",\n            \"creditDebitIndicator\": \"Debit\",\n            \"status\": \"Booked\",\n            \"amount\": \"1000\",\n            \"currency\": \"HKD\",\n            \"balance\": {\n               \"type\": \"CurrentBalance\",\n               \"creditDebitIndicator\": \"Debit\",\n               \"amount\": \"920.64\",\n               \"currency\": \"HKD\",\n               \"datetime\": \"2020-12-22T07:06:20\"\n            }\n         }\n      ]\n   },\n   \"links\": {\n      \"self\": \"string\"\n   }\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created"
+                    },
+                    "202": {
+                        "description": "Success. Data accepted"
+                    },
+                    "204": {
+                        "description": "Success. No data returned"
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data"
+                    },
+                    "401": {
+                        "description": "Unauthorised request"
+                    },
+                    "403": {
+                        "description": "Authentication failed"
+                    },
+                    "404": {
+                        "description": "Resource not found"
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning"
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server"
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later"
+                    }
+                },
+                "x-codegen-request-body-name": "body",
+                "x-markets": "HK"
+            }
+        },
+        "/hkopenbanking/accounts/v2/balances": {
+            "get": {
+                "tags": [
+                    "Account Services"
+                ],
+                "summary": "Hong Kong – Account Balance",
+                "description": "The Hong Kong – Account Balance API enables the registered Third-Party Service Provider (TSP) to securely retrieve authorised Standard Chartered’s customer account balance information. This API allows user to retrieve a list of accounts' balances. Upon successful verification, this API will provide user with specific account information such as opening balance, current balance and available balance of the day. Otherwise, if entitlements check failed, API will return a rejection response.",
+                "operationId": "account-balances",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AccountResponse"
+                                },
+                                "example": "{\n   \"data\": {\n      \"account\": [\n         {\n            \"accountId\": \"201137243039306132394A5553778B\",\n            \"balance\": [\n               {\n                  \"type\": \" Current Balance\",\n                  \"creditDebitIndicator\": \"Debit\",\n                  \"amount\": 10000.25,\n                  \"currency\": \"HKD\",\n                  \"datetime\": \"2020-12-22T07:06:20\"\n               },\n               {\n                  \"type\": \"Available Balance\",\n                  \"creditDebitIndicator\": \"Debit\",\n                  \"amount\": 10000.25,\n                  \"currency\": \"HKD\",\n                  \"datetime\": \"2020-12-22T07:06:20\"\n               },\n               {\n                 \"type\": \"Opening Balance\",\n                 \"creditDebitIndicator\": \"Credit\",\n                 \"amount\": 12457899.3,\n                 \"currency\": \"HKD\",\n                 \"datetime\": \"2020-12-22T07:06:20\"\n               }\n            ]\n         },\n         {\n            \"accountId\": \"39037243039306132394A5553778A\",\n            \"balance\": [\n               {\n                  \"type\": \" Current Balance\",\n                  \"creditDebitIndicator\": \"Debit\",\n                  \"amount\": 10000.25,\n                  \"currency\": \"HKD\",\n                  \"datetime\": \"2020-12-22T07:06:20\"\n               }\n            ]\n         }\n      ]\n   },\n   \"links\": {\n      \"self\": \"string\"\n   }\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created"
+                    },
+                    "202": {
+                        "description": "Success. Data accepted"
+                    },
+                    "204": {
+                        "description": "Success. No data returned"
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data"
+                    },
+                    "401": {
+                        "description": "Access token has expired. Please refresh the token"
+                    },
+                    "404": {
+                        "description": "Invalid Path"
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates error on the webserver hosting the API"
+                    },
+                    "503": {
+                        "description": "Microservice dependency is down or undergoing maintenance.Try again later"
+                    }
+                },
+                "x-codegen-request-body-name": "body",
+                "x-markets": "HK"
+            }
+        },
+        "/hkopenbanking/accounts/v2/{accountId}/balances": {
+            "get": {
+                "tags": [
+                    "Account Services"
+                ],
+                "summary": "Hong Kong – Account Balance by Account Number",
+                "description": "The Hong Kong – Account Balance by Account Number API enables the registered Third-Party Service Provider (TSP) to securely retrieve authorised Standard Chartered’s customer account balance information. It allows user to retrieve either a list of accounts' balances or a specific account balance. Upon successful verification, this API will provide user with specific account information such as opening balance, current balance and available balance of the day. Otherwise, if entitlements check failed, API will return a rejection response.",
+                "operationId": "account-balances-by-accountId",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Account Number for which account balance is requested",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AccountResponse"
+                                },
+                                "example": "{\n   \"data\": {\n      \"account\": [\n         {\n            \"accountId\": \"201137243039306132394A5553778B\",\n            \"balance\": [\n               {\n                  \"type\": \"Available Balance\",\n                  \"creditDebitIndicator\": \"Debit\",\n                  \"amount\": 10000.25,\n                  \"currency\": \"HKD\",\n                  \"datetime\": \"2020-12-22T07:06:20\"\n               },\n               {\n                  \"type\": \"Current Balance\",\n                  \"creditDebitIndicator\": \"Debit\",\n                  \"amount\": 10000.25,\n                  \"currency\": \"HKD\",\n                  \"datetime\": \"2020-12-22T07:06:20\"\n               },\n               {\n                  \"type\": \"Opening Balance\",\n                  \"creditDebitIndicator\": \"Debit\",\n                  \"amount\": 10000.25,\n                  \"currency\": \"HKD\",\n                  \"datetime\": \"2020-12-22T07:06:20\"\n              }\n            ]\n         }\n      ]\n   },\n   \"links\": {\n      \"self\": \"string\"\n   }\n}"
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned"
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data"
+                    },
+                    "404": {
+                        "description": "Invalid Path"
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates error on the webserver hosting the API"
+                    },
+                    "503": {
+                        "description": "Microservice dependency is down or undergoing maintenance. Try again later"
+                    }
+                },
+                "x-codegen-request-body-name": "body",
+                "x-markets": "HK"
+            }
+        },
+        "/hkopenbanking/accounts/v2/status": {
+            "get": {
+                "tags": [
+                    "Account Services"
+                ],
+                "summary": "Hong Kong – Account Status",
+                "description": "The Hong Kong - Account Status API enables the registered Third-Party Service Provider (TSP) to securely retrieve authorised Standard Chartered’s customer account information including account status. This API allows user to retrieve a list of accounts' statuses.",
+                "operationId": "account-status",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AccountResponseData"
+                                },
+                                "example": "{\n  \"data\": {\n     \"account\": [\n      {\n        \"accountId\":\"34313130393239313130353A5343424C484B48485858583A484B44\",\n        \"accountNumber\": \"01XXXXX188\",\n        \"accountType\": \"DDA\",\n        \"accountSubType\": \"CD\",\n        \"productName \": \"SAVINGS ACCOUNT\",\n        \"accountStatus\": \"Active\",\n        \"currency\": \"HKD\"\n      },\n      {\n        \"accountId\":\"34313130393239313130353A5343424C484B48485858583A484B45\",\n        \"accountNumber\": \"01XXXXX188\",\n        \"accountType\": \"DDA\",\n        \"accountSubType\": \"CC\",\n        \"productName \": \"HKD CURRENT ACCOUNT  (COMPANY)\",\n        \"accountStatus\": \"Active\",\n        \"currency\": \"HKD\"\n      }\n\n   ]\n\n},\n\"links\": {\n   \"self\": \"string\"\n  }\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created"
+                    },
+                    "202": {
+                        "description": "Success. Data accepted"
+                    },
+                    "204": {
+                        "description": "Success. No data returned"
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data"
+                    },
+                    "401": {
+                        "description": "Access token has expired. Please refresh the token"
+                    },
+                    "404": {
+                        "description": "Invalid Path"
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates error on the webserver hosting the API"
+                    },
+                    "503": {
+                        "description": "Microservice dependency is down or undergoing maintenance.Try again later"
+                    }
+                },
+                "x-codegen-request-body-name": "body",
+                "x-markets": "HK"
+            }
+        },
+        "/hkopenbanking/accounts/v2/{accountId}/status": {
+            "get": {
+                "tags": [
+                    "Account Services"
+                ],
+                "summary": "Hong Kong – Account Status by Account Number",
+                "description": "The Hong Kong - Account Status by Account Number API enables the registered Third-Party Service Provider (TSP) to securely retrieve authorised Standard Chartered’s customer account information including account status. This API allows user to retrieve a specific account's status.",
+                "operationId": "account-status-by-accountId",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Account Number for which account status is requested",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AccountResponseData"
+                                },
+                                "example": "{\n  \"data\": {\n      \"account\" : [\n         {\n           \"accountId\": \"34313130393239313130353A5343424C484B48485858583A484B44\",\n           \"accountNumber\": \"01XXXXX188\",\n           \"accountType\": \"Business\",\n           \"accountSubType\": \"Current\",\n           \"productName \": \"Current Account\",\n           \"accountStatus\": \"Active\",\n           \"currency\": \"HKD\"\n         }\n      ]\n    },\n    \"links\": {\n      \"self\": \"string\"\n    }\n}"
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned"
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data"
+                    },
+                    "404": {
+                        "description": "Invalid Path"
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates error on the webserver hosting the API"
+                    },
+                    "503": {
+                        "description": "Microservice dependency is down or undergoing maintenance. Try again later"
+                    }
+                },
+                "x-codegen-request-body-name": "body",
+                "x-markets": "HK"
+            }
+        },
+        "/hkopenbanking/accounts/v2/availability": {
+            "post": {
+                "tags": [
+                    "Account Services"
+                ],
+                "summary": "Hong Kong – Account Availability",
+                "description": "The Hong Kong - Account Availability API enables the registered Third-Party Service Provider (TSP) to check for authorised Standard Chartered’s customer account availability. Upon successful verification, this API will return account availability status as Yes or No.",
+                "operationId": "account-availability",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AccountAvailableRequest",
+                                "description": "This input will not be considered. Response is based on client's GroupId"
+                            }
+                        }
+                    },
+                    "required": false
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AccountAvailableResponse"
+                                },
+                                "example": "{\n  \"data\": {\n  \"status\": \"Yes\"\n  },\n  \"links\": {\n  \"self\": \"string\"\n  }\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created"
+                    },
+                    "202": {
+                        "description": "Success. Data accepted"
+                    },
+                    "204": {
+                        "description": "Success. No data returned"
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data"
+                    },
+                    "401": {
+                        "description": "Access token has expired. Please refresh the token"
+                    },
+                    "404": {
+                        "description": "Invalid Path"
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates error on the webserver hosting the API"
+                    },
+                    "503": {
+                        "description": "Microservice dependency is down or undergoing maintenance.Try again later"
+                    }
+                },
+                "x-codegen-request-body-name": "body",
+                "x-markets": "HK"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "OpenApiAccountTransactionResponse": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/OpenApiAccountTransactionResponseDataArray"
+                    },
+                    "links": {
+                        "type": "object",
+                        "properties": {
+                            "self": {
+                                "type": "string",
+                                "description": "URIs which are typically links on the web"
+                            }
+                        }
+                    }
+                }
+            },
+            "OpenApiAccountTransactionResponseDataArray": {
+                "type": "object",
+                "properties": {
+                    "transaction": {
+                        "type": "array",
+                        "description": "Transaction Details",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiAccountTransactionResponseData"
+                        }
+                    }
+                }
+            },
+            "OpenApiAccountTransactionResponseData": {
+                "type": "object",
+                "required": [
+                    "accountId",
+                    "accountNumber",
+                    "transactionCode",
+                    "transactionId",
+                    "transactionDescription",
+                    "datetime",
+                    "creditDebitIndicator",
+                    "status",
+                    "amount",
+                    "currency",
+                    "balance"
+                ],
+                "properties": {
+                    "accountId": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "example": "34313130393239313130353A5343424C484B48485858583A484B44",
+                        "description": "Unique identifier used internally by the bank to identify an account"
+                    },
+                    "accountNumber": {
+                        "type": "string",
+                        "maxLength": 11,
+                        "example": "XXXXXXXXXX02",
+                        "description": "Account number assigned by the bank to identify an account"
+                    },
+                    "transactionCode": {
+                        "type": "string",
+                        "maxLength": 5,
+                        "example": "PYMT",
+                        "description": "ISO transaction code"
+                    },
+                    "transactionId": {
+                        "type": "string",
+                        "maxLength": 16,
+                        "example": "PBKBP62508440005099",
+                        "description": "Unique identifier for the transaction used by the bank"
+                    },
+                    "transactionDescription": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "Bill Payment",
+                        "description": "Description of the transaction"
+                    },
+                    "transactionDate": {
+                        "type": "string",
+                        "maxLength": 10,
+                        "example": "2020-12-22T00:00:00.000Z",
+                        "description": "Date of the transaction"
+                    },
+                    "creditDebitIndicator": {
+                        "type": "string",
+                        "maxLength": 6,
+                        "example": "Debit",
+                        "description": "Indicates whether the transaction is a credit or debit entry"
+                    },
+                    "status": {
+                        "type": "string",
+                        "maxLength": 10,
+                        "example": "Pending",
+                        "description": "Status of the transaction entry"
+                    },
+                    "amount": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": 10079.36,
+                        "description": "Transaction amount"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "minLength": 0,
+                        "maxLength": 3,
+                        "example": "HKD",
+                        "description": "Account currency code"
+                    },
+                    "currencyExchange": {
+                        "description": "Currency exchange object for a foreign currency transaction",
+                        "$ref": "#/components/schemas/OpenApiCurrencyExchange"
+                    },
+                    "balance": {
+                        "description": "Balance object of the account",
+                        "$ref": "#/components/schemas/OpenApiBalance"
+                    }
+                }
+            },
+            "OpenApiCurrencyExchange": {
+                "type": "object",
+                "required": [
+                    "amount",
+                    "currency",
+                    "rate",
+                    "date"
+                ],
+                "properties": {
+                    "amount": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": 1300,
+                        "description": "Transaction amount in foreign currency"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "minLength": 0,
+                        "maxLength": 3,
+                        "example": "USD",
+                        "description": "Foreign currency code"
+                    },
+                    "rate": {
+                        "type": "string",
+                        "example": 7.75,
+                        "maxLength": 20,
+                        "description": "Exchange rate at the time of the foreign currency transaction"
+                    },
+                    "date": {
+                        "type": "string",
+                        "maxLength": 10,
+                        "example": "2020-12-22T00:00:00.000Z",
+                        "description": "Date that the exchange rate was applied"
+                    }
+                }
+            },
+            "OpenApiBalance": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "creditDebitIndicator",
+                    "amount",
+                    "currency",
+                    "datetime"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "Available Balance",
+                        "description": "Balance type of the account"
+                    },
+                    "creditDebitIndicator": {
+                        "type": "string",
+                        "maxLength": 6,
+                        "example": "Credit",
+                        "description": "Indicates whether the account balance is a credit or debit balance"
+                    },
+                    "amount": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": 1920.64,
+                        "description": "Account balance amount"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "minLength": 0,
+                        "maxLength": 3,
+                        "example": "HKD",
+                        "description": "Account currency code"
+                    },
+                    "datetime": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "2020-12-22T07:06:20.000Z",
+                        "description": "Date and time of the account balance"
+                    }
+                }
+            },
+            "AccountResponse": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/AccountData"
+                    },
+                    "links": {
+                        "type": "object",
+                        "properties": {
+                            "self": {
+                                "type": "string",
+                                "example": "string",
+                                "description": "URIs which are typically links on the web"
+                            }
+                        }
+                    }
+                }
+            },
+            "AccountData": {
+                "type": "object",
+                "properties": {
+                    "account": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AccountBalance"
+                        }
+                    }
+                }
+            },
+            "AccountBalance": {
+                "type": "object",
+                "properties": {
+                    "accountId": {
+                        "type": "string",
+                        "maxLength": 54,
+                        "description": "Unique identifier used internally by the bank to identify an account",
+                        "example": "20113724303"
+                    },
+                    "balance": {
+                        "type": "array",
+                        "description": "Account balance details",
+                        "items": {
+                            "$ref": "#/components/schemas/BalanceData"
+                        }
+                    }
+                }
+            },
+            "BalanceData": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "description": "Account balance type",
+                        "example": "Opening Balance",
+                        "enum": [
+                            "Opening Balance",
+                            "Available Balance",
+                            "Current Balance"
+                        ]
+                    },
+                    "creditDebitIndicator": {
+                        "type": "string",
+                        "maxLength": 6,
+                        "description": "Indicates whether the account balance is a credit or debit balance",
+                        "example": "Credit",
+                        "enum": [
+                            "Credit",
+                            "Debit"
+                        ]
+                    },
+                    "amount": {
+                        "type": "number",
+                        "maxLength": 20,
+                        "description": "Account balance amount",
+                        "example": 10000.25
+                    },
+                    "currency": {
+                        "type": "string",
+                        "minLength": 0,
+                        "maxLength": 3,
+                        "description": "Account currency code",
+                        "example": "HKD"
+                    },
+                    "datetime": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "description": "Date and time of the account balance",
+                        "example": "2020-12-22T07:06:20.000Z"
+                    }
+                }
+            },
+            "AccountResponseData": {
+                "type": "object",
+                "properties": {
+                    "accountId": {
+                        "type": "string",
+                        "maxLength": 54,
+                        "description": "Unique identifier used internally by the bank to identify an account",
+                        "example": "201137243039306132394A5553778B"
+                    },
+                    "accountNumber": {
+                        "type": "string",
+                        "maxLength": 11,
+                        "description": "Account number assigned by the bank to identify an account",
+                        "example": "XXXXXXXXXX02"
+                    },
+                    "accountType": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "description": "Type of account(CDA|DDA|RSV)",
+                        "example": "DDA"
+                    },
+                    "accountSubType": {
+                        "type": "string",
+                        "maxLength": 2,
+                        "description": "Sub- type of account(FA - FLEXIBLE HKD TIME DEPOSIT | CC - HKD CURRENT ACCOUNT  (COMPANY) | CF - FOREIGN CURRENCY CURRENT ACCOUNT | C5 - USD CURRENT ACCOUNT | SE - HKD SAVINGS ACCOUNT | CQ - COMMERCIAL ALL-IN-ONE ACCOUNT | CI - HKD CURRENT ACCOUNT | CW - FOREIGN CURRENCY CURRENT VOSTRO AC | CZ - HKD CURRENT ACCOUNT | NC - EXTRA YIELD HKD CALL DEPOSIT | ND - EXTRA YIELD HKD CALL DEPOSIT | CX - FOREIGN CURRENCY CURRENT VOSTRO AC | CV - HKD CURRENT ACCOUNT   (VOSTRO) | SV - HKD BONUS SAVINGS ACCOUNT | SF - FOREIGN CURRENCY SAVINGS ACCOUNT | NA - HKD CALL DEPOSIT | RC - HKD DO DREAM ACCOUNT | C6 - USD CURRENT ACCOUNT | CT - HKD CURRENT ACCOUNT | BT - RENMINBI CURRENT ACCOUNT | RT - RENMINBI SAVINGS ACCOUNT)",
+                        "example": "CC"
+                    },
+                    "productName": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "description": "Name of the product",
+                        "example": "Zero Balance Savings"
+                    },
+                    "accountStatus": {
+                        "type": "string",
+                        "maxLength": 10,
+                        "description": "Status of an account(NEW|DORMANT|ACTIVE|UNCLAIMED|CLOSED)",
+                        "example": "Active"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "minLength": 0,
+                        "maxLength": 3,
+                        "description": "Account currency code",
+                        "example": "HKD"
+                    }
+                }
+            },
+            "AccountStatusResponse": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/AccountStatusDataArray"
+                    },
+                    "links": {
+                        "type": "object",
+                        "properties": {
+                            "self": {
+                                "type": "string",
+                                "example": "string",
+                                "description": "URIs which are typically links on the web"
+                            }
+                        }
+                    }
+                }
+            },
+            "AccountStatusDataArray": {
+                "type": "object",
+                "properties": {
+                    "account": {
+                        "type": "array",
+                        "description": "Status Details",
+                        "items": {
+                            "$ref": "#/components/schemas/AccountResponseData"
+                        }
+                    }
+                }
+            },
+            "AccountAvailableResponseData": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "example": "yes",
+                        "description": "Status of the account availability(Yes/No) for the requested parameter"
+                    }
+                }
+            },
+            "AccountAvailableResponse": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/AccountAvailableResponseData"
+                    },
+                    "links": {
+                        "type": "object",
+                        "properties": {
+                            "self": {
+                                "type": "string",
+                                "example": "string",
+                                "description": "URIs which are typically links on the web"
+                            }
+                        }
+                    }
+                }
+            },
+            "AccountAvailableRequest": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AccountAvailableRequestBody"
+                        }
+                    }
+                }
+            },
+            "AccountAvailableRequestBody": {
+                "type": "object",
+                "properties": {
+                    "paramName": {
+                        "type": "string",
+                        "description": "Specifies the parameter name to verify the available customer and account-type information",
+                        "example": "accountType"
+                    },
+                    "paramValue": {
+                        "type": "string",
+                        "description": "Specifies the parameter value against the parameter type",
+                        "example": "currentAccount"
+                    }
+                }
+            }
+        }
+    }
+}

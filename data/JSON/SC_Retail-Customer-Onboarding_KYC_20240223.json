@@ -1,0 +1,418 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "KYC API Specifications",
+    "version": "1.1.0",
+    "description": "\n## Encryption and Signing\nEncryption and Signing uses JSON Web Tokens (JWT), an open industry standard <a href=\"https://tools.ietf.org/html/rfc7519\">RFC7519</a> method to represent claims securely across two parties.\n<hr/>\n\n### Algorithms\nSCB provides support for the below-mentioned algorithms, which are specified in the JOSE Header, as per <a href=\"https://tools.ietf.org/html/rfc7515\">JSON Web Signature</a> (JWS) and <a href=\"https://tools.ietf.org/html/rfc7516#section-4.1.12\">JSON Web Encryption</a> (JWE) Standards.\n <table>\n  <thead>\n    <tr>\n      <th width='25%'>Standard</th>\n      <th width='25%'>Algorithm</th>\n      <th width='70%'>JOSE Header</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>JSON Web Signature (JWS)</td>\n      <td>ES256</td>\n      <td>\n        kid: (key id)\n        cty: JWS\n        alg: ES256\n      </td>\n    </tr>\n    <tr>\n      <td>JSON Web Encryption (JWE)</td>\n      <td>RSA-OAEP-256 (Asymmetric)</td>\n      <td>\n          kid: (key id)\n          cty: JWT\n          alg: RSA-OAEP-256\n      </td>\n    </tr>\n    </tbody>\n</table>\n\n<hr/>\n\n## Guide for JWE and JWS\nAs per SCB API Security standards, SCB uses Compact Serialization for its <a href=\"https://tools.ietf.org/html/rfc7515#section-7.1\">JWS</a>/<a href=\"https://tools.ietf.org/html/rfc7516#section-3.1\">JWE</a> representation. The content to be sent to the client <b>is first signed following JWS specifications</b> and <b>then encrypted and sent as a JWE to the client</b>. Specifics for creating each component are as shown below:\n<hr/>\n\n### JSON Web Signature\nThe following describes the structure of our JWS.\n\n**Message** : Content to be sent to client\n\n**JWS Payload** : BASE64URL-ENCODE(Message)\n\n**Signature** : ASCII(BASE64URL-ENCODE(UTF8(JOSE Header))‘.’BASE64URL-ENCODE(JWS Payload))\n\n**Structure** : BASE64URL(UTF8(JOSE Header))‘.’BASE64URL(JWS Payload)‘.’BASE64URL(JWS Signature)\n<hr/>\n\n### JSON Web Encryption\nThe following describes the structure of our JWE. The payload in our JWE is the JWS we have created in the steps above. The JOSE header of JWE contains both symmetric and asymmetric encryptions. Symmetric encryption to encrypt the payload, and asymmetric encryption to encrypt the symmetric key. The asymmetric keypair belongs to the client who will be receiving the JWE.\n\n**JWE Payload** : JWS Signature (from above)\n\n**JWE Ciphertext** : *ENCRYPT-SYMMETRIC*(JWE Payload)\n\n**JWE Encrypted Key** : *ENCRYPT-ASYMMETRIC*(Symmetric Key) - using client's public key\n\n**Structure** : BASE64URL-ENCODE(UTF8(JWE Header))‘.’BASE64URL-ENCODE(JWE Encrypted Key)‘.’BASE64URL-ENCODE(JWE Initialization Vector)‘.’BASE64URL-ENCODE(JWE Ciphertext)‘.’BASE64URL-ENCODE(JWE Authentication Tag)\n\n## API Response Codes\n\n\n  <table style='border: 0.5px solid; '>\n    <thead>\n      <tr>\n        <th width='5%'>Response Code</th>\n        <th width='40%'>Response Message</th>\n        <th width='10%'>HTTP status</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>E001</td>\n        <td>Field is mandatory</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E002</td>\n        <td>Field value not in valid range</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E003</td>\n        <td>Invalid Format</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E004</td>\n        <td>Contains invalid characters</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E005</td>\n        <td>Resource not found</td>\n        <td>404</td>\n      </tr>\n      <tr>\n        <td>E100</td>\n        <td>Unable to decrypt</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E101</td>\n        <td>Unable to verify signature</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E102</td>\n        <td>Unable to decrypt or verify signature</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E103</td>\n        <td>Unable to encrypt</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E104</td>\n        <td>Unable to sign</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E105</td>\n        <td>Unable to encrypt or sign</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E110</td>\n        <td>Invalid MTLS Cert</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E111</td>\n        <td>Invalid Token Error</td>\n        <td>401</td>\n      </tr>\n      <tr>\n        <td>E112</td>\n        <td>Forbidden</td>\n        <td>403</td>\n      </tr>\n      <tr>\n        <td>E200</td>\n        <td>Downstream System Error</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E201</td>\n        <td>Internal API Gateway Error</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E202</td>\n        <td>Timeout Error</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E300</td>\n        <td>Modify request as message is too large</td>\n        <td>413</td>\n      </tr>\n      <tr>\n        <td>E999</td>\n        <td>Unexpected error occurred</td>\n        <td>500</td>\n      </tr>\n    <tbody>\n  </table>\n"
+  },
+  "servers": [
+    {
+      "url": "https://test-api.sc.com/retail/{version}/",
+      "description": "Test Environment",
+      "variables": {
+        "version": {
+          "description": "The Open API endpoints are accessible via https only",
+          "enum": [
+            "v1"
+          ],
+          "default": "v1"
+        }
+      }
+    },
+    {
+      "url": "https://api.sc.com/retail/{version}/",
+      "description": "Production Environment",
+      "variables": {
+        "version": {
+          "description": "The Open API endpoints are accessible via https only",
+          "enum": [
+            "v1"
+          ],
+          "default": "v1"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "KYC",
+      "description": "KYC API Specifications",
+      "x-subcategory": "Retail Customer Onboarding"
+    }
+  ],
+  "paths": {
+    "/cdd/kyc": {
+      "post": {
+        "tags": [
+          "KYC"
+        ],
+        "description": "Performs KYC check for an individual based on Deduplication check and Name Screening, to ensure that the individual is not in the blacklist.",
+        "summary": "KYC for Dedupe and Name Screening",
+        "x-markets": "VN",
+        "parameters": [
+          {
+            "name": "Transaction-Id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request, for tracking purposes",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "description": "IP address which the request originated from, segregated by commas. \\<user ip>, \\<server ip> etc",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "example": "10.123.123.123, 10.123.45.67"
+          },
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "VN"
+              ]
+            },
+            "example": "VN"
+          },
+          {
+            "name": "X-Locale",
+            "in": "header",
+            "description": "Indicates the specific locale for which this operation is performed. Value should be a langauge code based on ISO-639 language code.",
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "vi-VN"
+              ]
+            },
+            "example": "vi-VN"
+          },
+          {
+            "name": "version",
+            "in": "header",
+            "description": "API Version to used",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "beta"
+              ]
+            },
+            "example": "beta"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/kyc-request"
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "$ref": "#/components/schemas/encrypted"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful enquire and registration.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/kyc-success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message parameters etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-bad-request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "encrypted": {
+        "type": "string",
+        "example": "eyJraWQiOiI0UTVZMDU1V1NHNFFLMTAxNDcxIiwiZW5jIjoiQTI1NkNCQy1IUzUxMiIsImFsZyI6IlJTQS1PQUVQLTI1NiJ9.kuq6D5pf_cSykPcukL2amWBIyvc6lm49wjuX440CWXvPSXzenwroxpNNfIs8NVuh15xQleXfv8tDwBaamepHQHF8K7xr8BkAoyFYRNLxUpkF4PCG1WbhcQrqVQHYpEXOmReqaiOtZcfHAfE67PxP_ajwnEWoSYyTlUuEM1eQZBRUVg5giOTZpYWjjpfF2nvFxJQY36q-8dHt2AWP2OpQuFcO_NnahC2k3n0X-WuuIUhRlXjvOYgv--KuLC49gvMvVEEqQ041eOTn6t3MLr5Nh48FmD4UxzSF3hePr-DUjK-bZltPW0RnMNCdXzbPGF7OjNm9EPQC6aYtCa-EvKDZmw.XxkayMQH5TT3t4W9zuJtDQ.5-hBIs6mKkSilQuLiofNPYVmdVRmFm0VdNt65qL40jtZG62RDvqUcxw5HeWRWUHt9TIg_GtrLAdVuvt2V0avgqRBeIOj84n5Nx_qphCN1846Dhv-73F5qculYBjdMSFdQoOwmcbIOJKtuF1klRJvIoDc2ebFtkb7YKmrcwDnlBueB-lIDn8G3UcowS9x9z1Cxq4UpkYJjRy-Ak4WuROrJvfHEUpvD7Q7jibIhstKS9oz4kxA5Vc5bzqlRmmjGRn0OiCUeDnUOEwZvCtSG-5WM5W71KI_bUHF9bGNd37-RlRnCsgt0i1ApiNwiI3kOVuHw0nt1bgY5XvXuf5VVjj1dc60yQLPl_VS7I17CgILzRLPS8uFQ8NPrJITGjmZEAvIR7dOxXa16PzRmJUKEE6ioxbKrdnsG1bZqugtx52GCk0gveXtwyH6zH-8h0t9QUdmwtZamZVkjEJlVuPU1SBrrwtHe1CTW9XNIVUMSuIBe_uvF0rcm4k5Jp98gy5ecsI3r81BJn30uLV3Hk4HGoHJ1Hrza9A6q0nEEqQ-XqfSXQEUBVuS8PmQRUIe409isnwdJIQHP3SehVt2nRufh9bDfQ.Yw3C1zME5UShNGZ7oa8eN-Cg3SeM0dKxRWObZwaHdWk",
+        "description": "Encrypted Message base on JWE standard"
+      },
+      "signed": {
+        "type": "string",
+        "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJhY2Nlc3MtdG9rZW4iOiIxYWFmN2Y0OC00NGRhLTQ5OWUtYmRmMi04OWQ2ZDlkYzM5NzcifQ.eZubyvKstz8lYmAVCfQnAUZ8k4IO6JU0tn8vvZNLWDdXKthA-K0UkQ6GnoURpruoFr4QD7Cy_8uRMBEigm1BSQ",
+        "description": "Signed Message base on JWS standard"
+      },
+      "kyc-request": {
+        "type": "object",
+        "properties": {
+          "tsp-user-id": {
+            "type": "string",
+            "description": "Partner's Unique reference number of customer",
+            "example": "86c1d522-efab-479c-9c4a-d51f1c3152d8"
+          },
+          "legal-name": {
+            "type": "string",
+            "description": "Legal Name as per legal document",
+            "example": "John William Smith"
+          },
+          "first-name": {
+            "type": "string",
+            "description": "First Name",
+            "example": "John"
+          },
+          "middle-name": {
+            "type": "string",
+            "description": "Middle Name",
+            "example": "William"
+          },
+          "last-name": {
+            "type": "string",
+            "description": "Last Name",
+            "example": "Smith"
+          },
+          "country-of-birth": {
+            "type": "string",
+            "description": "2 character ISO country code",
+            "example": "US"
+          },
+          "date-of-birth": {
+            "type": "string",
+            "description": "Date of Birth in YYYY-MM-DD",
+            "example": "1900-01-01"
+          },
+          "mobile-country-code": {
+            "type": "string",
+            "description": "Customer Mobile Number Country code",
+            "example": "84"
+          },
+          "mobile-number": {
+            "type": "string",
+            "description": "Customer Mobile Phone Number",
+            "example": "37689346"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Customer gender - Female or Male",
+            "enum": [
+              "F",
+              "M"
+            ]
+          },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "example": "test@gmail.com"
+          },
+          "applicant-identity": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "id-issuer": {
+                  "type": "string",
+                  "description": "2 character ISO country code",
+                  "example": "VN"
+                },
+                "id-type": {
+                  "type": "string",
+                  "description": "Document Type, such as Vietnam National ID",
+                  "enum": [
+                    "NATIONALID",
+                    "PASSPORT"
+                  ]
+                },
+                "id-value": {
+                  "type": "string",
+                  "description": "Document Number or National ID number",
+                  "example": "001055000112"
+                }
+              }
+            }
+          },
+          "addresses": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "city": {
+                  "type": "string",
+                  "description": "city name",
+                  "example": "London"
+                },
+                "country": {
+                  "type": "string",
+                  "description": "2 character ISO country code",
+                  "example": "US"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Address type indicator - Mailing or Residential",
+                  "enum": [
+                    "M",
+                    "R"
+                  ]
+                }
+              },
+              "example": {
+                "city": "London",
+                "country": "UK",
+                "type": "M"
+              }
+            }
+          },
+          "nationalities": {
+            "type": "array",
+            "description": "2 character ISO country code",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "US",
+              "HK"
+            ]
+          }
+        },
+        "required": [
+          "tsp-user-id",
+          "first-name",
+          "last-name",
+          "country-of-birth",
+          "date-of-birth",
+          "applicant-identity",
+          "mobile-country-code",
+          "mobile-number"
+        ]
+      },
+      "kyc-success": {
+        "type": "object",
+        "properties": {
+          "existing-customer": {
+            "description": "Denotes whether the applicant is an existing Bank customer",
+            "type": "string",
+            "enum": [
+              "Y",
+              "N"
+            ],
+            "example": "N"
+          },
+          "screening-result": {
+            "description": "Allow or Deny based on check against Blacklist",
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "OK",
+              "DENY"
+            ],
+            "example": "DENY"
+          }
+        }
+      },
+      "fail-bad-request": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the transaction-id from the request header"
+          },
+          "code": {
+            "type": "string",
+            "description": "Response Code. Refer to Response Code Table for list of responses."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Details of the error."
+          },
+          "source": {
+            "type": "string",
+            "description": "Optional; Shows the field name with the error"
+          }
+        },
+        "example": {
+          "id": "1234",
+          "code": "E001",
+          "detail": "Field is mandatory",
+          "source": "first-name"
+        }
+      },
+      "fail-certificate-mismatch": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Certificate used in API call did not match",
+            "example": "Certificate mismatch"
+          }
+        }
+      },
+      "fail-unexpected": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the transaction-id from the request header"
+          },
+          "code": {
+            "type": "string",
+            "description": "Response Code. Refer to Response Code Table for list of responses."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Details of the error.",
+            "example": "Unexpected error occurred"
+          }
+        },
+        "example": {
+          "id": "86c1d522-efab-479c-9c4a-d51f1c3152d8",
+          "code": "E005",
+          "detail": "Unexpected error occurred"
+        }
+      }
+    }
+  }
+}

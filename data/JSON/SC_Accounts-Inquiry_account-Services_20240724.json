@@ -1,0 +1,1580 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking - Accounts",
+        "description": "**API Banking - Accounts**\nProvides account information, balances and information about transactions. It allows to retrieve all available data for customer's authorised account services, such as basic account details, account balances for single or multiple accounts and transaction summary.",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company License",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.standardchartered.com/openapi"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Account Services",
+            "description": "Account Services APIs enable you to fetch the account details, balances and transaction details.",
+            "x-subcategory": "Accounts"
+        }
+    ],
+    "paths": {
+        "/accounts/v3/{accountId}/balances": {
+            "get": {
+                "tags": [
+                    "Account Services"
+                ],
+                "summary": "Single Account Balances by Account ID",
+                "description": "The Single Account Balances by Account ID API enables you to retrieve various balance information such as opening available balance, opening actual balance, opening booked balance, closing available balance, closing actual balance, and closing booked balance for the specified account number and/or currency, BIC, and date.",
+                "operationId": "getBalancesByAccount",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "The client account number for which the account balance is requested.",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "schema": {
+                            "maxLength": 34,
+                            "minLength": 10,
+                            "pattern": "^[a-zA-Z0-9_]*$",
+                            "type": "string"
+                        },
+                        "example": 22289000001
+                    },
+                    {
+                        "name": "currency",
+                        "in": "query",
+                        "description": "The ISO currency code of the account.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "maxLength": 3,
+                            "minLength": 2,
+                            "pattern": "^[a-zA-Z0-9_]*$",
+                            "type": "string"
+                        },
+                        "example": "GBP"
+                    },
+                    {
+                        "name": "swiftBic",
+                        "in": "query",
+                        "description": "Standard Chartered Bank's BIC, where the account is opened.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "maxLength": 11,
+                            "minLength": 8,
+                            "pattern": "^[a-zA-Z0-9_]*$",
+                            "type": "string"
+                        },
+                        "example": "SCBLGB2LXXX"
+                    },
+                    {
+                        "name": "businessDate",
+                        "in": "query",
+                        "description": "The date of the account balance to be retrieved. Balances can be queried up to 90 days in the past. If not provided, the current date will be used. If not provided or there is no balance information for the provided date, the balance of the latest date that has data will be fetched.<br> For instance, the provided date is 2024-05-30 but the latest available data is on 2024-05-18. Therefore, the balance information fetched will be for 2024-05-18.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "example": "2017-04-05T00:00:00.000Z"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SingleAccountBalance"
+                                },
+                                "example": "{\n  \"accountBalances\": [\n    {\n      \"accountId\": \"22289000001\",\n      \"swiftBic\": \"SCBLGB2LXXX\",\n      \"currency\": \"GBP\",\n      \"balances\": [\n        {\n          \"balanceAmount\": {\n            \"amount\": 1230.00,\n            \"currency\": \"GBP\"\n          },\n          \"creditDebitIndicator\": \"Credit\",\n          \"type\": \"OpeningAvailable\",\n          \"businessDate\": \"2017-04-05\"\n        },\n        {\n          \"balanceAmount\": {\n            \"amount\": 1230.00,\n            \"currency\": \"GBP\"\n          },\n          \"creditDebitIndicator\": \"Credit\",\n          \"type\": \"OpeningActual\",\n          \"businessDate\": \"2017-04-05\"\n        },\n        {\n          \"balanceAmount\": {\n            \"amount\": 1230.00,\n            \"currency\": \"GBP\"\n          },\n          \"creditDebitIndicator\": \"Credit\",\n          \"type\": \"OpeningBooked\",\n          \"businessDate\": \"2017-04-05\"\n        },\n        {\n          \"balanceAmount\": {\n            \"amount\": 1230.00,\n            \"currency\": \"GBP\"\n          },\n          \"creditDebitIndicator\": \"Credit\",\n          \"type\": \"ClosingAvailable\",\n          \"businessDate\": \"2017-04-05\"\n        },\n        {\n          \"balanceAmount\": {\n            \"amount\": 1230.00,\n            \"currency\": \"GBP\"\n          },\n          \"creditDebitIndicator\": \"Credit\",\n          \"type\": \"ClosingActual\",\n          \"businessDate\": \"2017-04-05\"\n        },\n        {\n          \"balanceAmount\": {\n            \"amount\": 1230.00,\n            \"currency\": \"GBP\"\n          },\n          \"creditDebitIndicator\": \"Credit\",\n          \"type\": \"ClosingBooked\",\n          \"businessDate\": \"2017-04-05\"\n        }\n      ]\n    }\n  ]\n}"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Invalid Account Number",
+                                    "errorCode": "AER-001"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized Request.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Unauthorized Request",
+                                    "errorCode": "AER-002"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Data access profile (DAP) check failure. Please use the valid accountId tagged to the respective groupId.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Account is not authorised",
+                                    "errorCode": "AER-003"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource Not found.",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates error on the webserver hosting the API.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Internal server error",
+                                    "errorCode": "AER-000"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Microservice dependency is down or undergoing maintenance. Try again later.",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,IN"
+            }
+        },
+        "/accounts/v3/balances": {
+            "get": {
+                "tags": [
+                    "Account Services"
+                ],
+                "summary": "Bulk Account Balances by Group ID",
+                "description": "The Bulk Account Balances by Group ID API enables you to retrieve various balance information such as opening available balance, opening actual balance, opening booked balance, closing available balance, closing actual balance, and closing booked balance for multiple account numbers under the specified group ID and/or date with pagination.",
+                "operationId": "getBalancesByGroup",
+                "parameters": [
+                    {
+                        "name": "businessDate",
+                        "in": "query",
+                        "description": "The date of the account balance to be retrieved. Balances can be queried up to 90 days in the past. If not provided, the current date will be used. If not provided or there is no balance information for the provided date, the balance of the latest date that has data will be fetched.<br> For instance, the provided date is 2024-05-30 but the latest available data is on 2024-05-18. Therefore, the balance information fetched will be for 2024-05-18.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "example": "2017-04-05T00:00:00.000Z"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to be returned. If this value is not provided, the default value used will be 1.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "minimum": 1,
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 1
+                        },
+                        "example": 2
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "The number of records to return per page. If this value is not provided, the default value used will be 100.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "maximum": 100,
+                            "minimum": 1,
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 100
+                        },
+                        "example": 10
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BulkAccountBalance"
+                                },
+                                "example": {
+                                    "accountBalances": [
+                                        {
+                                            "accountId": "0105365998",
+                                            "swiftBic": "SCBLSG22XXX",
+                                            "currency": "SGD",
+                                            "balances": [
+                                                {
+                                                    "balanceAmount": {
+                                                        "amount": 0,
+                                                        "currency": "SGD"
+                                                    },
+                                                    "creditDebitIndicator": "Credit",
+                                                    "type": "OpeningAvailable",
+                                                    "businessDate": "2024-04-30T00:00:00.000Z"
+                                                },
+                                                {
+                                                    "balanceAmount": {
+                                                        "amount": 0,
+                                                        "currency": "SGD"
+                                                    },
+                                                    "creditDebitIndicator": "Credit",
+                                                    "type": "OpeningActual",
+                                                    "businessDate": "2024-04-30T00:00:00.000Z"
+                                                },
+                                                {
+                                                    "balanceAmount": {
+                                                        "amount": 0,
+                                                        "currency": "SGD"
+                                                    },
+                                                    "creditDebitIndicator": "Credit",
+                                                    "type": "OpeningBooked",
+                                                    "businessDate": "2024-04-30T00:00:00.000Z"
+                                                },
+                                                {
+                                                    "balanceAmount": {
+                                                        "amount": 0,
+                                                        "currency": "SGD"
+                                                    },
+                                                    "creditDebitIndicator": "Credit",
+                                                    "type": "ClosingAvailable",
+                                                    "businessDate": "2024-04-30T00:00:00.000Z"
+                                                },
+                                                {
+                                                    "balanceAmount": {
+                                                        "amount": 0,
+                                                        "currency": "SGD"
+                                                    },
+                                                    "creditDebitIndicator": "Credit",
+                                                    "type": "ClosingActual",
+                                                    "businessDate": "2024-04-30T00:00:00.000Z"
+                                                },
+                                                {
+                                                    "balanceAmount": {
+                                                        "amount": 0,
+                                                        "currency": "SGD"
+                                                    },
+                                                    "creditDebitIndicator": "Credit",
+                                                    "type": "ClosingBooked",
+                                                    "businessDate": "2024-04-30T00:00:00.000Z"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "accountId": "0105366021",
+                                            "swiftBic": "SCBLSG22XXX",
+                                            "currency": "SGD",
+                                            "balances": [
+                                                {
+                                                    "balanceAmount": {
+                                                        "amount": 0,
+                                                        "currency": "SGD"
+                                                    },
+                                                    "creditDebitIndicator": "Credit",
+                                                    "type": "OpeningAvailable",
+                                                    "businessDate": "2024-04-30T00:00:00.000Z"
+                                                },
+                                                {
+                                                    "balanceAmount": {
+                                                        "amount": 0,
+                                                        "currency": "SGD"
+                                                    },
+                                                    "creditDebitIndicator": "Credit",
+                                                    "type": "OpeningActual",
+                                                    "businessDate": "2024-04-30T00:00:00.000Z"
+                                                },
+                                                {
+                                                    "balanceAmount": {
+                                                        "amount": 0,
+                                                        "currency": "SGD"
+                                                    },
+                                                    "creditDebitIndicator": "Credit",
+                                                    "type": "OpeningBooked",
+                                                    "businessDate": "2024-04-30T00:00:00.000Z"
+                                                },
+                                                {
+                                                    "balanceAmount": {
+                                                        "amount": 0,
+                                                        "currency": "SGD"
+                                                    },
+                                                    "creditDebitIndicator": "Credit",
+                                                    "type": "ClosingAvailable",
+                                                    "businessDate": "2024-04-30T00:00:00.000Z"
+                                                },
+                                                {
+                                                    "balanceAmount": {
+                                                        "amount": 0,
+                                                        "currency": "SGD"
+                                                    },
+                                                    "creditDebitIndicator": "Credit",
+                                                    "type": "ClosingActual",
+                                                    "businessDate": "2024-04-30T00:00:00.000Z"
+                                                },
+                                                {
+                                                    "balanceAmount": {
+                                                        "amount": 0,
+                                                        "currency": "SGD"
+                                                    },
+                                                    "creditDebitIndicator": "Credit",
+                                                    "type": "ClosingBooked",
+                                                    "businessDate": "2024-04-30T00:00:00.000Z"
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "metadata": {
+                                        "page": 7,
+                                        "size": 2,
+                                        "total": 230
+                                    },
+                                    "links": {
+                                        "self": "/openapi/accounts/v3/balances?page=7&size=2",
+                                        "next": "/openapi/accounts/v3/balances?page=8&size=2"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Invalid Account Number",
+                                    "errorCode": "AER-001"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized Request.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Unauthorized Request",
+                                    "errorCode": "AER-002"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Data access profile (DAP) check failure. Please use the valid accountId tagged to the respective groupId.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Account is not authorised",
+                                    "errorCode": "AER-003"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource Not found.",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates error on the webserver hosting the API.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Internal server error",
+                                    "errorCode": "AER-000"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Microservice dependency is down or undergoing maintenance. Try again later.",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,IN"
+            }
+        },
+        "/accounts/v3/{accountId}/transactions": {
+            "get": {
+                "tags": [
+                    "Account Services"
+                ],
+                "summary": "Single Account Transactions by Account ID",
+                "description": "The Single Account Transactions by Account ID API enables you to retrieve the account transaction details for the specified account number and/or currency, BIC, and start and end date with pagination.",
+                "operationId": "getTransactionsByAccount",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "The client account number for which the account transactions is requested.",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "schema": {
+                            "maxLength": 34,
+                            "minLength": 10,
+                            "pattern": "^[a-zA-Z0-9_]*$",
+                            "type": "string"
+                        },
+                        "example": 44700980949
+                    },
+                    {
+                        "name": "swiftBic",
+                        "in": "query",
+                        "description": "Standard Chartered Bank's BIC, where the account is opened.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "maxLength": 11,
+                            "minLength": 8,
+                            "pattern": "^[a-zA-Z0-9_]*$",
+                            "type": "string"
+                        },
+                        "example": "SCBLGB2LXXX"
+                    },
+                    {
+                        "name": "currency",
+                        "in": "query",
+                        "description": "The ISO currency code of the account.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "maxLength": 3,
+                            "minLength": 2,
+                            "pattern": "^[a-zA-Z0-9_]*$",
+                            "type": "string"
+                        },
+                        "example": "GBP"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to be returned. If this value is not provided, the default value used will be 1.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "minimum": 1,
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 1
+                        },
+                        "example": 2
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "The number of records to return per page. If this value is not provided, the default value used will be 100.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "maximum": 100,
+                            "minimum": 1,
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 100
+                        },
+                        "example": 10
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "The start date of the transactions to be retrieved.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "example": "2024-03-31T00:00:00.000Z"
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "The end date until which the transactions is to be retrieved.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "example": "2024-04-30T00:00:00.000Z"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AccountTransactions"
+                                },
+                                "example": {
+                                    "transactions": [
+                                        {
+                                            "accountId": "44700980949",
+                                            "accountName": "MISC C/A-S2B PVR ACCOUNT",
+                                            "swiftBic": "SCBLHKHHXXX",
+                                            "ccyCode": "HKD",
+                                            "transactionReference": "PACS0831MARTC03",
+                                            "creditDebitIndicator": "Credit",
+                                            "transactionAmount": {
+                                                "amount": 1.19,
+                                                "currency": "HKD"
+                                            },
+                                            "valueDateTime": "2024-04-02T08:30:36.000Z",
+                                            "transactionInformation": [
+                                                "TT|PACS0831MARTC03",
+                                                "SCBSINGAPORENEWSGDMASTERCREATION01|STANDARD CHARTE",
+                                                "HK5IT24033100002|LESSOFCHG0",
+                                                "UVTTESTING PRIORITY1",
+                                                "4470095951|SCBLSG22XXX",
+                                                "HKD|1.19|1.00|LESSOFCHG0"
+                                            ],
+                                            "transactionDescriptionShort": "HK5IT24033100002SCBSINGAPORENEWSGDMASTER",
+                                            "transactionDescription": "HK5IT24033100002SCBSINGAPORENEWSGDMASTER  TC5 ",
+                                            "payAmount": 1.19,
+                                            "payReference": "HK5IT24033100002",
+                                            "payCcy": "HKD",
+                                            "approvalSeqNo": "447009809490000002159",
+                                            "bookingDate": "2024-04-02T00:00:00.000Z",
+                                            "payee": {
+                                                "name": "YYY Acc Name",
+                                                "accountNumber": 77774026160,
+                                                "bank": "CITLSGKXXXX"
+                                            },
+                                            "bankTransactionCode": {
+                                                "code": "195",
+                                                "subCode": "TC5"
+                                            },
+                                            "balance": {
+                                                "balanceAmount": {
+                                                    "amount": 7.55,
+                                                    "currency": "HKD"
+                                                },
+                                                "creditDebitIndicator": "Credit",
+                                                "type": "ClosingAvailable"
+                                            },
+                                            "chargeAmount": {
+                                                "amount": 0,
+                                                "currency": "HKD"
+                                            },
+                                            "currencyExchange": {
+                                                "contractIdentification": "A979W4H"
+                                            }
+                                        }
+                                    ],
+                                    "metadata": {
+                                        "page": 3,
+                                        "size": 1,
+                                        "total": 126
+                                    },
+                                    "links": {
+                                        "self": "/openapi/accounts/v3/44700980949/transactions?startDate=2024-03-31&endDate=2024-04-30&page=3&size=1",
+                                        "next": "/openapi/accounts/v3/44700980949/transactions?page=4&size=1&startDate=2024-03-31&endDate=2024-04-30"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Invalid Account Number",
+                                    "errorCode": "AER-001"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized Request.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Unauthorized Request",
+                                    "errorCode": "AER-002"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Data access profile (DAP) check failure. Please use the valid accountId tagged to the respective groupId.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Account is not authorised",
+                                    "errorCode": "AER-003"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource Not found.",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates error on the webserver hosting the API.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Internal server error",
+                                    "errorCode": "AER-000"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Microservice dependency is down or undergoing maintenance. Try again later.",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,IN"
+            }
+        },
+        "/accounts/v3/{accountId}": {
+            "get": {
+                "tags": [
+                    "Account Services"
+                ],
+                "summary": "Single Account Details by Account ID",
+                "description": "The Single Account Details by Account ID API enables you to retrieve the account details for the specified account number and/or account status, account type, currency, and BIC.",
+                "operationId": "getAccountDetailsById",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "The client account number for which the account details is requested.",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "schema": {
+                            "maxLength": 34,
+                            "minLength": 10,
+                            "pattern": "^[a-zA-Z0-9_]*$",
+                            "type": "string"
+                        },
+                        "example": 22289000001
+                    },
+                    {
+                        "name": "swiftBic",
+                        "in": "query",
+                        "description": "Standard Chartered Bank's BIC, where the account is opened.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "maxLength": 11,
+                            "minLength": 8,
+                            "pattern": "^[a-zA-Z0-9_]*$",
+                            "type": "string"
+                        },
+                        "example": "SCBLGB2LXXX"
+                    },
+                    {
+                        "name": "currency",
+                        "in": "query",
+                        "description": "The ISO currency code of the account.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "maxLength": 3,
+                            "minLength": 2,
+                            "pattern": "^[a-zA-Z0-9_]*$",
+                            "type": "string"
+                        },
+                        "example": "GBP"
+                    },
+                    {
+                        "name": "accountType",
+                        "in": "query",
+                        "description": "The specific account type to be retrieved. <br> CA – Current Account <br> CD – Cash Deposit <br> SA – Savings Account",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/AccountType"
+                        },
+                        "example": "CA"
+                    },
+                    {
+                        "name": "accountStatus",
+                        "in": "query",
+                        "description": "The specific status of the account to be retrieved. <br> O – Open <br> A – Active <br> U – Unclaimed <br> C – Closed <br> D – Dormant",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/AccountStatus"
+                        },
+                        "example": "C"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AccountDetails"
+                                },
+                                "example": "{\n    \"accounts\": [\n        {\n            \"title\": \"MISC C/A-S2B PVR ACCOUNT\",\n            \"owner\": {\n                \"id\": \"750945\",\n                \"shortName\": \"STANDARD CHARTERED G\"\n            },\n            \"type\": \"CA\",\n            \"productCode\": \"DDA\",\n            \"productSubCode\": \"CM\",\n            \"swiftCode\": \"SCBLHKHHXXX\",\n            \"bank\": \"STANDARD CHARTERED BANK (HONG KONG) LIMITED\",\n            \"branch\": \"447\",\n            \"accountNumber\": \"44700980949\",\n            \"currency\": \"HKD\",\n            \"iban\": \"SG65SCBLSG123456789012\",\n            \"openingDate\": \"2023-03-12\",\n            \"closingDate\": \"2024-03-12\",\n            \"accountStatus\": \"O\",\n            \"address\": {\n              \"line1\": \"CN ROAD\",\n              \"line2\": \"Singapore\",\n              \"line3\": \"SG TWO FACTOR COUNTRY\"\n            }\n        }\n    ]\n}"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Invalid Account Number",
+                                    "errorCode": "AER-001"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized Request.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Unauthorized Request",
+                                    "errorCode": "AER-002"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Data access profile (DAP) check failure. Please use the valid accountId tagged to the respective groupId.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Account is not authorised",
+                                    "errorCode": "AER-003"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource Not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates error on the webserver hosting the API.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Internal server error",
+                                    "errorCode": "AER-000"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Microservice dependency is down or undergoing maintenance. Try again later.",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,IN"
+            }
+        },
+        "/accounts/v3": {
+            "get": {
+                "tags": [
+                    "Account Services"
+                ],
+                "summary": "Bulk Account Details By Group ID",
+                "description": "The Bulk Account Details by Group ID API enables you to retrieve the account details for the specified account numbers under the specified Group ID with pagination.",
+                "operationId": "getAccountDetailsByGroupId",
+                "parameters": [
+                    {
+                        "name": "accountType",
+                        "in": "query",
+                        "description": "The specific account type to be retrieved. <br> CA – Current Account <br> CD – Cash Deposit <br> SA – Savings Account",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "example": "CA",
+                        "schema": {
+                            "pattern": "^[CN|C|OA|FL|L|I|SA|N|S|FD|DP|CA|CD|D|LA]*$",
+                            "$ref": "#/components/schemas/AccountType"
+                        }
+                    },
+                    {
+                        "name": "accountStatus",
+                        "in": "query",
+                        "description": "The specific status of the account to be retrieved. <br> O – Open <br> A – Active <br> U – Unclaimed <br> C – Closed <br> D – Dormant",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "example": "C",
+                        "schema": {
+                            "pattern": "^[O|A|C|U|D]*$",
+                            "$ref": "#/components/schemas/AccountStatus"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The page number to be returned. If this value is not provided, the default value used will be 1.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "minimum": 1,
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 1
+                        },
+                        "example": 2
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "The number of records to return per page. If this value is not provided, the default value used will be 100.",
+                        "required": false,
+                        "style": "form",
+                        "explode": true,
+                        "schema": {
+                            "maximum": 100,
+                            "minimum": 1,
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 100
+                        },
+                        "example": 10
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BulkAccountDetails"
+                                },
+                                "example": "{\n  \"accounts\": [\n    {\n      \"title\": \"STANDARD CHARTERED BANK TB\",\n      \"owner\": {\n        \"id\": \"884071\",\n        \"shortName\": \"STANDARD CHARTERED G\"\n      },\n      \"type\": \"CA\",\n      \"productCode\": \"202\",\n      \"productSubCode\": \"XX\",\n      \"swiftCode\": \"SCBLSG22XXX\",\n      \"bank\": \"Standard Chartered Bank (Singapore) Limited\",\n      \"branch\": \"001\",\n      \"accountNumber\": \"0104644575\",\n      \"currency\": \"SGD\",\n      \"iban\": \"SG65SCBLSG123456789012\",\n      \"openingDate\": \"2023-07-24\",\n      \"closingDate\": \"2024-07-24\",\n      \"accountStatus\": \"O\",\n      \"address\": {\n        \"line1\": \"C/O STANDARD CHARTERED BANK,RETAIL\",\n        \"line2\": \"OPS,7 CHANGI BIZ PARK, L2-ZONE 1,ZI\",\n        \"line3\": \"SINGAPORE\"\n      }\n    },\n    {\n      \"title\": \"STANDARD CHARTERED BANK TB\",\n      \"owner\": {\n        \"id\": \"884071\",\n        \"shortName\": \"STANDARD CHARTERED G\"\n      },\n      \"type\": \"CA\",\n      \"productCode\": \"202\",\n      \"productSubCode\": \"XX\",\n      \"swiftCode\": \"SCBLSG22XXX\",\n      \"bank\": \"Standard Chartered Bank (Singapore) Limited\",\n      \"branch\": \"001\",\n      \"accountNumber\": \"0104644575\",\n      \"currency\": \"CNY\",\n      \"iban\": \"SG65SCBLSG123456789012\",\n      \"openingDate\": \"2023-07-24\",\n      \"closingDate\": \"2024-07-24\",\n      \"accountStatus\": \"O\",\n      \"address\": {\n        \"line1\": \"C/O STANDARD CHARTERED BANK,RETAIL\",\n        \"line2\": \"OPS,7 CHANGI BIZ PARK, L2-ZONE 1,ZI\",\n        \"line3\": \"P 486028,SINGAPORE/SINGAPORE\"\n      }\n    }\n  ],\n  \"metadata\": {\n    \"page\": 5,\n    \"size\": 2,\n    \"total\": 195\n  },\n  \"links\": {\n    \"self\": \"/openapi/accounts/v3?page=5&size=2\",\n    \"next\": \"/openapi/accounts/v3?page=6&size=2\"\n  }\n}"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Invalid Account Number",
+                                    "errorCode": "AER-001"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized Request.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Unauthorized Request",
+                                    "errorCode": "AER-002"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Data access profile (DAP) check failure. Please use the valid accountId tagged to the respective groupId.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Account is not authorised",
+                                    "errorCode": "AER-003"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource Not found.",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server.",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Internal server error",
+                                    "errorCode": "AER-000"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Microservice dependency is down or undergoing maintenance. Please try again later.",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,IN"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "SingleAccountBalance": {
+                "type": "object",
+                "properties": {
+                    "accountBalances": {
+                        "type": "array",
+                        "description": "The details of the account types balances in the account.",
+                        "items": {
+                            "$ref": "#/components/schemas/AccountBalance"
+                        }
+                    }
+                }
+            },
+            "Account": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "The account title/name",
+                        "example": "MISC C/A-S2B PVR ACCOUNT"
+                    },
+                    "owner": {
+                        "$ref": "#/components/schemas/Owner"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "The account type",
+                        "example": "CA"
+                    },
+                    "productCode": {
+                        "type": "string",
+                        "description": "The product code of the account",
+                        "example": "1"
+                    },
+                    "productSubCode": {
+                        "type": "string",
+                        "description": "The product subcode of the account",
+                        "example": "DD"
+                    },
+                    "swiftCode": {
+                        "maxLength": 11,
+                        "type": "string",
+                        "description": "Standard Chartered Bank's BIC, where the account is opened",
+                        "example": "SCBLGB2LXXX"
+                    },
+                    "bank": {
+                        "type": "string",
+                        "description": "The financial institution name of the account",
+                        "example": "Standard Chartered Bank"
+                    },
+                    "branch": {
+                        "type": "string",
+                        "description": "The financial institution branch code of the account",
+                        "example": "UKC113"
+                    },
+                    "accountNumber": {
+                        "type": "string",
+                        "description": "The account number",
+                        "example": "183512176"
+                    },
+                    "currency": {
+                        "maxLength": 3,
+                        "type": "string",
+                        "description": "The ISO currency code of the account",
+                        "example": "GBP"
+                    },
+                    "iban": {
+                        "type": "string",
+                        "description": "The IBAN of the account",
+                        "example": "GB15SCBL60914052104132"
+                    },
+                    "openingDate": {
+                        "type": "string",
+                        "description": "The account opening date",
+                        "format": "date",
+                        "example": "2022-03-01T00:00:00.000Z"
+                    },
+                    "closingDate": {
+                        "type": "string",
+                        "description": "The account closing date",
+                        "format": "date",
+                        "example": "2024-03-01T00:00:00.000Z"
+                    },
+                    "accountStatus": {
+                        "type": "string",
+                        "description": "The account status",
+                        "maxLength": 1,
+                        "example": "C"
+                    },
+                    "addressDetails": {
+                        "$ref": "#/components/schemas/Address"
+                    }
+                }
+            },
+            "Owner": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The unique ID of the account",
+                        "example": "78694102"
+                    },
+                    "shortName": {
+                        "type": "string",
+                        "description": "The company's name",
+                        "example": "Associated British foods"
+                    }
+                },
+                "description": "The company details"
+            },
+            "BalanceAmount": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "number",
+                        "description": "The balance amount. The whole amount has a maximum of 16 digits with up to two decimal points.",
+                        "maxLength": 16,
+                        "example": 7.55
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "The ISO currency code of the balance amount.",
+                        "maxLength": 3,
+                        "example": "HKD"
+                    }
+                },
+                "description": "The details of the balance amount and currency."
+            },
+            "Address": {
+                "type": "object",
+                "properties": {
+                    "line1": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Line 1 of the address",
+                        "example": "Associated British foods LTD"
+                    },
+                    "line2": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Line 2 of the address",
+                        "example": "ICE CHECKLEY,50 BERKELY STREET"
+                    },
+                    "line3": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Line 3 of the address",
+                        "example": "ICE CHECKLEY,50 BERKELY STREET"
+                    }
+                },
+                "description": "The address details"
+            },
+            "Metadata": {
+                "type": "object",
+                "properties": {
+                    "page": {
+                        "maxLength": 3,
+                        "type": "integer",
+                        "description": "The page number to be returned.If this value is not provided, the default value used will be 1.",
+                        "format": "int32",
+                        "example": 2
+                    },
+                    "size": {
+                        "maxLength": 3,
+                        "type": "integer",
+                        "description": "The number of records to return per page. If this value is not provided, the default value used will be 100.",
+                        "format": "int32",
+                        "example": 10
+                    },
+                    "total": {
+                        "type": "integer",
+                        "description": "The total number of records available.",
+                        "format": "int32",
+                        "example": 180
+                    }
+                },
+                "description": "The pagination details of the returned results."
+            },
+            "CreditDebitIndicator": {
+                "maxLength": 10,
+                "type": "string",
+                "description": "Indicates whether the specified balance is positive (credit) or negative (debit). Zero balance is considered as positive.",
+                "example": "CREDIT",
+                "enum": [
+                    "Credit",
+                    "Debit"
+                ],
+                "x-enum-varnames": [
+                    "CREDIT",
+                    "DEBIT"
+                ]
+            },
+            "AccountTransaction": {
+                "type": "object",
+                "properties": {
+                    "accountId": {
+                        "maxLength": 34,
+                        "type": "string",
+                        "description": "The Account Number.",
+                        "example": "44700980949"
+                    },
+                    "accountName": {
+                        "maxLength": 35,
+                        "type": "string",
+                        "description": "The Account Name.",
+                        "example": "MISC C/A-S2B PVR ACCOUNT"
+                    },
+                    "swiftBic": {
+                        "maxLength": 11,
+                        "type": "string",
+                        "description": "Standard Chartered Bank's BIC, where the account is opened.Standard Chartered Bank's BIC, where the account is opened.",
+                        "example": "SCBLHKHHXXX"
+                    },
+                    "ccyCode": {
+                        "maxLength": 3,
+                        "type": "string",
+                        "description": "The ISO currency code of the account.",
+                        "example": "HKD"
+                    },
+                    "transactionReference": {
+                        "maxLength": 17,
+                        "type": "string",
+                        "description": "The customer reference provided by the client during the transaction.",
+                        "example": "PACS0831MARTC03"
+                    },
+                    "creditDebitIndicator": {
+                        "$ref": "#/components/schemas/CreditDebitIndicator"
+                    },
+                    "transactionAmount": {
+                        "$ref": "#/components/schemas/TransactionAmount"
+                    },
+                    "valueDateTime": {
+                        "type": "string",
+                        "description": "The date when the transaction happened.",
+                        "format": "date-time",
+                        "example": "2024-04-02T08:30:36.000Z"
+                    },
+                    "transactionInformation": {
+                        "maxLength": 200,
+                        "type": "array",
+                        "description": "The narrations (line 1 to 6) pertaining to the transaction.",
+                        "example": [
+                            "TT|PACS0831MARTC03",
+                            "SCBSINGAPORENEWSGDMASTERCREATION01|STANDARD CHARTE",
+                            "HK5IT24033100002|LESSOFCHG0",
+                            "UVTTESTING PRIORITY1",
+                            "4470095951|SCBLSG22XXX",
+                            "HKD|1.19|1.00|LESSOFCHG0"
+                        ],
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "transactionDescriptionShort": {
+                        "maxLength": 44,
+                        "type": "string",
+                        "description": "The short transaction description.",
+                        "example": "HK5IT24033100002SCBSINGAPORENEWSGDMASTER"
+                    },
+                    "transactionDescription": {
+                        "maxLength": 44,
+                        "type": "string",
+                        "description": "The long transaction description.",
+                        "example": "HK5IT24033100002SCBSINGAPORENEWSGDMASTER  TC5"
+                    },
+                    "payAmount": {
+                        "maxLength": 16,
+                        "type": "number",
+                        "description": "The payment amount. The whole amount has a maximum of 16 digits with up to two decimal points.",
+                        "format": "double",
+                        "example": 1.19
+                    },
+                    "payReference": {
+                        "maxLength": 17,
+                        "type": "string",
+                        "description": "The payment reference.",
+                        "example": "HK5IT24033100002"
+                    },
+                    "payCcy": {
+                        "maxLength": 3,
+                        "type": "string",
+                        "description": "The ISO currency code of the payment.",
+                        "example": "HKD"
+                    },
+                    "approvalSeqNo": {
+                        "maxLength": 40,
+                        "type": "string",
+                        "description": "The approval sequence number.",
+                        "example": "447009809490000002159"
+                    },
+                    "bookingDate": {
+                        "type": "string",
+                        "description": "The transaction date.",
+                        "format": "date",
+                        "example": "2024-04-02T00:00:00.000Z"
+                    },
+                    "payee": {
+                        "$ref": "#/components/schemas/PayeeDetails"
+                    },
+                    "bankTransactionCode": {
+                        "$ref": "#/components/schemas/BankTransactionCode"
+                    },
+                    "balance": {
+                        "$ref": "#/components/schemas/Balance"
+                    },
+                    "chargeAmount": {
+                        "$ref": "#/components/schemas/ChargeAmount"
+                    },
+                    "currencyExchange": {
+                        "$ref": "#/components/schemas/CurrencyExchange"
+                    }
+                }
+            },
+            "CurrencyExchange": {
+                "type": "object",
+                "properties": {
+                    "contractIdentification": {
+                        "type": "string",
+                        "description": "The unique identification to identify the foreign exchange contract.",
+                        "example": "FX001"
+                    },
+                    "exchangeRate": {
+                        "maxLength": 15,
+                        "type": "string",
+                        "description": "The exchange rate.",
+                        "example": "1"
+                    }
+                },
+                "description": "The currency exchange information."
+            },
+            "ChargeAmount": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "number",
+                        "description": "The charge amount. The whole amount has a maximum of 16 digits with up to two decimal points.",
+                        "format": "double",
+                        "example": 0
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "The ISO currency code of the charge amount.",
+                        "example": "HKD"
+                    }
+                },
+                "description": "The details of the charge amount and currency."
+            },
+            "AccountType": {
+                "type": "string",
+                "enum": [
+                    "CN",
+                    "C",
+                    "OA",
+                    "FL",
+                    "L",
+                    "I",
+                    "SA",
+                    "N",
+                    "S",
+                    "FD",
+                    "DP",
+                    "CA",
+                    "CD",
+                    "D",
+                    "LA"
+                ]
+            },
+            "BulkAccountDetails": {
+                "type": "object",
+                "properties": {
+                    "accounts": {
+                        "type": "array",
+                        "description": "The details of the accounts.",
+                        "items": {
+                            "$ref": "#/components/schemas/Account"
+                        }
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/Metadata"
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/Links"
+                    }
+                }
+            },
+            "TransactionAmount": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "number",
+                        "description": "The debit amount or credit amount based on transactions.creditDebitIndicator.",
+                        "maxLength": 16,
+                        "format": "double",
+                        "example": 1.19
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "The ISO currency code of the balance amount.",
+                        "maxLength": 3,
+                        "example": "HKD"
+                    }
+                },
+                "description": "The details of the transaction amount and currency."
+            },
+            "AccountStatus": {
+                "type": "string",
+                "enum": [
+                    "O",
+                    "A",
+                    "U",
+                    "C",
+                    "D"
+                ],
+                "x-enum-descriptions": [
+                    "Open",
+                    "Active",
+                    "Unclaimed",
+                    "Closed",
+                    "Dormant"
+                ]
+            },
+            "PayeeDetails": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The beneficiary name.",
+                        "example": "YYY Acc Name"
+                    },
+                    "accountNumber": {
+                        "type": "string",
+                        "description": "The Payee beneficiary account number.",
+                        "example": "77774026160"
+                    },
+                    "bank": {
+                        "type": "string",
+                        "description": "The beneficiary Bank code.",
+                        "example": "CITLSGKXXXX"
+                    }
+                },
+                "description": "The details of the beneficiary."
+            },
+            "BankTransactionCode": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "description": "The BAI code.",
+                        "example": "195"
+                    },
+                    "subCode": {
+                        "type": "string",
+                        "description": "The transaction code.",
+                        "example": "TC5"
+                    }
+                },
+                "description": "The bank transaction codes."
+            },
+            "AccountBalance": {
+                "type": "object",
+                "properties": {
+                    "accountId": {
+                        "type": "string",
+                        "description": "The account number",
+                        "maxLength": 34,
+                        "example": "22289000001"
+                    },
+                    "swiftBic": {
+                        "type": "string",
+                        "description": "Standard Chartered Bank's BIC",
+                        "maxLength": 11,
+                        "example": "SCBLGB2LXXX"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "The ISO currency code of the account",
+                        "maxLength": 3,
+                        "example": "GBP"
+                    },
+                    "balances": {
+                        "type": "array",
+                        "items": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/Balance"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "businessDate": {
+                                            "type": "string",
+                                            "description": "The date of the balance to be retrieved.",
+                                            "maxLength": 20,
+                                            "format": "date",
+                                            "example": "2017-04-05T00:00:00.000Z"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "BulkAccountBalance": {
+                "type": "object",
+                "properties": {
+                    "accountBalances": {
+                        "type": "array",
+                        "description": "The details of the account types and balances in the account.",
+                        "items": {
+                            "$ref": "#/components/schemas/AccountBalance"
+                        }
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/Metadata"
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/Links"
+                    }
+                }
+            },
+            "AccountTransactions": {
+                "type": "object",
+                "properties": {
+                    "transactions": {
+                        "type": "array",
+                        "description": "The details of the transactions.",
+                        "items": {
+                            "$ref": "#/components/schemas/AccountTransaction"
+                        }
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/Metadata"
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/Links"
+                    }
+                }
+            },
+            "Links": {
+                "type": "object",
+                "properties": {
+                    "self": {
+                        "type": "string",
+                        "description": "The URL of the page returned.",
+                        "example": "/baseUrl/endpoint/?queryParam1=value1&queryParam2=value2"
+                    },
+                    "next": {
+                        "type": "string",
+                        "description": "The URL of the page after the returned page.",
+                        "example": "/baseUrl/endpoint/?queryParam1=value1&queryParam2=value2"
+                    }
+                },
+                "description": "The URLs of the pagination results."
+            },
+            "BalanceType": {
+                "type": "string",
+                "description": "The balance type based on opening, current, and closing balance. <table>\n  <tr>\n    <th>Value</th>\n    <th>Description</th>\n  </tr>\n  <tr>\n    <td>OpeningAvailable</td>\n    <td>Opening available balance including overdraft (OD) limit</td>\n  </tr>\n  <tr>\n    <td>OpeningActual</td>\n    <td>Opening balance excluding OD limit</td>\n  </tr>\n  <tr>\n    <td>OpeningBooked</td>\n    <td>Opening ledger balance</td>\n  </tr>\n  <tr>\n    <td>ClosingAvailable</td>\n    <td>Closing available balance including OD limit</td>\n  </tr>\n  <tr>\n    <td>ClosingActual</td>\n    <td>Closing balance excluding OD limit</td>\n  </tr> \n  <tr>\n    <td>ClosingBooked</td>\n    <td>Closing ledger balance</td>\n  </tr>\n</table>",
+                "maxLength": 30,
+                "example": "ClosingAvailable",
+                "enum": [
+                    "OpeningAvailable",
+                    "OpeningActual",
+                    "OpeningBooked",
+                    "ClosingAvailable",
+                    "ClosingActual",
+                    "ClosingBooked"
+                ],
+                "x-enum-varnames": [
+                    "OPENING_AVAILABLE",
+                    "OPENING_ACTUAL",
+                    "OPENING_BOOKED",
+                    "CLOSING_AVAILABLE",
+                    "CLOSING_ACTUAL",
+                    "CLOSING_BOOKED"
+                ]
+            },
+            "Balance": {
+                "type": "object",
+                "description": "The details of the account types and balances in the account.",
+                "properties": {
+                    "balanceAmount": {
+                        "$ref": "#/components/schemas/BalanceAmount"
+                    },
+                    "creditDebitIndicator": {
+                        "$ref": "#/components/schemas/CreditDebitIndicator"
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/BalanceType"
+                    }
+                }
+            },
+            "AccountDetails": {
+                "type": "object",
+                "properties": {
+                    "accounts": {
+                        "type": "array",
+                        "description": "The details of the accounts.",
+                        "items": {
+                            "$ref": "#/components/schemas/Account"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

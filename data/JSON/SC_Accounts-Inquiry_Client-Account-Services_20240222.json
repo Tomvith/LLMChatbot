@@ -1,0 +1,1342 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "eCAS account maintenance APIs",
+    "description": "**eCAS account maintenance APIs** The Client Account Services(CAS) Account Maintenance APIs support instructions to create, amend or delete sub-accounts. Users may initiate APIs to create new sub-accounts, make amendments to existing sub-accounts (this includes name and address) as well as request to delete an existing sub-accounts. Status of these requests can be tracked via the sub-account maintenance status API.",
+    "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+    "contact": {
+      "name": "API Banking Support Team",
+      "url": "https://www.sc.com",
+      "email": "api.query@sc.com"
+    },
+    "license": {
+      "name": "Company Licence",
+      "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.standardchartered.com/openapi"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Client Account Services (CAS)",
+      "description": "Account and Transactions APIs enable registered third parties to securely retrieve Standard Chartered's customers account information and transaction data.",
+      "x-subcategory": "Accounts Inquiry"
+    }
+  ],
+  "paths": {    
+    "/accounts/v2/ecas/subaccount/create": {
+      "post": {
+        "tags": ["Client Account Services (CAS)"],
+        "summary": "Client Account Service – Create Sub Account",
+        "description": "The Client Account Service - Create Sub Account API exposes the ability to create a single eCAS Sub Account under a Master Account. Upon successful validation of required parameters it returns an acknowledgement as a representation that a Sub Account creation request was received successfully. To check the status of a specific Sub Account, you are required to use the Client Account Service - Sub Account Status Enquiry API and/or subscribe to notifications via webhook, which provides the current status of the Sub Account request.",
+        "operationId": "create-ecas-subaccount",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenApiAcMgmtRequestCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success with data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenApiSubAccountResponse"
+                },
+                "example": "{\n  \"statusCode\": \"23\",\n  \"statusDesc\": \"Completed\",\n  \"timestamp\": \"2022-06-06T06:41:09.500Z\",\n  \"additionalInformation\": \"Account Creation Successful\",\n  \"clientReferenceId\": \"ClntRef12\",\n  \"subAccount\": {\n      \"accountId\": \"44707859126\"\n    },\n  \"masterAccount\": {\n    \"accountId\": \"44707859126\"\n  }\n}"
+              }
+            }
+          },
+          "201": {
+            "description": "Success. Data created"
+          },
+          "202": {
+            "description": "Success. Data accepted"
+          },
+          "204": {
+            "description": "Success. No data returned"
+          },
+          "400": {
+            "description": "Invalid request. Missing or invalid data"
+          },
+          "401": {
+            "description": "Access token has expired. Please refresh the token"
+          },
+          "429": {
+            "description": "Default return code for health status, indicating a warning"
+          },
+          "500": {
+            "description": "Internal server error. This indicates error on the webserver hosting the API"
+          },
+          "503": {
+            "description": "Microservice dependency is down or undergoing maintenance. Try again later"
+          }
+        },
+        "x-markets": "HK,SG"
+      }
+    },
+    "/accounts/v2/ecas/subaccount/modify": {
+      "post": {
+        "tags": ["Client Account Services (CAS)"],
+        "summary": "Client Account Service – Modify Sub Account",
+        "description": "The Client Account Service - Modify Sub Account API exposes the ability to modify a single eCAS Sub Account under a Master Account. Upon successful validation of required parameters it returns an acknowledgement as a representation that a Sub Account modify request was received successfully. To check the status of a specific Sub Account, you are required to use the Client Account Service - Sub Account  Status Enquiry API and/or subscribe to notifications via webhook, which provides the current status of the Sub Account request.",
+        "operationId": "modify-ecas-subaccount",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenApiAcMgmtRequestModify"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success with data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenApiSubAccountResponse"
+                },
+                "example": "{\n  \"statusCode\": \"23\",\n  \"statusDesc\": \"Completed\",\n  \"timestamp\": \"2022-06-06T06:41:09.500Z\",\n  \"additionalInformation\": \"Successful\",\n  \"clientReferenceId\": \"ClntRef12\",\n  \"subAccount\": {\n      \"accountId\": \"44707859126\"\n    },\n  \"masterAccount\": {\n    \"accountId\": \"44707859126\"\n  }\n}"
+              }
+            }
+          },
+          "201": {
+            "description": "Success. Data created"
+          },
+          "202": {
+            "description": "Success. Data accepted"
+          },
+          "204": {
+            "description": "Success. No data returned"
+          },
+          "400": {
+            "description": "Invalid request. Missing or invalid data"
+          },
+          "401": {
+            "description": "Access token has expired. Please refresh the token"
+          },
+          "429": {
+            "description": "Default return code for health status, indicating a warning"
+          },
+          "500": {
+            "description": "Internal server error. This indicates error on the webserver hosting the API"
+          },
+          "503": {
+            "description": "Microservice dependency is down or undergoing maintenance. Try again later"
+          }
+        },
+        "x-markets": "HK,SG"
+      }
+    },
+    "/accounts/v2/ecas/subaccount/delete": {
+      "post": {
+        "tags": ["Client Account Services (CAS)"],
+        "summary": "Client Account Service – Delete Sub Account",
+        "description": "The Client Account Service - Delete Sub Account API exposes the ability to delete existing single eCAS Sub Account under a Master Account. Upon successful validation of required parameters it returns an acknowledgement as a representation that a Sub Account deletion request was received successfully. After deletion, this Sub Account record will not be available for payment initiation. To check the status of a specific Sub Account, you are required to use the Client Account Service - Sub Account Status Enquiry API and/or subscribe to notifications via webhook, which provides the current status of the Sub Account request.",
+        "operationId": "delete-ecas-subaccount",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenApiAcMgmtRequestDelete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success with data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenApiSubAccountResponse"
+                },
+                "example": "{\n  \"statusCode\": \"9\",\n  \"statusDesc\": \"Completed\",\n  \"timestamp\": \"2022-06-06T06:41:09.500Z\",\n  \"additionalInformation\": \"Closed Account Sucessful\",\n  \"clientReferenceId\": \"ClntRef12\",\n  \"subAccount\": {\n      \"accountId\": \"44707859126\"\n    },\n  \"masterAccount\": {\n    \"accountId\": \"44707859126\"\n  }\n}"
+              }
+            }
+          },
+          "201": {
+            "description": "Success. Data created"
+          },
+          "202": {
+            "description": "Success. Data accepted"
+          },
+          "204": {
+            "description": "Success. No data returned"
+          },
+          "400": {
+            "description": "Invalid request. Missing or invalid data"
+          },
+          "401": {
+            "description": "Access token has expired. Please refresh the token"
+          },
+          "429": {
+            "description": "Default return code for health status, indicating a warning"
+          },
+          "500": {
+            "description": "Internal server error. This indicates error on the webserver hosting the API"
+          },
+          "503": {
+            "description": "Microservice dependency is down or undergoing maintenance. Try again later"
+          }
+        },
+        "x-markets": "HK,SG"
+      }
+    },
+    "/accounts/v2/ecas/subaccount/statusEnquiry/{clientReferenceId}": {
+      "get": {
+        "tags": ["Client Account Services (CAS)"],
+        "summary": "Client Account Service – Sub Account Status Enquiry",
+        "description": "The Client Account Service – Sub Account Status Enquiry provides the ability to retrieve the Sub Account status for a specific Client Reference ID. The Sub Account status returned will be the status at that point in time and the timestamp within the message will indicate the effective time of the status.To determine if a Sub Account request has completed processing you may poll the API repeatedly with negligible performance impact. Alternatively, you may use the Webhook capability to receive push notifications instead of polling",
+        "operationId": "statusenquiry-ecas-subaccount",
+        "parameters": [
+          {
+            "name": "clientReferenceId",
+            "in": "path",
+            "description": "Client Reference ID of the Sub Account request",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success with data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpenApiSubAccountResponse"
+                },
+                "example": "{\n  \"statusCode\": \"23\",\n  \"statusDesc\": \"Completed\",\n  \"timestamp\": \"2022-06-06T06:41:09.500Z\",\n  \"additionalInformation\": \"Account Creation Successful\",\n  \"clientReferenceId\": \"ClntRef12\",\n  \"subAccount\": {\n      \"accountId\": \"44707859126\"\n    },\n  \"masterAccount\": {\n    \"accountId\": \"44707859126\"\n  }\n}"
+              }
+            }
+          },
+          "201": {
+            "description": "Success. Data created"
+          },
+          "202": {
+            "description": "Success. Data accepted"
+          },
+          "204": {
+            "description": "Success. No data returned"
+          },
+          "400": {
+            "description": "Invalid request. Missing or invalid data"
+          },
+          "401": {
+            "description": "Access token has expired. Please refresh the token"
+          },
+          "429": {
+            "description": "Default return code for health status, indicating a warning"
+          },
+          "500": {
+            "description": "Internal server error. This indicates error on the webserver hosting the API"
+          },
+          "503": {
+            "description": "Microservice dependency is down or undergoing maintenance. Try again later"
+          }
+        },
+        "x-markets": "HK,SG"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccountId": {
+        "required": ["accountId", "bankCode", "currencyCode"],
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Account Number",
+            "example": "22201111594"
+          },
+          "currencyCode": {
+            "type": "array",
+            "description": "Account Currency",
+            "example": "INR",
+            "items": {
+              "$ref": "#/components/schemas/CurrencyCode"
+            }
+          },
+          "bankCode": {
+            "type": "string",
+            "description": "Account Bank BIC",
+            "example": "SCBLINBBXXX"
+          }
+        }
+      },
+      "MasterAccount": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "maxLength": 34,
+            "type": "string",
+            "description": "Master Account Number of the sub-account",
+            "example": "34546567"
+          }
+        }
+      },
+      "OpenApiFundConfirmationRequest": {
+        "required": ["accountId", "amount", "consentId", "reference"],
+        "type": "object",
+        "properties": {
+          "consentId": {
+            "type": "string",
+            "description": "Consent ID"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account Number"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Reference"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Amount"
+          }
+        }
+      },
+      "OpenApiAcMgmtRequestModify": {
+        "required": ["clientAccountServices", "header"],
+        "type": "object",
+        "properties": {
+          "header": {
+            "$ref": "#/components/schemas/OpenApiAcMgmtHeader"
+          },
+          "clientAccountServices": {
+            "$ref": "#/components/schemas/OpenApiAccountServicesModify"
+          }
+        }
+      },
+      "OpenApiSubAccountCreate": {
+        "required": [
+          "companyIndicator",
+          "customerReference",
+          "masterRebateFlag",
+          "masterTargetBalanceFlag",
+          "masterWhtFlag"
+        ],
+        "type": "object",
+        "properties": {
+          "companyIndicator": {
+            "maxLength": 1,
+            "pattern": "^[A-Z]{1}$",
+            "type": "string",
+            "description": "Company Indicator <table><tr><th>Possible Values</th></tr> <tr><td>Y</td><td>Sub Account Holder is a business unit</td></tr> <tr><td>N</td><td>Sub Account Holder is an individual</td></tr></table>",
+            "example": "Y"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/OpenApiContact"
+          },
+          "customerReference": {
+            "maxLength": 35,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Customer Reference",
+            "example": "CUSTOMER REFERENCE"
+          },
+          "attentionParty": {
+            "maxLength": 35,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Attention Party",
+            "example": "ABCDEF"
+          },
+          "relationshipId": {
+            "maxLength": 16,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Relationship ID",
+            "example": "ABC1234"
+          },
+          "postalAddress": {
+            "$ref": "#/components/schemas/OpenApiPostalAddress"
+          },
+          "masterRebateFlag": {
+            "maxLength": 1,
+            "pattern": "^[A-Z]{1}$",
+            "type": "string",
+            "description": "Master Rebate Type Indicator for the Sub Account <table><tr><th>Possible Values:</th></tr> <tr><td>Y</td><td>Master Rebate Type will be the Rebate Type for Sub Account</td></tr> <tr><td>N</td><td>The updated Rebate Type entered will be the Rebate Type for the Sub Account</td></tr> <tr><td>D</td><td>Sub Account deletion</td></tr></table>",
+            "example": "Y"
+          },
+          "rebateType": {
+            "maxLength": 1,
+            "pattern": "^[A-Z]{1}$",
+            "type": "string",
+            "description": "Rebate Type for the Sub Account <table><tr><th>Possible Values:</th></tr> <tr><td>P</td><td>Prime Rate</td></tr> <tr><td>F</td><td>Fixed Rate</td></tr> <tr><td>N</td><td>No Interest</td></tr></table>",
+            "example": "P"
+          },
+          "spreadOrFixedRate": {
+            "maxLength": 20,
+            "pattern": "^[ 0-9 ]\\d{0,15}(\\.\\d{1,3})?%?$",
+            "type": "string",
+            "description": "Spread in % if Rebate Type is Prime Rate (P) or Fixed Rate",
+            "example": "1111.1"
+          },
+          "customerAccountManager": {
+            "maxLength": 35,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Customer Account Manager",
+            "example": "MANAGER"
+          },
+          "masterTargetBalanceFlag": {
+            "maxLength": 1,
+            "pattern": "^[A-Z]{1}$",
+            "type": "string",
+            "description": "Master Target Balance Indicator for Sub Account <table><tr><th>Possible Values:</th></tr> <tr><td>Y</td><td>Master Target Balance will be the Target Balance for the Sub Account</td></tr> <tr><td>N</td><td>The updated Target Balance entered will be the Target Balance for the Sub Account</td></tr> </table>",
+            "example": "Y"
+          },
+          "targetBalance": {
+            "maxLength": 20,
+            "pattern": "^[ 0-9 ]\\d{0,15}(\\.\\d{1,3})?%?$",
+            "type": "string",
+            "description": "Target Balance of Sub Account",
+            "example": "2324.2"
+          },
+          "masterWhtFlag": {
+            "maxLength": 1,
+            "pattern": "^[A-Z]{1}$",
+            "type": "string",
+            "description": "Master WHT Indicator for Sub Account <table><tr><th>Possible Values:</th></tr> <tr><td>Y</td><td>Master WHT rate will be the WHT Rate for the Sub Account</td></tr> <tr><td>N</td><td>The updated WHT Rate entered will be the WHT Rate for the Sub Account</td></tr> </table>",
+            "example": "Y"
+          },
+          "whtRate": {
+            "maxLength": 20,
+            "pattern": "^[ 0-9 ]\\d{0,10}(\\.\\d{1,3})?%?$",
+            "type": "string",
+            "description": "WHT Rate",
+            "example": "1223.5"
+          }
+        }
+      },
+      "CurrencyCode": {
+        "type": "object",
+        "properties": {
+          "isoCode": {
+            "type": "string",
+            "description": "ISO Code",
+            "example": "EUR"
+          }
+        }
+      },
+      "OpenApiBeneficiary": {
+        "type": "object",
+        "properties": {
+          "payeename": {
+            "type": "string",
+            "description": "Name of the Payee/Beneficiary",
+            "example": "ABC Limited"
+          },
+          "payeeacctNum": {
+            "type": "string",
+            "description": "Account Number of the Payee/Beneficiary",
+            "example": "01234567"
+          },
+          "payeebankCode": {
+            "type": "string",
+            "description": "Payee/Beneficiary Bank Code",
+            "example": "SGBCLSG2XXX"
+          },
+          "payeebankName": {
+            "type": "string",
+            "description": "Payee/Beneficiary Bank Name",
+            "example": "Standard Chartered Limited"
+          },
+          "payeebankCountry": {
+            "type": "string",
+            "description": "Payee/Beneficiary Bank Country",
+            "example": "GB"
+          }
+        }
+      },
+      "OpenApiBeneficiariesResponse": {
+        "type": "object",
+        "properties": {
+          "transactionSuccess": {
+            "type": "boolean",
+            "description": "Request Status - True or False"
+          },
+          "beneficiaryList": {
+            "type": "array",
+            "description": "Beneficiary Details",
+            "items": {
+              "$ref": "#/components/schemas/OpenApiBeneficiary"
+            }
+          }
+        }
+      },
+      "TransactionIdentifier": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Transaction Identifier Type",
+            "example": "BAI",
+            "enum": ["BAI", "SWIFT", "Other"]
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Transaction Identifier",
+            "example": "1111111111111111"
+          }
+        }
+      },
+      "OpenApiAccounts": {
+        "type": "object",
+        "properties": {
+          "accounts": {
+            "type": "array",
+            "description": "Accounts Details",
+            "items": {
+              "$ref": "#/components/schemas/OpenApiAccount"
+            }
+          }
+        }
+      },
+      "OpenApiAccountStatus": {
+        "type": "object",
+        "properties": {
+          "groupId": {
+            "type": "string",
+            "description": "Internal SCB Identifier",
+            "example": "INFXFFF"
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "Account Number"
+          },
+          "countryOfAccount": {
+            "type": "string",
+            "description": "Country of account"
+          },
+          "currencyOfAccount": {
+            "type": "string",
+            "description": "Currency of account"
+          },
+          "legalEntity": {
+            "type": "string",
+            "description": "Legal Entity"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of account"
+          }
+        }
+      },
+      "OpenApiSubAccountDelete": {
+        "required": [
+          "accountId",
+          "customerReference",
+          "masterTargetBalanceFlag",
+          "reasonForClosure"
+        ],
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "maxLength": 34,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Unique Account Number for Sub Account  Holder",
+            "example": "11111111111111"
+          },
+          "customerReference": {
+            "maxLength": 35,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Customer Reference",
+            "example": "CUSTOMER REFERENCE"
+          },
+          "masterTargetBalanceFlag": {
+            "maxLength": 1,
+            "pattern": "^[A-Z]{1}$",
+            "type": "string",
+            "description": "Master Target Balance Indicator for Sub Account <table><tr><th>Possible Values:</th></tr> <tr><td>Y</td><td>Master Target Balance will be the Target Balance for the Sub Account</td></tr> <tr><td>N</td><td>The updated Target Balance entered will be the Target Balance for the Sub Account</td></tr> </table>",
+            "example": "Y"
+          },
+          "reasonForClosure": {
+            "maxLength": 100,
+            "minLength": 0,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Reason for Closure of Sub Account",
+            "example": "XXXXX"
+          }
+        }
+      },
+      "OpenApiAccount": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique Identification Number of the request for tracking purpose",
+            "example": "01111111111111A111"
+          },
+          "label": {
+            "type": "string",
+            "description": "Label",
+            "example": "XXX"
+          },
+          "number": {
+            "maxLength": 34,
+            "minLength": 0,
+            "type": "string",
+            "description": "Account Number for which the balance and transaction information being returned",
+            "example": "12345678"
+          },
+          "owners": {
+            "type": "array",
+            "description": "Owners Details",
+            "items": {
+              "$ref": "#/components/schemas/OpenApiAccountOwner"
+            }
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the Account",
+            "example": "CACC"
+          },
+          "balance": {
+            "type": "array",
+            "description": "Balance Details of the Account",
+            "items": {
+              "$ref": "#/components/schemas/OpenApiAccountBalance"
+            }
+          },
+          "iban": {
+            "maxLength": 34,
+            "minLength": 0,
+            "type": "string",
+            "description": "International Bank Account Number"
+          },
+          "swiftBic": {
+            "maxLength": 11,
+            "minLength": 0,
+            "type": "string",
+            "description": "SWIFT BIC of the Financial Institution",
+            "example": "SCBLSGSGXXX"
+          },
+          "bankId": {
+            "type": "string",
+            "description": "Bank BIC Code for which transaction history is requested",
+            "example": "STANDARD CHARTERED BK"
+          },
+          "currency": {
+            "maxLength": 3,
+            "minLength": 0,
+            "type": "string",
+            "description": "ISO Currency Code of the account"
+          },
+          "groupId": {
+            "maxLength": 10,
+            "minLength": 0,
+            "type": "string",
+            "description": "Internal SCB Identifier known as account ID",
+            "example": "APINTST2"
+          },
+          "country": {
+            "maxLength": 2,
+            "minLength": 0,
+            "type": "string",
+            "description": "Country of the account",
+            "example": "SG"
+          }
+        }
+      },
+      "OpenApiSubAccountResponse": {
+        "type": "object",
+        "properties": {
+          "clientReferenceId": {
+            "maxLength": 16,
+            "type": "string",
+            "description": "Your unique Reference ID for Client Account Services(CAS) Maintenance request",
+            "example": "11111111111111"
+          },
+          "masterAccount": {
+            "$ref": "#/components/schemas/MasterAccount"
+          },
+          "subAccount": {
+            "$ref": "#/components/schemas/SubAccount"
+          },
+          "statusCode": {
+            "type": "string",
+            "description": "Status Code <table><tr><th>Possible Values:</th></tr> <tr><td>2300</td><td>Processed</td></tr> <tr><td>23</td><td>Completed (created / modified account successful)</td></tr> <tr><td>9</td><td>Completed (closed account successful)</td></tr> <tr><td>15</td><td>Rejected</td></tr> </table>",
+            "example": "23"
+          },
+          "statusDesc": {
+            "type": "string",
+            "description": "Status Description",
+            "example": "Completed"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Timestamp of the response generated",
+            "example": "2022-06-06T06:41:09.500Z"
+          },
+          "additionalInformation": {
+            "type": "string",
+            "description": "Status description updated by the interface application",
+            "example": "Account Creation Successful"
+          }
+        }
+      },
+      "OpenApiCreditDebitAdvice": {
+        "required": [
+          "adviceType",
+          "clientIdentifier",
+          "groupId",
+          "transactionCode"
+        ],
+        "type": "object",
+        "properties": {
+          "groupId": {
+            "type": "string",
+            "description": "Internal SCB Identifier",
+            "example": "INFXFFF"
+          },
+          "accountIdentifier": {
+            "type": "array",
+            "description": "Account Details",
+            "items": {
+              "$ref": "#/components/schemas/AccountId"
+            }
+          },
+          "eventDate": {
+            "type": "string",
+            "description": "Transaction Date",
+            "format": "date",
+            "example": "2019-01-29"
+          },
+          "transactionIdentifier": {
+            "type": "array",
+            "description": "Transaction Details",
+            "items": {
+              "$ref": "#/components/schemas/TransactionIdentifier"
+            }
+          },
+          "adviceType": {
+            "type": "string",
+            "description": "The type of advice - Credit or Debit",
+            "example": "credit",
+            "enum": ["Credit", "Debit"]
+          },
+          "valueDate": {
+            "type": "string",
+            "description": "Value Date",
+            "format": "date",
+            "example": "2019-01-29"
+          },
+          "virtualAccountId": {
+            "type": "string",
+            "description": "Virtual Account Number",
+            "example": "111111111111"
+          },
+          "transactionCode": {
+            "type": "string",
+            "description": "Transaction Code",
+            "example": "716"
+          },
+          "baiCode": {
+            "type": "string",
+            "description": "BAI Code",
+            "example": "169"
+          },
+          "transactionDescription": {
+            "type": "string",
+            "description": "Transaction Description",
+            "example": "Fund Transfer NEFT Inward -credit"
+          },
+          "postExecutionBalance": {
+            "type": "array",
+            "description": "Post Execution Balance",
+            "items": {
+              "$ref": "#/components/schemas/DenominatedAmount"
+            }
+          },
+          "preExecutionBalance": {
+            "type": "array",
+            "description": "Pre Execution Balance",
+            "items": {
+              "$ref": "#/components/schemas/DenominatedAmount"
+            }
+          },
+          "transactionFreeText": {
+            "type": "array",
+            "description": "Transaction Narration 1",
+            "items": {
+              "type": "string"
+            }
+          },
+          "transactionExtendedFreeText": {
+            "type": "array",
+            "description": "Transaction Narration 2",
+            "items": {
+              "type": "string"
+            }
+          },
+          "transactionMultiLingualFreeText": {
+            "type": "array",
+            "description": "Transaction Narration 3",
+            "items": {
+              "type": "string"
+            }
+          },
+          "transactionAmount": {
+            "type": "array",
+            "description": "Transaction Amount",
+            "items": {
+              "$ref": "#/components/schemas/DenominatedAmount"
+            }
+          },
+          "clientIdentifier": {
+            "type": "array",
+            "description": "Internal Transaction Reference",
+            "items": {
+              "$ref": "#/components/schemas/TransactionIdentifier"
+            }
+          },
+          "externalIdentifier": {
+            "type": "array",
+            "description": "Clearing Bank Reference",
+            "items": {
+              "$ref": "#/components/schemas/TransactionIdentifier"
+            }
+          },
+          "timestamp": {
+            "type": "integer",
+            "description": "Timestamp",
+            "format": "int64"
+          }
+        }
+      },
+      "OpenApiAccountBalance": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "Currency of the Account"
+          },
+          "asOf": {
+            "type": "string",
+            "description": "Date of the response",
+            "format": "date"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Available Balance for the account"
+          },
+          "opening": {
+            "type": "number",
+            "description": "Opening Balance of the account"
+          },
+          "closing": {
+            "type": "number",
+            "description": "Closing Balance of the account"
+          },
+          "openingLedger": {
+            "type": "number",
+            "description": "Opening Ledger of the account"
+          },
+          "closingLedger": {
+            "type": "number",
+            "description": "Closing Ledger of the account"
+          },
+          "ledger": {
+            "type": "number",
+            "description": "Ledger"
+          },
+          "cleared": {
+            "type": "number",
+            "description": "Cleared"
+          }
+        }
+      },
+      "OpenApiAccountAsOf": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Balance Type",
+            "enum": ["Current", "Historical"]
+          },
+          "date": {
+            "type": "string",
+            "description": "Balance Date",
+            "format": "date"
+          }
+        }
+      },
+      "OpenApiAcMgmtHeader": {
+        "required": ["coutryCode", "identifier", "messageSender", "timestamp"],
+        "type": "object",
+        "properties": {
+          "messageSender": {
+            "maxLength": 246,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "This should be a constant tag to identify the senders system, it is used for audit and diagnostics. Defaulted as your Corporate registered name",
+            "example": "CorporateRegisteredName"
+          },
+          "messageID": {
+            "maxLength": 35,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Unique Identifier for the transaction. This should be a unique tracking value (GUID) to identify the request, it is used for audit & support",
+            "example": "1111111111111111"
+          },
+          "countryCode": {
+            "maxLength": 2,
+            "pattern": "^[A-Z]{2}$",
+            "type": "string",
+            "description": "Used to identify the country of request origination",
+            "example": "HK"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Timestamp of creating the subaccount request. Must be a valid ISO format timestamp of this message, i.e. time message was generated in the form YYYY-MM-DD’T’HH:mm:SS.SSSZ (UTC), Example:2019-01-01T13:30:32.010Z",
+            "example": "2019-01-01T13:30:32.010Z"
+          },
+          "identifier": {
+            "maxLength": 1,
+            "pattern": "^[A-Z]{1}$",
+            "type": "string",
+            "description": "<table><tr><th>Possible Values</th></tr> <tr><td>C</td><td>Sub Account creation</td></tr> <tr><td>M</td><td>Sub Account modification</td></tr> <tr><td>D</td><td>Sub Account deletion</td></tr></table>",
+            "example": "C"
+          }
+        }
+      },
+      "OpenApiAccountServicesCreate": {
+        "required": ["clientReferenceId"],
+        "type": "object",
+        "properties": {
+          "clientReferenceId": {
+            "maxLength": 16,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Your unique Reference ID for Client Account Services(CAS) Maintenance request",
+            "example": "1111111111111111"
+          },
+          "masterAccount": {
+            "$ref": "#/components/schemas/OpenApiMasterAccount"
+          },
+          "subAccount": {
+            "$ref": "#/components/schemas/OpenApiSubAccountCreate"
+          }
+        }
+      },
+      "OpenApiSubAccountModify": {
+        "required": [
+          "accountId",
+          "companyIndicator",
+          "customerReference",
+          "masterRebateFlag",
+          "masterTargetBalanceFlag",
+          "masterWhtFlag"
+        ],
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "maxLength": 34,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Unique Account Number for Sub Account  Holder",
+            "example": "11111111111111"
+          },
+          "companyIndicator": {
+            "maxLength": 1,
+            "pattern": "^[A-Z]{1}$",
+            "type": "string",
+            "description": "Company Indicator <table><tr><th>Possible Values:</th></tr> <tr><td>Y</td><td>Sub Account Holder is a business unit</td></tr> <tr><td>N</td><td>Sub Account Holder is an individual</td></tr> </table>",
+            "example": "Y"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/OpenApiContact"
+          },
+          "customerReference": {
+            "maxLength": 35,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Customer Reference",
+            "example": "CUSTOMER REFERENCE"
+          },
+          "attentionParty": {
+            "maxLength": 35,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Attention Party",
+            "example": "ABCDEF"
+          },
+          "relationshipId": {
+            "maxLength": 16,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Relationship ID",
+            "example": "ABC1234"
+          },
+          "postalAddress": {
+            "$ref": "#/components/schemas/OpenApiPostalAddress"
+          },
+          "masterRebateFlag": {
+            "maxLength": 1,
+            "pattern": "^[A-Z]{1}$",
+            "type": "string",
+            "description": "Master Rebate Type Indicator for the Sub Account <table><tr><th>Possible Values:</th></tr> <tr><td>Y</td><td>Master Rebate Type will be the Rebate Type for Sub Account</td></tr> <tr><td>N</td><td>The updated Rebate Type entered will be the Rebate Type for the Sub Account</td></tr> </table>",
+            "example": "Y"
+          },
+          "rebateType": {
+            "maxLength": 1,
+            "pattern": "^[A-Z]{1}$",
+            "type": "string",
+            "description": "Rebate Type for the Sub Account <table><tr><th>Possible Values:</th></tr> <tr><td>P</td><td>Prime Rate</td></tr> <tr><td>F</td><td>Fixed Rate</td></tr> <tr><td>N</td><td>No Interest</td></tr> </table>",
+            "example": "P"
+          },
+          "spreadOrFixedRate": {
+            "maxLength": 20,
+            "pattern": "^[ 0-9 ]\\d{0,15}(\\.\\d{1,3})?%?$",
+            "type": "string",
+            "description": "Spread in % if Rebate Type is Prime Rate (P) or Fixed Rate",
+            "example": "1111.1"
+          },
+          "customerAccountManager": {
+            "maxLength": 35,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Customer Account Manager",
+            "example": "MANAGER"
+          },
+          "masterTargetBalanceFlag": {
+            "maxLength": 1,
+            "pattern": "^[A-Z]{1}$",
+            "type": "string",
+            "description": "Master Target Balance Indicator for Sub Account <table><tr><th>Possible Values:</th></tr> <tr><td>Y</td><td>Master Target Balance will be the Target Balance for the Sub Account</td></tr> <tr><td>N</td><td>The updated Target Balance entered will be the Target Balance for the Sub Account</td></tr> </table>",
+            "example": "Y"
+          },
+          "targetBalance": {
+            "maxLength": 20,
+            "pattern": "^[ 0-9 ]\\d{0,15}(\\.\\d{1,3})?%?$",
+            "type": "string",
+            "description": "Target Balance of Sub Account",
+            "example": "2324.2"
+          },
+          "masterWhtFlag": {
+            "maxLength": 1,
+            "pattern": "^[A-Z]{1}$",
+            "type": "string",
+            "description": "Master WHT Indicator for Sub Account <table> <tr> <th>Possible value</th> </tr> <tr>  <td>Y</td>   <td>Master WHT rate will be the WHT Rate for the Sub Account</td>  </tr> <tr>  <td>N</td>  <td>The updated WHT Rate entered will be the WHT Rate for the Sub Account</td> </tr></table>",
+            "example": "Y"
+          },
+          "whtRate": {
+            "maxLength": 20,
+            "pattern": "^[ 0-9 ]\\d{0,10}(\\.\\d{1,3})?%?$",
+            "type": "string",
+            "description": "WHT Rate",
+            "example": "1223.5"
+          }
+        }
+      },
+      "OpenApiMasterAccount": {
+        "required": ["accountId", "city", "country", "bic"],
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "maxLength": 34,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Master Account Number",
+            "example": "11111111111111"
+          },
+          "city": {
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Master Account City",
+            "example": "HKN"
+          },
+          "country": {
+            "maxLength": 2,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Master Account Country",
+            "example": "HK"
+          },
+          "bic": {
+            "maxLength": 11,
+            "pattern": "^[A-Z]{4}[A-Z]{2}[0-9A-Z]{2}([0-9A-Z]{3})$",
+            "type": "string",
+            "description": "Financial Institution, BIC code",
+            "example": "SCBLHKHHXXX"
+          },
+          "currency": {
+            "maxLength": 3,
+            "type": "string",
+            "description": "Master Account Currency",
+            "example": "HKD"
+          }
+        }
+      },
+      "OpenApiAccountIdList": {
+        "type": "object",
+        "properties": {
+          "asOf": {
+            "type": "array",
+            "description": "Balance Details",
+            "items": {
+              "$ref": "#/components/schemas/OpenApiAccountAsOf"
+            }
+          },
+          "accountIds": {
+            "type": "array",
+            "description": "Accounts Details",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "OpenApiAcMgmtRequestCreate": {
+        "required": ["clientAccountServices", "header"],
+        "type": "object",
+        "properties": {
+          "header": {
+            "$ref": "#/components/schemas/OpenApiAcMgmtHeader"
+          },
+          "clientAccountServices": {
+            "$ref": "#/components/schemas/OpenApiAccountServicesCreate"
+          }
+        }
+      },
+      "OpenApiContact": {
+        "required": ["name", "shortName"],
+        "type": "object",
+        "properties": {
+          "title": {
+            "maxLength": 4,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Title(Mr, Miss or Mrs) of the individual Sub Account Holder",
+            "example": "Mr"
+          },
+          "name": {
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Contact name of the Sub Account Holder",
+            "example": "John"
+          },
+          "shortName": {
+            "maxLength": 19,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Short Name of the Sub Account Holder",
+            "example": "Doe"
+          },
+          "phoneNumber": {
+            "maxLength": 20,
+            "type": "string",
+            "description": "Contact Phone Number",
+            "example": "123435466"
+          },
+          "faxNumber": {
+            "maxLength": 20,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Contact Fax Number",
+            "example": "12343556"
+          },
+          "emailAddress": {
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Contact email Address",
+            "example": "abc@xyz.com"
+          }
+        }
+      },
+      "OpenApiAccountServicesModify": {
+        "required": ["clientReferenceId"],
+        "type": "object",
+        "properties": {
+          "clientReferenceId": {
+            "maxLength": 16,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Your unique Reference ID for Client Account Services(CAS) Maintenance request",
+            "example": "1111111111111111"
+          },
+          "masterAccount": {
+            "$ref": "#/components/schemas/OpenApiMasterAccount"
+          },
+          "subAccount": {
+            "$ref": "#/components/schemas/OpenApiSubAccountModify"
+          }
+        }
+      },
+      "SubAccount": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "maxLength": 34,
+            "type": "string",
+            "description": "Unique Account Number for sub-account holder",
+            "example": "12343435"
+          }
+        }
+      },
+      "OpenApiFundConfirmationResponse": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Unique Reference Number for tracking purpose"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Amount being confirmed as available based on account balance"
+          },
+          "fundsAvailable": {
+            "type": "boolean",
+            "description": "Indicative response if funds are available - true/false"
+          }
+        }
+      },
+      "OpenApiPostalAddress": {
+        "type": "object",
+        "properties": {
+          "line_1": {
+            "maxLength": 40,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Address Line 1",
+            "example": "XXXXX"
+          },
+          "line_2": {
+            "maxLength": 40,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Address Line 2",
+            "example": "YYYYY"
+          },
+          "line_3": {
+            "maxLength": 40,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Address Line 3",
+            "example": "ZZZZZZZ"
+          },
+          "city": {
+            "maxLength": 3,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "City",
+            "example": "HKN"
+          },
+          "country": {
+            "maxLength": 2,
+            "pattern": "^[A-Z]{2}$",
+            "type": "string",
+            "description": "Country",
+            "example": "HK"
+          },
+          "state": {
+            "maxLength": 15,
+            "type": "string",
+            "description": "State",
+            "example": "XXXXX"
+          },
+          "postcode": {
+            "maxLength": 9,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Postal Code",
+            "example": "ZZZ"
+          }
+        }
+      },
+      "OpenApiAccountOwner": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID of the Account"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Financial Institution Name"
+          },
+          "display_name": {
+            "type": "string",
+            "description": "Account Title/Name"
+          }
+        }
+      },
+      "OpenApiAccountServicesDelete": {
+        "required": ["clientReferenceId"],
+        "type": "object",
+        "properties": {
+          "clientReferenceId": {
+            "maxLength": 16,
+            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+            "type": "string",
+            "description": "Your unique Reference ID for Client Account Services(CAS) Maintenance request",
+            "example": "1111111111111111"
+          },
+          "masterAccount": {
+            "$ref": "#/components/schemas/OpenApiMasterAccount"
+          },
+          "subAccount": {
+            "$ref": "#/components/schemas/OpenApiSubAccountDelete"
+          }
+        }
+      },
+      "DenominatedAmount": {
+        "required": ["amount", "currencyCode"],
+        "type": "object",
+        "properties": {
+          "currencyCode": {
+            "maxLength": 3,
+            "minLength": 0,
+            "type": "string",
+            "description": "ISO Currency Code",
+            "example": "EUR"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount in local currency units",
+            "example": 12000.12
+          }
+        }
+      },
+      "OpenApiAcMgmtRequestDelete": {
+        "required": ["clientAccountServices", "header"],
+        "type": "object",
+        "properties": {
+          "header": {
+            "$ref": "#/components/schemas/OpenApiAcMgmtHeader"
+          },
+          "clientAccountServices": {
+            "$ref": "#/components/schemas/OpenApiAccountServicesDelete"
+          }
+        }
+      }
+    }
+  }
+}

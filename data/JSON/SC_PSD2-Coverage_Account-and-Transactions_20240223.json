@@ -1,0 +1,1388 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking - Open API Scheme",
+        "description": "### PSD2 Background\nWith respect to the Directive (EU) 2015/2366 of the European Parliament and of the Council on Strong Customer Authentication and Common and Secure Open Standards of Communication, supplementing the Revised Payments Services Directive (PSD2) and the Regulatory Technical Standards (RTS) on Strong Customer Authentication (SCA) and Common and Secure Communication (CSC), Standard Chartered Bank (SCB) has implemented a set of PSD2 APIs which enables certified Third Party Providers (TPPs) providing account information (AIS), payment initiation services (PIS) and funds confirmation services to access SCB client accounts.\n### TPP Access requirements \nThe SCB Developer Portal is for TPPs interested in connecting to our PSD2 APIs to develop and test Third Party services. \nFor a TPP to start testing our API's, they will need the following: \n1. TLS certificate: eIDAS certificates (QWAC/QSeal for TPP's in the EU) or OBIE (OBWAC/OBSeal for TPP's in the UK).\n    - Post Brexit, we no longer accept eIDAS certificates for UK TPPs, but we do accept OBIE certificates for UK TPP.\n    - These accepted certificates must contain these information: Payment service provider's name, company number, principle place of business; assurance of the payment service provider's authenticity of data and identity.\n\n2. Signing Certificate: to verify TPP signature on requests (we support QSEAL and OBSEAL)\n\n    - Callback URL to receive auth token upon consent creation \n    - Optionally, Webhook URL, to receive payment status notifications.We will append payment/transaction-status to the url TPP registers with us for payment status.\n\n### Sandbox environment details \n1. Base URL for rest endpoints: https://psd-test.sc.com\n2. Consent Initiate URL for PSU(Server to Server call): POST https://s2bssotest.standardchartered.com/unifiedlogin/api/login/tpp/consent/initiate\n3. Consent creation URL for PSU:\n\n    a. Transaction Banking:\n        \n        https://s2bssotest.standardchartered.com/unifiedlogin/api/login/tpp/consent/validateTPP?tpp_id=tppId&tpp_type=TB&state=1234567&correlationId=1234567\n        \n        - State is returned from the Consent Initiate call.\n        - CorrelationId is the random id created by you and is used for request tracking at our end.  \n\n4. Consent can be revoked by users after login into the S2B Platform<br>Revoke consent is only supported for transaction banking.\n\n    - Login using the following URL: <br> https://s2bssotest.standardchartered.com/unifiedlogin/v1.0/login/index.html\n    - Choose either Physical Token or Password as the login authentication method.\n    - Once logged in Go to Menu --> Third Party Provider --> Manage Consent .\n    \n### Production environment details \n1. Base URL for rest endpoints: https://psd.sc.com\n2. Consent Initiate URL for PSU(Server to Server call): POST https://s2.standardchartered.com/unifiedlogin/api/login/tpp/consent/initiate\n3. Consent creation URL for PSU:\n\n    a. Transaction Banking:\n        \n        https://s2b.standardchartered.com/unifiedlogin/api/login/tpp/consent/validateTPP?tpp_id=tppId&tpp_type=TB&state=1234567&correlationId=1234567\n        \n        - State is returned from the Consent Initiate call.\n        - CorrelationId is the random id created by you and is used for request tracking at our end. \n\n4. Consent can be revoked by users after login into the S2B Platform<br>Revoke consent is only supported for transaction banking.\n\n    - Login using the following URL: <br> https://s2b.standardchartered.com/unifiedlogin/login/index.html\n    - Choose either Physical Token or Password as the login authentication method.\n    - Once logged in Go to Menu --> Third Party Provider --> Manage Consent.\n    \n### Onboarding\n1. A TPP will be automatically registered once they have invoked the \"consent initiate\" API.\n    \n    Consent Initiate URL for PSU(Server to Server call): POST https://s2b.standardchartered.com/unifiedlogin/api/login/tpp/consent/initiate\n\n2. We will validate the TPP status with the regulators' database before onboarding and each Consent / API Call. \n#### Notes to TPPs:\n1. Our PSD2 services TPP onboarding journey has recently been updated with onboarding process automation.\n2. For the TPP onboarding process flow, please refer to this page under Documentation. The Tutorial tab next to the Documentation tab describes the testing and onboarding process flow for all Standard Chartered API banking open APIs, but not for the PSD2 APIs.\n3. Clients need to approach to the bank and complete user profile set up for consent management before the consent service is ready to use.\n### Sandbox testing \n1. **Consent Creation**: \n    <br>Consent binds TPP and group accounts. Each consent contains auth level which can be AISP  or PISP. \n    <br>PSU Group users need to login to our consent screen for 2FA and provide required consent to an already on-boarded TPP.\n    \n    - TPP can create consent themselves(A end-client credentials will be provided by Bank) for quick testing in sandbox environment, however in production this can only be done by PSU with authorization code delivered to TPP call-back URL.\n      \n    - For standalone TPP testing without a valid group, we can provide dummy group details.)\n        \n2. **Receiving consent token(authorization code)**: \n    <br>We create a JWT token from consent and send that back to TPP's registered call-back URL. Do note that auth code is valid only for 2 mins \n    <br>  Consent callback GET endpoint should accept the following optional request params: \n    - authorizationCode(TB auth token)\n\n3. **Getting access and refresh tokens**: \n  \n    a. Authorization code must be exchanged for access and refresh tokens via call to **/oauth/tokens** endpoint\n    \n    b. Access token is valid for 15 mins and can be used for account enquiry/transactions\n    \n    c. Refresh token is valid for 90 days and can be used for getting new access token.\n    \n    d. Tokens is a POST call with body being a JWT with a claim named payload which has auth code jwt.\n      \n        This JWT should not be valid for more than 30 sec\n    \n    e. Authorization header is not required.\n\n4. **Refreshing access token**:\n\n    a. Upon expiry, new access token can be acquired by calling **/oauth/refresh** API\n  \n    b. Refresh is a POST call with body being a JWT with a claim named payload which has refresh token.This JWT should not be valid for not more than 30 sec.\n  \n    c. Authorization header is not required.\n  \n5. **Payment status webhook**: \n  <br>Payment status POST endpoint will receive encrypted payment status map with following keys:\n  \n    a. endToEndId\n  \n    b. statusString\n  \n    c. reasonInformation\n    \n      NOTE: We will append payment/transaction-status to the url TPP registers with us for payment status.\n      \n      For example, if TPP registers pay/status they should expect payment status at pay/status/payment/transaction-status endpoint.\n      \n6. **Revoke Consent**:\n  <br>Revoke consent UI enables group users to view and revoke consent provided to TPPs.\n\n7. **GET requests**:\n  <br>All our GET requests need the following:\n      \n      a. Authorization header with value = Bearer  + access token.\n      \n      b. Signed jwt token header with expiry within 30 secs and an empty claim with name payload.\n      \n      c. Content type should be text/plain.\n      \n8. **POST requests**:\n  <br>All our POST requests need the following:\n  \n      a. Authorization header with value = Bearer  + access token.\n      \n      b. Request body as JWT with expiry with 30 sec and a claim with name Payload and content as request json.\n      \n      c. Content type should be text/plain.\n      \n9. **Test Accounts**:\n      \n      a. Germany:\n          <br>Account No: 500178403,  BIC: SCBLDEFXXXX,  Currency: EUR\n          \n      b. UK:\n          <br>Account No: 99999999557,  BIC: SCBLGB20XXX ,  Currency: GBP\n          <br>Account No: 01234567890,  BIC:SCBLGB20XXX ,  Currency: GBP\n          \n### Tech Contacts\nFor any assistance and support, kindly contact: <a href='mailto:PSD2.Information@sc.com'> PSD2.Information@sc.com</a> <br/> <br/>** TB: Transaction banking\n",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company License",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://psd.sc.com/openapi"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Account and Transactions",
+            "description": "Account and Transactions APIs enable registered third parties to securely retrieve Standard Chartered's customers account information and transaction data.",
+            "x-subcategory": "PSD2"
+        },
+        {
+            "name": "Payment Services",
+            "description": "Payment Services APIs enable registered third parties to securely set up secure payments on behalf of customers.",
+            "x-subcategory": "PSD2"
+        },
+        {
+            "name": "OAuth",
+            "description": "Supports OAuth flow by facilitating auth, access and refresh token issue and verification.",
+            "x-subcategory": "PSD2"
+        }
+    ],
+    "paths": {
+        "/accounts/v2/info": {
+            "get": {
+                "tags": [
+                    "Account and Transactions"
+                ],
+                "summary": "Account Information",
+                "description": "The Account Information API provides the ability to retrieve a list of available bank accounts and its details",
+                "operationId": "accountinfo",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The Page represents a number of pages that will be returned in case request supports pagination. Page number is defaulted to 1",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "The Size is a number of records which will be returned per page in case request supports pagination. Size is defaulted to 10",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiAccounts"
+                                },
+                                "example": [
+                                    {
+                                        "id": "39393939393939393535373A4742503A5343424C47423230585858",
+                                        "label": "Account Name2",
+                                        "number": "99999999557",
+                                        "owners": [
+                                            "Array"
+                                        ],
+                                        "type": "CACC",
+                                        "iban": "SCBLGB20XXX",
+                                        "swiftBic": "SCBLGB20XXX",
+                                        "bankId": "",
+                                        "currency": "GBP",
+                                        "groupId": "",
+                                        "country": "GB"
+                                    },
+                                    {
+                                        "id": "30313233343536373839303A4742503A5343424C47423230585858",
+                                        "label": "Account Name",
+                                        "number": "01234567890",
+                                        "owners": [
+                                            "Array"
+                                        ],
+                                        "type": "CACC",
+                                        "iban": "SCBLGB20XXX",
+                                        "swiftBic": "SCBLGB20XXX",
+                                        "bankId": "",
+                                        "currency": "GBP",
+                                        "groupId": "",
+                                        "country": "GB"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Data is incorrect",
+                        "content": {}
+                    },
+                    "403": {
+                        "description": "Forbidden if cert is not valid/token is expired or doesn't match certificate",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource is not found",
+                        "content": {}
+                    }
+                },
+                "x-markets": "DE,GB",
+                "x-codegen-request-body-name": "body"
+            }
+        },
+        "/accounts/v2/beneficiaries": {
+            "get": {
+                "tags": [
+                    "Account and Transactions"
+                ],
+                "summary": "Beneficiaries Information",
+                "description": "The Beneficiaries Information API exposes the ability to query for a list of registered beneficiary or payee details as available in the bank for the requested customer. Upon success it returns a paginated list of Beneficiaries.",
+                "operationId": "beneficiaries",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The Page represents a number of pages that will be returned in case request supports pagination. Page number is defaulted to 1",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "The Size is a number of records which will be returned per page in case request supports pagination. Size is defaulted to 10",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiBeneficiariesResponse"
+                                },
+                                "example": "{\npayeename: \"ABC Limited\",\npayeebankCountry: \"GB\",\npayeeacctNum: \"01234567\", \npayebankCode: \"SGBCLSG2XXX\",\npayeebankName: \"Standard Chartered Limited\"\n}"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Data is incorrect",
+                        "content": {}
+                    },
+                    "403": {
+                        "description": "Forbidden if cert is not valid/token is expired or doesn't match certificate",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource is not found",
+                        "content": {}
+                    }
+                },
+                "x-markets": "DE,GB"
+            }
+        },
+        "/accounts/v2/balance": {
+            "get": {
+                "tags": [
+                    "Account and Transactions"
+                ],
+                "summary": "Account Balance",
+                "description": "The Account Balance API exposes the ability for TPP to request balance information for accounts which are part of the consent. The balance information will not reflect any unapproved/pending payments/credit. Upon success it returns account balance at the time of request.",
+                "operationId": "account-balance",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The Page represents a number of pages that will be returned in case request supports pagination. Page number is defaulted to 1",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "The Size is a number of records which will be returned per page in case request supports pagination. Size is defaulted to 10",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiAccount"
+                                },
+                                "example": "[{\nnumber: \"0123445\",\nlabel: \"\",\niban: \"SGBCLSG2XXX\",\ncurrency: \"GBP\",\nbalance: {\n\topening: \"1000000.00\",\n\tclosing: \"1000000.00\",\n\topeningLedger: \"1000000.00\",\n\tclosingLedger: \"1000000.00\",\n\tcurrency: \"GBP\",\n\tasof: \"01-01-2019 01:01:01\"\n},\ncountryCode: \"GB\",\nid: \"0123445;SGBCLSG2XXX;GBP\"\n}]\n"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Data is incorrect",
+                        "content": {}
+                    },
+                    "403": {
+                        "description": "Forbidden if cert is not valid/token is expired or doesn't match certificate",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource is not found",
+                        "content": {}
+                    }
+                },
+                "x-markets": "DE,GB"
+            }
+        },
+        "/accounts/v2/account-revoke-consent": {
+            "post": {
+                "tags": [
+                    "Account and Transactions"
+                ],
+                "summary": "Revoke Consent",
+                "description": "The Revoke Consent API provides the ability to revoke an existing consent. Consent is a contract between client and bank to provide account access to third party service provider for account balance, transaction inquiry and payment initiation on selected accounts. Upon receiving a consent revocation request,API processing system will validate the TPP and the consent requested for revocation. On successful validation,consent will be revoked and system will respond with a positive acknowledgement. If the TPP or consent found invalid, negative response will be received by the client.Once revoked, the access/refresh tokens associated with the consent can't be used anymore.",
+                "operationId": "revoke-consent",
+                "responses": {
+                    "200": {
+                        "description": "Success, consent is revoked",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "example": "200"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Data is incorrect",
+                        "content": {}
+                    },
+                    "403": {
+                        "description": "Forbidden if cert is not valid/token is expired or doesn't match certificate",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Consent is not found",
+                        "content": {}
+                    }
+                },
+                "x-markets": "DE,GB"
+            }
+        },
+        "/accounts/v2/{accountId}/transactions": {
+            "get": {
+                "tags": [
+                    "Account and Transactions"
+                ],
+                "summary": "Account Transaction Information",
+                "description": "The Account Transaction Information API enables TPP to query for transaction history for an account. Transaction history can be requested for maximum 90 days in the past. Upon success it returns paginated view of account transactions.",
+                "operationId": "account-transaction",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Account Number for which transaction history is requested",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "The Page represents a number of pages that will be returned in case request supports pagination. Page number is defaulted to 1",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "The Size is a number of records which will be returned per page in case request supports pagination. Size is defaulted to 10",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "Start date for information, as in this case for transaction history, is applicable for time based requests. It is defaulted to current date -90.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "End date for information, as in this case for transaction history, is applicable for time based requests. It is defaulted to current date.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiCreditDebitAdvice"
+                                },
+                                "example": "[{\nadviceType: \"Credit|Debit\",\ntransactionDescription: \"Funds Transfer NEFT Inward -credit\",\nvalueDate: \"01-01-1990 00:00:00\"\ntransactionCode: \"CB-001\",\ncurrency: \"GBP\",\ntransactionAmount: \"10.0\",\nbalanceAmount: \"1000000.00\"\n}]\n"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Data is incorrect",
+                        "content": {}
+                    },
+                    "403": {
+                        "description": "Forbidden if cert is not valid/token is expired or doesn't match certificate",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource is not found",
+                        "content": {}
+                    }
+                },
+                "x-markets": "DE,GB"
+            }
+        },
+        "/accounts/v2/funds-confirmations": {
+            "post": {
+                "tags": [
+                    "Account and Transactions"
+                ],
+                "summary": "Fund Confirmation Information",
+                "description": "The Fund Confirmation Information API exposes the ability to query the availability of funds for a payment on a particular debit account.The service is useful for the TPP to ensure that the amount necessary is available for the execution of a payment transaction. This is just an indicative response as pending or unapproved transactions are not included in the same. Funds availability can also change quickly with new transactions being made. Upon success it returns if funds are available in an account against a debit amount, at the time of request.",
+                "operationId": "funds-confirmations",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiFundConfirmationRequest"
+                            }
+                        }
+                    },
+                    "required": false
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiFundConfirmationResponse"
+                                },
+                                "example": true
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Data is incorrect",
+                        "content": {}
+                    },
+                    "403": {
+                        "description": "Forbidden if cert is not valid/token is expired or doesn't match certificate",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Consent is not found",
+                        "content": {}
+                    }
+                },
+                "x-markets": "DE,GB"
+            }
+        },
+        "/payments/v2/psd2/initiate": {
+            "post": {
+                "tags": [
+                    "Payment Services"
+                ],
+                "summary": "Payment Initiation",
+                "description": "The Payment Initiation API exposes the ability to initiate a payment instruction, upon success it returns a payment reference identifier. The response is a representation or acknowledgment that an instruction was received successfully. To check the status of a specific payment, the client is required to use the Payment Status Inquiry API which provides the current state of the payment.",
+                "operationId": "payment-initiate",
+                "parameters": [
+                    {
+                        "name": "PreVerified",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPaymentInstruction"
+                            }
+                        }
+                    },
+                    "required": false
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPaymentId"
+                                },
+                                "example": "[{\n\n    \"paymentIdentifier\": \"Q4594051\",\n\n    \"internalTrackingId\": \"20181018OPENAPI1X3ODEU3224029\",\n\n    \"clientReferenceId\": \"INTERNAL1234567893\",\n\n    \"referenceId\": \"INTERNAL1234567893\"\n},{     \"paymentIdentifier\": \"Q4594051\",\n\n   \"errorMessage\": \"Duplicate payment initiation request detected {\\\"paymentIdentifier\\\" : \\\"Q4594051\\\"}\",\n\n    \"errorCode\": \"AER-013\"\n}]"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized request",
+                        "content": {}
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "DE,GB"
+            }
+        },
+        "/oauth/tokens": {
+            "post": {
+                "tags": [
+                    "OAuth"
+                ],
+                "summary": "Access and Refresh Token - Issue Request",
+                "description": "Tokens API upon successful validation of passed auth token will issue Access and Refresh Tokens.Request body is a JWT with a claim named \"payload\" which has auth code jwt. This JWT should not be valid for not more than 30 sec. ex - eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RpZCI6Ijk3ZTM5Y2FjLWE2ZjgtNGJlYy04ODBmLTI5NDRiOWQ2NWYxZiIsImlhdCI6MTYwNDQxNjExOSwiZXhwIjoxNjA0NDE2MTQ5LCJzdWIiOiJwc2QyIiwiaXNzIjoidHBwIiwicGF5bG9hZCI6ImV5SmhiR2NpT2lKU1V6STFOaUo5LmV5SnBjM01pT2lKVlFVRlRJaXdpWVhWa0lqb2lVekpDSWl3aWFXRjBJam94TmpBME5ERTJNRFk0TENKbGVIQWlPakUyTURRME1UWXhPRGdzSW5CaGVXeHZZV1FpT25zaVkyeHBaVzUwU1dRaU9pSlVVRkF0UjFBdE1EQXdOU0lzSW1OdmJuTmxiblJKWkNJNkltUXpOakJoTlRVeUxUaG1ORFV0TkdZM1l5MDVPRE13TFdJNE1XRXhabU00TUdSbE1pSXNJblI1Y0dVaU9pSlVRaUo5ZlEuY3EtaklXWUNuVlcxOTBVUnlXSWFUd24yV3B5NWNVaE1yMXE2dFoxMHdKbTFTdW5DeEdaa2I3bjRMa2FndHBkeEl6Z0NPYXRzOGRGZHNOTk1NbEJjWDVCQ3BFT09yYUpRbEJXamhLbHV6Z0lFZmVIREhwaHY5bG5IY0pDRHFiVzFFQTFjV0ZOOHdZM2xzRmkzZlEyQ3J3WGdYZzdBNFF3N0tZWjgzX1ZHamp6Q2ZlV3FsdHFkRGg1UUtoNHF4aUlmV3NJWU13Mlgwdi1tc3J6eHk1bkVfdHZCUXpxM2pQeTBBdFBLVHZxU0MxU0xJWkhlakRMc3ByZGpaclhqR1p3dGhMMjlzWXExbmtUa3hlYlNQZXR1OF9feTlVQTU3NE80eGZ2Z1l1dTM3aVAzYUhUYm1FWnJlOF9TWkg4bTZUSEhENGVOUXZzdjYtd2l2MGxDUk1ZVElnIn0.W_9l_mCK8Wk-iSYF8OaXodG00jO3MHimq7QXMG-ht6FM5A9gjCLRq46h_6jJfq-AmEzG07prj6BGhFN3RGQMvoY0i_MKg0EgMwNku8SSD1SIAbUeQDEVLNWDc_hbYZx2pD_bLebe95QxoJQJxoB4cOxsYVvwfwuK3-kNJHZTfVhi5Y0yn39NAPPgEM5q1h0nlaoysEITXzN8vsjnSHx_76shra1ahGEIs_NGKtaJNImdhaKdnZeQLxEJIKO2iDIM61n92HUwrWsAFvCfTiW7N73OQlbtKi5Q3pOc8f_EgZM_UrhOcDj7C3zVnhNiaXg8eWNjoyqSJFvWzt5CKe2eiQ",
+                "operationId": "oauthTokensIssue",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OAuthTokens"
+                                },
+                                "example": "{\nstatus:\"100\",\naccess:\"eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJVQUFTIiwiYXVkIjoiUzJCIiwiaWF0IjoxNjA0NDE2MTIwLCJleHAiOjE2MDQ0MTcwMjAsInBheWxvYWQiOnsiY2xpZW50SWQiOiJUUFAtR1AtMDAwNSIsImNvbnNlbnRJZCI6ImQzNjBhNTUyLThmNDUtNGY3Yy05ODMwLWI4MWExZmM4MGRlMiIsInR5cGUiOiJUQiJ9fQ.BDEytNkwPyrBPQY-cJdKYdjmiVQiPO2szGw-_cNxQyLNWhQwFP3fhx4IcZH6Cha7oi_bcvukzZaK7-mwVf_sQDhNv4qnp2R5YWkgjsZVFloDNktOhghnvDUg4u7vCOOuCYDSDGd8aNgOebPnWWg_GYS1QB9nIGQU3FWa9y8_hIQ7ajpXCq2Y8kRzt-skmLCZTiLRfPdVnNZEfipZcpmePki1qFqYSXq9UTKoM0S96LN6m-MXlpUKso-fKOvamXzd3Dth-UjcnBccOF5O4f_5CyiRHVh9abwOdQ3TSv6riVbY-vbyx8VmWzbAd5OyJ0VtTXBrTJBDeowxOk4qdOQSsw\",\nrefresh:\"eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJVQUFTIiwiYXVkIjoiUzJCIiwiaWF0IjoxNjA0NDE2MTIwLCJleHAiOjE2MTIxOTIxMjAsInBheWxvYWQiOnsiY2xpZW50SWQiOiJUUFAtR1AtMDAwNSIsImNvbnNlbnRJZCI6ImQzNjBhNTUyLThmNDUtNGY3Yy05ODMwLWI4MWExZmM4MGRlMiIsInR5cGUiOiJUQiJ9fQ.C2onZH7pxkK6lGYYFUpWyhmOewnT-TWwyc6HIXFRkESdGYrH_bxV7_yQ4AJGkNcg43JTPTJgWznDIadgXGiCMFFz6u8tKMY7i1_U3WmoSuBfE4lDxzbi9zYMdTP-CLbLRFyTaDtjIkNn6vw8J_GJzR5RxBJzYPdvzeDQjQo2gZNeQa_xR0KikqgaiyT0q9exWN_4HXPbzXuiI3CFb8qkK9aBTy-YjLXYYLXLvj7tiOV8dvv6XW1iKElrqAS9GlyrdsgMlwH57hvxqz8m89qfmT3XESmHtQPh_rmqu0naawSFqqwRz1go3c5JhSuFelQZNd8ytkLlMrRLE8r35vAmSA\"\n}\n"
+                            }
+                        }
+                    }
+                },
+                "x-markets": "DE,GB",
+                "x-codegen-request-body-name": "body"
+            }
+        },
+        "/oauth/refresh": {
+            "post": {
+                "tags": [
+                    "OAuth"
+                ],
+                "summary": "Access Token - Refresh Request",
+                "description": "Refresh API upon successful validation of passed refresh token will refresh Access Tokens.Body is a JWT with a claim named \"payload\" which has refresh token jwt. This JWT should not be valid for not more than 30 sec. ex - eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqd3RpZCI6ImY2MzY1NDViLWY3NjctNDMzOC05NGU3LTVhZjIzMzY0NGJiZSIsImlhdCI6MTYwNDQxODAzOSwiZXhwIjoxNjA0NDE4MDY5LCJzdWIiOiJwc2QyIiwiaXNzIjoidHBwIiwicGF5bG9hZCI6ImV5SmhiR2NpT2lKU1V6STFOaUo5LmV5SnBjM01pT2lKVlFVRlRJaXdpWVhWa0lqb2lVekpDSWl3aWFXRjBJam94TmpBME5ERTJNVEl3TENKbGVIQWlPakUyTVRJeE9USXhNakFzSW5CaGVXeHZZV1FpT25zaVkyeHBaVzUwU1dRaU9pSlVVRkF0UjFBdE1EQXdOU0lzSW1OdmJuTmxiblJKWkNJNkltUXpOakJoTlRVeUxUaG1ORFV0TkdZM1l5MDVPRE13TFdJNE1XRXhabU00TUdSbE1pSXNJblI1Y0dVaU9pSlVRaUo5ZlEuQzJvblpIN3B4a0s2bEdZWUZVcFd5aG1PZXduVC1UV3d5YzZISVhGUmtFU2RHWXJIX2J4VjdfeVE0QUpHa05jZzQzSlRQVEpnV3puRElhZGdYR2lDTUZGejZ1OHRLTVk3aTFfVTNXbW9TdUJmRTRsRHh6Ymk5ellNZFRQLUNMYkxSRnlUYUR0aklrTm42dnc4Sl9HSnpSNVJ4Qkp6WVBkdnplRFFqUW8yZ1pOZVFhX3hSMEtpa3FnYWl5VDBxOWV4V05fNEhYUGJ6WHVpSTNDRmI4cWtLOWFCVHktWWpMWFlZTFhMdmo3dGlPVjhkdnY2WFcxaUtFbHJxQVM5R2x5cmRzZ01sd0g1N2h2eHF6OG04OXFmbVQzWEVTbUh0UVBoX3JtcXUwbmFhd1NGcXF3UnoxZ28zYzVKaFN1RmVsUVpOZDh5dGtMbE1yUkxFOHIzNXZBbVNBIn0.Es1BQtnDN6Li7wbPL5vPUXfdkxSCe-27K24xpT8oRxcwOZ3OeDKsN-SVvxpVh9o9FX7I6uirY_kh5OlNzabonLsSszdBCwcXYM-oL1r3_qr8wftXuoJ-njvhNusGp8GF1Zs3Jk87a7EcYeuO-rbO3h9e8KKCI4lrau5FTndBTtQ91IfIw8Wt-ZwHHGmoauJsoWW-sUdZz9wDrxepTxj1nVNMWO0wbVMvJb9QIKy1foOEQaHlOil4L2uoZyOO72bGMmDgxBEs8ZH9D1zBLka1VkMnv_fnP-Mkt6TvN3PGCjCa1Msd1SRrvggRYRX-3Aa-lQNMzv_5MSd0g3vvaDwLWw",
+                "operationId": "oauthTokensrefresh",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OAuthTokens"
+                                },
+                                "example": "{\nstatus:\"100\",\naccess:\"eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJVQUFTIiwiYXVkIjoiUzJCIiwiaWF0IjoxNjA0NDE4MDQwLCJleHAiOjE2MDQ0MTg5NDAsInBheWxvYWQiOnsiY2xpZW50SWQiOiJUUFAtR1AtMDAwNSIsImNvbnNlbnRJZCI6ImQzNjBhNTUyLThmNDUtNGY3Yy05ODMwLWI4MWExZmM4MGRlMiIsInR5cGUiOiJUQiJ9fQ.bpoF0LdFSI5J_ngADBvy6QUhkvMKpVIYwDYKRuZElIjSyORxUnBPqvUYVhgFOtbp1gThN0w28jdmy1Fa9W37Thkv41p7LWKeyGfklCyJGuqh98Sf35KH6bz_P6KjvdX5gc95O02BdaMO-DCNIFiZrxTEX2k773SH6lhBye_b9euBeg2bXSt9S5g1zLrdMtoobMT66JIAYfjaaigFCzcYPxVW1by7Xsnrte85SawRHHyGwB4vj91fGvgLKZRHqrAG5np921zGQlXKy3WgmW3AFNtJKmoGdFJzHetBo1g0cm-GCy9mXL-JbQMejy_IVbELjJaemTPP6X4iKnMAmcCpZw\",\nrefresh:\"eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJVQUFTIiwiYXVkIjoiUzJCIiwiaWF0IjoxNjA0NDE2MTIwLCJleHAiOjE2MTIxOTIxMjAsInBheWxvYWQiOnsiY2xpZW50SWQiOiJUUFAtR1AtMDAwNSIsImNvbnNlbnRJZCI6ImQzNjBhNTUyLThmNDUtNGY3Yy05ODMwLWI4MWExZmM4MGRlMiIsInR5cGUiOiJUQiJ9fQ.C2onZH7pxkK6lGYYFUpWyhmOewnT-TWwyc6HIXFRkESdGYrH_bxV7_yQ4AJGkNcg43JTPTJgWznDIadgXGiCMFFz6u8tKMY7i1_U3WmoSuBfE4lDxzbi9zYMdTP-CLbLRFyTaDtjIkNn6vw8J_GJzR5RxBJzYPdvzeDQjQo2gZNeQa_xR0KikqgaiyT0q9exWN_4HXPbzXuiI3CFb8qkK9aBTy-YjLXYYLXLvj7tiOV8dvv6XW1iKElrqAS9GlyrdsgMlwH57hvxqz8m89qfmT3XESmHtQPh_rmqu0naawSFqqwRz1go3c5JhSuFelQZNd8ytkLlMrRLE8r35vAmSA\"\n}\n"
+                            }
+                        }
+                    }
+                },
+                "x-markets": "DE,GB",
+                "x-codegen-request-body-name": "body"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "OpenApiAccounts": {
+                "type": "object",
+                "properties": {
+                    "accounts": {
+                        "type": "array",
+                        "description": "Acccount Details",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiAccount"
+                        }
+                    }
+                }
+            },
+            "OpenApiAccount": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique Identification Number of the request for tracking purpose"
+                    },
+                    "label": {
+                        "type": "string",
+                        "description": "Label"
+                    },
+                    "number": {
+                        "type": "string",
+                        "description": "Account Number for which the balance and transaction information being returned"
+                    },
+                    "owners": {
+                        "type": "array",
+                        "description": "Owners Details",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiAccountOwner"
+                        }
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Type of the Account"
+                    },
+                    "balance": {
+                        "$ref": "#/components/schemas/OpenApiAccountBalance"
+                    },
+                    "swiftBic": {
+                        "type": "string",
+                        "description": "SWIFT BIC of the Financial Institution"
+                    },
+                    "bankId": {
+                        "type": "string",
+                        "description": "Bank ID of the Financial Institution"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "ISO Currency Code of the account"
+                    },
+                    "groupId": {
+                        "type": "string",
+                        "description": "Internal SCB Identifier known as account ID",
+                        "example": "APINTST2"
+                    },
+                    "country": {
+                        "type": "string",
+                        "description": "Country of the account"
+                    },
+                    "iban": {
+                        "type": "string",
+                        "description": "International Bank Account Number"
+                    }
+                }
+            },
+            "OpenApiAccountBalance": {
+                "type": "object",
+                "properties": {
+                    "currency": {
+                        "type": "string",
+                        "description": "Currency of the Account"
+                    },
+                    "asOf": {
+                        "type": "string",
+                        "description": "Date of the response",
+                        "format": "date"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "Available Balance for the account"
+                    },
+                    "opening": {
+                        "type": "number",
+                        "description": "Opening Balance of the account"
+                    },
+                    "closing": {
+                        "type": "number",
+                        "description": "Closing Balance of the account"
+                    },
+                    "openingLedger": {
+                        "type": "number",
+                        "description": "Opening Ledger of the account"
+                    },
+                    "closingLedger": {
+                        "type": "number",
+                        "description": "Closing Ledger of the account"
+                    }
+                }
+            },
+            "OpenApiAccountOwner": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique ID of the Account"
+                    },
+                    "provider": {
+                        "type": "string",
+                        "description": "Financial Institution Name"
+                    },
+                    "display_name": {
+                        "type": "string",
+                        "description": "Account Title/Name"
+                    }
+                }
+            },
+            "OpenApiBeneficiariesResponse": {
+                "type": "object",
+                "properties": {
+                    "transactionSuccess": {
+                        "type": "boolean",
+                        "description": "Request Status - True or False"
+                    },
+                    "beneficiaryList": {
+                        "type": "array",
+                        "description": "Beneficiary Details",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiBeneficiary"
+                        }
+                    }
+                }
+            },
+            "OpenApiBeneficiary": {
+                "type": "object",
+                "properties": {
+                    "payeename": {
+                        "type": "string",
+                        "description": "Name of the Payee/Beneficiary",
+                        "example": "ABC Limited"
+                    },
+                    "payeeacctNum": {
+                        "type": "string",
+                        "description": "Account Number of the Payee/Beneficiary",
+                        "example": "01234567"
+                    },
+                    "payeebankCode": {
+                        "type": "string",
+                        "description": "Payee/Beneficiary Bank Code",
+                        "example": "SGBCLSG2XXX"
+                    },
+                    "payeebankName": {
+                        "type": "string",
+                        "description": "Payee/Beneficiary Bank Name",
+                        "example": "Standard Chartered Limited"
+                    },
+                    "payeebankCountry": {
+                        "type": "string",
+                        "description": "Payee/Beneficiary Bank Country",
+                        "example": "GB"
+                    }
+                }
+            },
+            "AccountId": {
+                "required": [
+                    "accountId",
+                    "bankCode",
+                    "currencyCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "accountId": {
+                        "type": "string",
+                        "description": "Account Number",
+                        "example": "22201111594"
+                    },
+                    "currencyCode": {
+                        "$ref": "#/components/schemas/CurrencyCode"
+                    },
+                    "bankCode": {
+                        "type": "string",
+                        "description": "Account Bank BIC",
+                        "example": "SCBLINBBXXX"
+                    }
+                }
+            },
+            "CurrencyCode": {
+                "type": "object",
+                "properties": {
+                    "isoCode": {
+                        "type": "string",
+                        "description": "ISO Code",
+                        "example": "EUR"
+                    }
+                }
+            },
+            "DenominatedAmount": {
+                "required": [
+                    "amount",
+                    "currencyCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "currencyCode": {
+                        "type": "string",
+                        "description": "ISO Currency Code",
+                        "example": "EUR"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "Amount in local currency units",
+                        "example": 12000.12
+                    }
+                }
+            },
+            "OpenApiCreditDebitAdvice": {
+                "required": [
+                    "adviceType",
+                    "clientIdentifier",
+                    "groupId",
+                    "transactionCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "groupId": {
+                        "type": "string",
+                        "description": "Internal SCB Identifier",
+                        "example": "INFXFFF"
+                    },
+                    "accountIdentifier": {
+                        "$ref": "#/components/schemas/AccountId"
+                    },
+                    "eventDate": {
+                        "type": "string",
+                        "description": "Transaction Date",
+                        "format": "date"
+                    },
+                    "transactionIdentifier": {
+                        "$ref": "#/components/schemas/TransactionIdentifier"
+                    },
+                    "adviceType": {
+                        "type": "string",
+                        "description": "The type of advice - Credit or Debit",
+                        "example": "credit",
+                        "enum": [
+                            "Credit",
+                            "Debit"
+                        ]
+                    },
+                    "valueDate": {
+                        "type": "string",
+                        "description": "Value Date",
+                        "format": "date",
+                        "example": "2019-01-29T00:00:00.000Z"
+                    },
+                    "virtualAccountId": {
+                        "type": "string",
+                        "description": "Virtual Account Number",
+                        "example": "99003xx1111"
+                    },
+                    "transactionCode": {
+                        "type": "string",
+                        "description": "Transaction Code",
+                        "example": "716"
+                    },
+                    "baiCode": {
+                        "type": "string",
+                        "description": "BAI Code",
+                        "example": "169"
+                    },
+                    "transactionDescription": {
+                        "type": "string",
+                        "description": "Transaction Description",
+                        "example": "Fund Transfer NEFT Inward -credit"
+                    },
+                    "postExecutionBalance": {
+                        "$ref": "#/components/schemas/DenominatedAmount"
+                    },
+                    "preExecutionBalance": {
+                        "$ref": "#/components/schemas/DenominatedAmount"
+                    },
+                    "transactionFreeText": {
+                        "type": "array",
+                        "description": "Transaction Narration 1",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "transactionExtendedFreeText": {
+                        "type": "array",
+                        "description": "Transaction Narration 2",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "transactionMultiLingualFreeText": {
+                        "type": "array",
+                        "description": "Transaction Narration 3",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "transactionAmount": {
+                        "$ref": "#/components/schemas/DenominatedAmount"
+                    },
+                    "clientIdentifier": {
+                        "$ref": "#/components/schemas/TransactionIdentifier"
+                    },
+                    "externalIdentifier": {
+                        "$ref": "#/components/schemas/TransactionIdentifier"
+                    },
+                    "timestamp": {
+                        "type": "integer",
+                        "description": "Timestamp",
+                        "format": "int64"
+                    }
+                }
+            },
+            "TransactionIdentifier": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "Transaction Identifier Type",
+                        "example": "BAI",
+                        "enum": [
+                            "BAI",
+                            "SWIFT",
+                            "Other"
+                        ]
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "description": "Transaction Identifier",
+                        "example": "201812131309869"
+                    }
+                }
+            },
+            "OpenApiFundConfirmationResponse": {
+                "type": "object",
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "description": "Unique Reference Number for tracking purpose"
+                    },
+                    "amount": {
+                        "type": "string",
+                        "description": "Amount being confirmed as available based on account balance"
+                    },
+                    "fundsAvailable": {
+                        "type": "boolean",
+                        "description": "Indicative response if funds are available - true/false"
+                    }
+                }
+            },
+            "OpenApiFundConfirmationRequest": {
+                "required": [
+                    "accountId",
+                    "amount",
+                    "consentId",
+                    "reference"
+                ],
+                "type": "object",
+                "properties": {
+                    "consentId": {
+                        "type": "string",
+                        "description": "Consent ID"
+                    },
+                    "accountId": {
+                        "type": "string",
+                        "description": "Account Number"
+                    },
+                    "reference": {
+                        "type": "string",
+                        "description": "Reference"
+                    },
+                    "amount": {
+                        "type": "string",
+                        "description": "Amount"
+                    }
+                }
+            },
+            "OpenApiPaymentAccount": {
+                "required": [
+                    "id",
+                    "identifierType"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9]+$",
+                        "type": "string",
+                        "description": "Unique Account Number",
+                        "example": "04430323443242"
+                    },
+                    "identifierType": {
+                        "type": "string",
+                        "description": "Account Identifier Type, defaulted as BBAN",
+                        "example": "IBAN",
+                        "enum": [
+                            "BBAN",
+                            "IBAN",
+                            "Other"
+                        ]
+                    },
+                    "accountType": {
+                        "type": "string",
+                        "description": "Account Type",
+                        "example": "CASH",
+                        "enum": [
+                            "CACC",
+                            "CASH",
+                            "CHAR",
+                            "CISH",
+                            "COMM",
+                            "CPAC",
+                            "LLSV",
+                            "LOAN",
+                            "MGLD",
+                            "MOMA",
+                            "NREX",
+                            "ODFT",
+                            "ONDP",
+                            "OTHR",
+                            "SACC",
+                            "SLRY",
+                            "SVGS",
+                            "TAXE",
+                            "TRAN",
+                            "TRAS"
+                        ]
+                    }
+                }
+            },
+            "OpenApiPaymentInstructionContainer": {
+                "type": "object",
+                "properties": {
+                    "paymentInstruction": {
+                        "$ref": "#/components/schemas/OpenApiPaymentInstructionInstruction"
+                    },
+                    "batchReference": {
+                        "type": "string",
+                        "description": "Batch Reference"
+                    },
+                    "paymentIdentifier": {
+                        "type": "string",
+                        "description": "Payment Identifier"
+                    }
+                }
+            },
+            "OpenApiPaymentInstructionInstruction": {
+                "required": [
+                    "amount",
+                    "creditor",
+                    "creditorAccount",
+                    "creditorAgent",
+                    "debtor",
+                    "debtorAccount",
+                    "debtorAgent",
+                    "referenceId"
+                ],
+                "type": "object",
+                "properties": {
+                    "paymentTimestamp": {
+                        "type": "integer",
+                        "description": "Payment Timestamp",
+                        "format": "int64"
+                    },
+                    "paymentTypePreference": {
+                        "type": "string",
+                        "description": "Indicates whether to use the fastest or cheapest or explicit payment type, this is currently based on predefined payment templates.",
+                        "enum": [
+                            "Fastest",
+                            "Cheapest",
+                            "Explicit"
+                        ]
+                    },
+                    "requiredExecutionDate": {
+                        "type": "string",
+                        "description": "Required Execution Date",
+                        "format": "date"
+                    },
+                    "amount": {
+                        "$ref": "#/components/schemas/DenominatedAmount"
+                    },
+                    "referenceId": {
+                        "type": "string",
+                        "description": "Unique Client Reference Id for the payment",
+                        "example": "CI1234566"
+                    },
+                    "purpose": {
+                        "type": "string",
+                        "description": "Purpose of the payment, defaults to CASH if not specified",
+                        "example": "CASH"
+                    },
+                    "paymentType": {
+                        "type": "string",
+                        "description": "Type of payment or payment instrument type, e.g. IBFT, IMPS, RTGS",
+                        "example": "IBFT"
+                    },
+                    "chargerBearer": {
+                        "type": "string",
+                        "description": "Charge Indicator - DEBT, CRED, SHAR, SLEV, will default from payment template if defined.",
+                        "example": "SHAR",
+                        "enum": [
+                            "DEBT",
+                            "CRED",
+                            "SHAR",
+                            "SLEV"
+                        ]
+                    },
+                    "debtor": {
+                        "$ref": "#/components/schemas/OpenApiBankParty"
+                    },
+                    "debtorAccount": {
+                        "$ref": "#/components/schemas/OpenApiPaymentAccount"
+                    },
+                    "debtorAgent": {
+                        "$ref": "#/components/schemas/OpenApiAgent"
+                    },
+                    "creditor": {
+                        "$ref": "#/components/schemas/OpenApiParty"
+                    },
+                    "creditorAgent": {
+                        "$ref": "#/components/schemas/OpenApiAgent"
+                    },
+                    "creditorAccount": {
+                        "$ref": "#/components/schemas/OpenApiPaymentAccount"
+                    },
+                    "remittanceInfo": {
+                        "$ref": "#/components/schemas/OpenApiRemittanceInfo"
+                    },
+                    "relatedRemittanceInfo": {
+                        "$ref": "#/components/schemas/OpenApiRemittanceInfo"
+                    }
+                }
+            },
+            "OpenApiPaymentInstruction": {
+                "required": [
+                    "header",
+                    "instruction"
+                ],
+                "type": "object",
+                "properties": {
+                    "header": {
+                        "$ref": "#/components/schemas/OpenApiPaymentInstructionHeader"
+                    },
+                    "instruction": {
+                        "$ref": "#/components/schemas/OpenApiPaymentInstructionInstruction"
+                    }
+                }
+            },
+            "OpenApiPaymentInstructionHeader": {
+                "required": [
+                    "countryCode",
+                    "messageId",
+                    "messageSender"
+                ],
+                "type": "object",
+                "properties": {
+                    "messageSender": {
+                        "type": "string",
+                        "description": "Message Sender - Defaulted as Client Registered Name",
+                        "example": "Corp Inc."
+                    },
+                    "messageId": {
+                        "type": "string",
+                        "description": "Message Id",
+                        "example": "213322-2232234"
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "description": "ISO Country Code - Defaulted as country of Client",
+                        "example": "SG"
+                    },
+                    "timestamp": {
+                        "type": "integer",
+                        "description": "Message Timestamp",
+                        "format": "int64"
+                    }
+                }
+            },
+            "OpenApiAgent": {
+                "required": [
+                    "financialInstitution"
+                ],
+                "type": "object",
+                "properties": {
+                    "financialInstitution": {
+                        "$ref": "#/components/schemas/OpenApiFinancialInstitution"
+                    },
+                    "clearingSystemId": {
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "pattern": "^[0-9]+$",
+                        "type": "string",
+                        "description": "Clearing System Branch Identifier"
+                    },
+                    "clearingSystemCode": {
+                        "type": "string",
+                        "description": "Clearing System Branch Code"
+                    },
+                    "branchCode": {
+                        "type": "string",
+                        "description": "Branch Code"
+                    }
+                }
+            },
+            "OpenApiBankParty": {
+                "required": [
+                    "legalEntityId",
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "legalEntityId": {
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "pattern": "^[0-9]+$",
+                        "type": "string",
+                        "description": "Legal Entity ID",
+                        "example": "01243433"
+                    },
+                    "name": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9&()/-@,.'*]+$",
+                        "type": "string",
+                        "description": "Company Name",
+                        "example": "Client Corp Inc."
+                    }
+                }
+            },
+            "OpenApiIdentity": {
+                "required": [
+                    "id",
+                    "identityType"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Identification Number",
+                        "example": "FPS123456"
+                    },
+                    "identityType": {
+                        "type": "string",
+                        "description": "Identification Type",
+                        "example": "FPS"
+                    }
+                }
+            },
+            "OpenApiParty": {
+                "required": [
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9&()/-@,.'*]+$",
+                        "type": "string",
+                        "description": "Full Name",
+                        "example": "Tony Leung Chiu-Wai"
+                    },
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiAddress"
+                    },
+                    "contact": {
+                        "$ref": "#/components/schemas/OpenApiContact"
+                    },
+                    "identity": {
+                        "$ref": "#/components/schemas/OpenApiIdentity"
+                    }
+                }
+            },
+            "OpenApiAddress": {
+                "type": "object",
+                "properties": {
+                    "line_1": {
+                        "type": "string",
+                        "description": "Address Line 1"
+                    },
+                    "line_2": {
+                        "type": "string",
+                        "description": "Address Line 2"
+                    },
+                    "line_3": {
+                        "type": "string",
+                        "description": "Address Line 3"
+                    },
+                    "city": {
+                        "type": "string",
+                        "description": "City"
+                    },
+                    "state": {
+                        "type": "string",
+                        "description": "State"
+                    },
+                    "postcode": {
+                        "type": "string",
+                        "description": "Postal Code"
+                    },
+                    "country": {
+                        "type": "string",
+                        "description": "Country"
+                    }
+                }
+            },
+            "OpenApiContact": {
+                "type": "object",
+                "properties": {
+                    "phoneNumber": {
+                        "type": "string",
+                        "description": "Contact Phone Number"
+                    },
+                    "mobileNumber": {
+                        "type": "string",
+                        "description": "Contact Mobile Number"
+                    },
+                    "emailAddress": {
+                        "type": "string",
+                        "description": "Contact Email Address"
+                    },
+                    "faxNumber": {
+                        "type": "string",
+                        "description": "Contact Fax Number"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Contact Full Name"
+                    }
+                }
+            },
+            "OpenApiFinancialInstitution": {
+                "required": [
+                    "BIC"
+                ],
+                "type": "object",
+                "properties": {
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiAddress"
+                    },
+                    "branchCode": {
+                        "type": "string",
+                        "description": "Branch Code"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Branch Name"
+                    },
+                    "BIC": {
+                        "maxLength": 11,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9]+$",
+                        "type": "string",
+                        "description": "Financial Institution",
+                        "example": "SCBLSGSGXXX"
+                    }
+                }
+            },
+            "OpenApiRemittanceInfo": {
+                "type": "object",
+                "properties": {
+                    "unstructured": {
+                        "type": "string",
+                        "description": "Unstructured"
+                    },
+                    "structured": {
+                        "$ref": "#/components/schemas/OpenApiStructureRemittanceInfo"
+                    }
+                }
+            },
+            "OpenApiStructureRemittanceInfo": {
+                "type": "object"
+            },
+            "OpenApiDenominatedAmount": {
+                "required": [
+                    "amount",
+                    "currencyCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "currencyCode": {
+                        "type": "string",
+                        "description": "currencyCode",
+                        "example": "EUR"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "amount",
+                        "example": 12000.12
+                    }
+                }
+            },
+            "OpenApiPaymentId": {
+                "type": "object",
+                "properties": {
+                    "paymentIdentifier": {
+                        "type": "string",
+                        "description": "Unique Payment Identification Reference",
+                        "example": "Q4594051"
+                    },
+                    "internalTrackingId": {
+                        "type": "string",
+                        "description": "Internal Tracking ID",
+                        "example": "20181018OPENAPI1X3ODEU3224029"
+                    },
+                    "clientReferenceId": {
+                        "type": "string",
+                        "description": "Unique Client Identification Reference",
+                        "example": "INTERNAL1234567893"
+                    },
+                    "referenceId": {
+                        "type": "string",
+                        "description": "Reference ID",
+                        "example": "INTERNAL1234567893"
+                    }
+                }
+            },
+            "OAuthTokens": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "request status",
+                        "example": 100
+                    },
+                    "access": {
+                        "type": "string",
+                        "description": "access jwt",
+                        "example": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJVQUFTIiwiYXVkIjoiUzJCIiwiaWF0IjoxNTcxMzA3NTk3LCJleHAiOjE1NzEzMDg0OTcsInBheWxvYWQiOnsiY2xpZW50SWQiOiJUUFAtR1AtMDAwNSIsImNvbnNlbnRJZCI6IjMzMTM3OGU1LWRmNGEtNDU3OC05ZTE2LWVmZWMyMTNkZmRjOCIsInR5cGUiOiJUQiJ9fQ.UJXWflGVrEVsV1GIvT_rSmGSsbU0ykEXBpvdEvbsbyt3YfYVjwgUwfBweTEsnjHAN6MIto6vm5YRaZC6x7Z4erwwVtYKTXvKwsgTk6RzuuAii-JM1ta7YuA1mEcTGeipuUjYxlPQaoDmZMzxd4djDTnmbPRigG0VhNbQ4lf89gXZTDzysJGO_GzijNCR0LchBDXXlQIq1S5t90iZcLivUG4A-7D9Y1c7ipLVuZUeW-8mPzMHAOLN8Htf-kebUpAqKO_VOElUKPwdpSZBia-xXDZShWhVVz4oMxZ38bApjH3FcOqdkS4VBE1S4XEPXHfxhkkhhjtSE1qjpRo82TB_sQ"
+                    },
+                    "refresh": {
+                        "type": "string",
+                        "description": "request jwt",
+                        "example": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJVQUFTIiwiYXVkIjoiUzJCIiwiaWF0IjoxNTcxMzA3NTk3LCJleHAiOjE1NzkwODM1OTcsInBheWxvYWQiOnsiY2"
+                    }
+                }
+            }
+        }
+    }
+}

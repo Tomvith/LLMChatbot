@@ -1,0 +1,2342 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking - Collections",
+        "description": "**API Banking - Collections**\r\n\r\nEnables collections for corporate entities. Collect Money APIs expose the ability to initiate direct debit instruction and direct debit authorisation, to retrieve its statuses and to retrieve its latest version using mandate ID. It also allows generating QR code to facilitate the collection events and enables maintenance of virtual accounts.\r\n\r\n",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company Licence",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.standardchartered.com/openapi"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Direct Debit Authorisation",
+            "description": "Direct Debit Authorisation APIs enable you to initiate a direct debit mandate between payer and payee, retrieve authorisation statuses and provides flexibility to amend or cancel any existing direct debit authorisation.",
+            "x-subcategory": "Collect Money"
+        },
+        {
+            "name": "Direct Debit Instruction",
+            "description": "Direct Debit Instruction APIs enable you to initiate direct debit instruction, retrieve its statuses and its latest version for a given Reference ID. Additionally it also provide option to retrieve all direct debit instruction status by Mandate ID.",
+            "x-subcategory": "Collect Money"
+        },
+        {
+            "name": "Virtual Accounts",
+            "description": "Virtual Accounts APIs empower corporates to create shadow accounts for each of their customers there by enabling them to differentiate each collection from the collection source. Virtual accounts APIs enable corporates to perform various functions like creation of Virtual accounts, maintenance functions like update, delete and check status of virtual accounts.",
+            "x-subcategory": "Collect Money"
+        },
+        {
+            "name": "QR Code Collections",
+            "description": "QR Code Collections APIs enable merchants to generate QR code to facilitate collection events.",
+            "x-subcategory": "Collect Money"
+        }
+    ],
+    "paths": {
+        "/collections/v2/dda/amend": {
+            "post": {
+                "tags": [
+                    "Direct Debit Authorisation"
+                ],
+                "summary": "Direct Debit Authorisation - Amend",
+                "description": "The Direct Debit Authorisation - Amendment API provides the ability to amend direct debit authorisation. A limited number of fields are available for amendment, all of which are subject to approval by the payer. The API will respond with a receipt and will create a pending DDA amendment request. As the DDA progresses through its lifecycle, status updates will be available via the status API. If you have chosen to make use of the WebHook capability, updates will be pushed directly to your API in real-time. Amendable fields: <ul>   <li>sequenceType</li>   <li>frequencyType</li>   <li>requestInstancesAllowed</li>   <li>effectiveDate</li>   <li>expiryDate</li>   <li>currencyCode</li>   <li>paymentLimit.maximumTransactionAmount</li>   <li>creditor.name</li>   <li>debtorAccount.name</li> </ul>",
+                "operationId": "ddaAmend_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenAPIDirectDebitAuthorization"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiDirectDebitAuthorizationReport"
+                                },
+                                "example": {
+                                    "mandateId": "MA1111111",
+                                    "referenceId": "1234",
+                                    "status": "Pending",
+                                    "statusMessage": "",
+                                    "comments": []
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK"
+            }
+        },
+        "/collections/v2/dda/cancel/{debtorReference}": {
+            "post": {
+                "tags": [
+                    "Direct Debit Authorisation"
+                ],
+                "summary": "Direct Debit Authorisation - Cancel",
+                "description": "The Direct Debit Authorisation - Cancellation API provides the ability to cancel Direct Debit Authorisation. The API will respond with a receipt and will create a pending DDA cancellation request. As the DDA progresses through its lifecycle, status updates will be available via the status API. If you have chosen to make use of the WebHook capability, updates will be pushed directly to your API in real-time.",
+                "operationId": "ddaCancel_1",
+                "parameters": [
+                    {
+                        "name": "debtorReference",
+                        "in": "path",
+                        "description": "Debtor Reference to be used to request DDA cancellation<br/>maxLength: 35<br/>minLength: 1<br/>example: 12341234",
+                        "required": true,
+                        "schema": {
+                            "maxLength": 35,
+                            "minLength": 1,
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiDirectDebitAuthorizationReport"
+                                },
+                                "example": {
+                                    "mandateId": "MA1111111",
+                                    "referenceId": "1234",
+                                    "status": "Pending",
+                                    "statusMessage": "",
+                                    "comments": []
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK"
+            }
+        },
+        "/collections/v2/dda/initiate": {
+            "post": {
+                "tags": [
+                    "Direct Debit Authorisation"
+                ],
+                "summary": "Direct Debit Authorisation - Initiate",
+                "description": "The Direct Debit Authorisation - Initiation API exposes the ability to initiate a Direct Debit Authorisation (DDA). A DDA is an agreement between the payer and payee that supports periodic or adhoc collection requests, subject to approval by the payer. The API will respond with receipt and will create a pending DDA request. As the DDA progresses through its lifecycle, status updates will be available via the status API. If you have chosen to make use of the WebHook capability, updates will be pushed directly to your API in real-time.",
+                "operationId": "ddaInitiate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenAPIDirectDebitAuthorization"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiDirectDebitAuthorizationReport"
+                                },
+                                "example": {
+                                    "mandateId": "MA1111111",
+                                    "referenceId": "1234",
+                                    "status": "Pending",
+                                    "statusMessage": "",
+                                    "comments": []
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK"
+            }
+        },
+        "/collections/v2/dda/{mandateId}": {
+            "get": {
+                "tags": [
+                    "Direct Debit Authorisation"
+                ],
+                "summary": "Direct Debit Authorisation - Retrieve by Mandate ID",
+                "description": "The Direct Debit Authorisation - Individual Retrieval API returns the latest version of a DDA for the given mandate ID. This API returns the latest version of a DDA based on the allocated Mandate ID, as specified in the URL. If the mandate ID does not exist, the API will return a 404 status code. This API only returns the DDA definition, for status enquiries the DDA status API should be used.",
+                "operationId": "ddaMandate_1",
+                "parameters": [
+                    {
+                        "name": "mandateId",
+                        "in": "path",
+                        "description": "Mandate ID based on which API will return the latest version of direct debit authorisation<br/>maxLength: 35<br/>minLength: 1<br/>example: 12341234",
+                        "required": true,
+                        "schema": {
+                            "maxLength": 35,
+                            "minLength": 1,
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenAPIDirectDebitAuthorization"
+                                },
+                                "example": {
+                                    "creditor": {
+                                        "legalEntityId": "01243433",
+                                        "name": " Company X"
+                                    },
+                                    "creditorAgent": {
+                                        "financialInstitution": {
+                                            "BIC": "003"
+                                        }
+                                    },
+                                    "creditorAccount": {
+                                        "id": "20205002714",
+                                        "identifierType": "Other"
+                                    },
+                                    "currencyCode": "HKD",
+                                    "debtor": {
+                                        "name": "FPS CUST 01F302142"
+                                    },
+                                    "debtorAccount": {
+                                        "id": "20205001432",
+                                        "identifierType": "Other"
+                                    },
+                                    "debtorAgent": {
+                                        "clearingSystemId": "12345678",
+                                        "financialInstitution": {
+                                            "BIC": "003"
+                                        }
+                                    },
+                                    "debtorIdentificationDocumentIds": {
+                                        "HKId": "A1234567"
+                                    },
+                                    "debtorReference": "12345745",
+                                    "effectiveDate": "2019-02-02",
+                                    "expiryDate": "2019-10-10",
+                                    "paymentLimit": {
+                                        "maximumBatchAmount": 500,
+                                        "maximumTransactionAmount": 500,
+                                        "periodicity": "Adhoc"
+                                    },
+                                    "mandateType": "Variable",
+                                    "type": "DDMP",
+                                    "referenceId": "1234"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK"
+            }
+        },
+        "/collections/v2/dda/status/{referenceId}": {
+            "get": {
+                "tags": [
+                    "Direct Debit Authorisation"
+                ],
+                "summary": "Direct Debit Authorisation - Status",
+                "description": "The Direct Debit Authorisation - Status API allows for the query of the latest status of a direct debit authorisation (DDA) for a given Reference ID. If the Reference ID is known, an object describes the identifiers of the mandate and its latest status code and status description. A DDA may have several interim statuses throughout its lifecycle before being Completed or Rejected. These interim statuses will all be reflected as a Pending status but with a message that indicates the sub-status of the pending DDA. Any update to the DDI status will result in a notification to the WebHook if it has been enabled during the activation process.",
+                "operationId": "ddaStatus_1",
+                "parameters": [
+                    {
+                        "name": "referenceId",
+                        "in": "path",
+                        "description": "Reference ID is a unique direct debit authorisation identifier which will allow to query its latest status<br/>maxLength: 35<br/>minLength: 1<br/>pattern: ^[a-zA-Z0-9&()/\\\\-@,.'*\" ]+$<br/>example: A999999999999",
+                        "required": true,
+                        "schema": {
+                            "maxLength": 35,
+                            "minLength": 1,
+                            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]+$",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiDirectDebitAuthorizationReport"
+                                },
+                                "example": {
+                                    "mandateId": "MA1111111",
+                                    "referenceId": "1234",
+                                    "status": "Pending",
+                                    "statusMessage": "File has been received at RCMS Successfully",
+                                    "comments": []
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK"
+            }
+        },
+        "/collections/v2/ddi/initiate": {
+            "post": {
+                "tags": [
+                    "Direct Debit Instruction"
+                ],
+                "summary": "Direct Debit Instruction - Initiate",
+                "description": "The Direct Debit Instruction - Initiate API exposes the ability to initiate a Direct Debit Instruction (DDI) that allow fund collection from a payer bank account to payee bank account with Standard Chartered Bank.\r\n\r\nFor Hong Kong, the DDI requires an active Direct Debit Authorisation (DDA) to be referenced and must comply with the parameters and limits of the parent DDA. The payer & receiver account details are strictly taken from the DDA.",
+                "operationId": "ddiInitiate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenAPIDirectDebitInstruction"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiDDIStatus"
+                                },
+                                "example": {
+                                    "referenceId": "38a26ee484344d1d94eadf10c5a45026",
+                                    "paymentContainerId": "9da30825-8b75-41fa-8e3e-0d8dfb1239bd",
+                                    "statusString": "Completed",
+                                    "statusCode": null,
+                                    "valueDate": "2021-06-09",
+                                    "reasonInformation": "D13",
+                                    "timestamp": "2021-06-09T08:52:21.519Z"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,SG"
+            }
+        },
+        "/collections/v2/ddi/{referenceId}": {
+            "get": {
+                "tags": [
+                    "Direct Debit Instruction"
+                ],
+                "summary": "Direct Debit Instruction - Retrieve",
+                "description": "The Direct Debit Instruction - Retrieve API returns the latest version of a DDI for the given Reference ID. This API returns the latest version of a DDI based on the allocated Reference ID, as specified in the URL. If the Reference ID does not exist, the API will return a 404 status code. This API only returns the DDI definition, for status enquiries the DDI status API should be used.",
+                "operationId": "ddiRetrieve_1",
+                "parameters": [
+                    {
+                        "name": "referenceId",
+                        "in": "path",
+                        "description": "Reference ID is a unique direct debit instruction identifier which will allow to retrieve instruction submitted earlier<br/>maxLength: 35<br/>minLength: 1<br/>pattern: ^[a-zA-Z0-9&()/\\\\-@,.'*\" ]+$<br/>example: A999999999999",
+                        "required": true,
+                        "schema": {
+                            "maxLength": 35,
+                            "minLength": 1,
+                            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]+$",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenAPIDirectDebitInstruction"
+                                },
+                                "example": {
+                                    "referenceId": "eDDIabc12345",
+                                    "debtorAccount": {
+                                        "id": "44780029910",
+                                        "identifierType": "BBAN",
+                                        "accountType": "CACC"
+                                    },
+                                    "creditorAccount": {
+                                        "id": "44708153456",
+                                        "identifierType": "BBAN",
+                                        "accountType": "CACC"
+                                    },
+                                    "instructedAmount": {
+                                        "currencyCode": "HKD",
+                                        "amount": 23.44
+                                    },
+                                    "purpose": "DDOTHR",
+                                    "chargerBearer": "DEBT",
+                                    "mandateId": "123p1Q12215",
+                                    "creditor": {
+                                        "legalEntityId": "692537",
+                                        "name": "Company Name"
+                                    },
+                                    "debtor": {
+                                        "name": "NAME G513601",
+                                        "identity": {
+                                            "id": "",
+                                            "identityType": ""
+                                        }
+                                    },
+                                    "creditorAgent": {
+                                        "financialInstitution": {
+                                            "branchCode": "",
+                                            "BIC": "SCBLHKHHXXX"
+                                        },
+                                        "clearingSystemId": "003",
+                                        "clearingSystemCode": "",
+                                        "branchCode": ""
+                                    },
+                                    "debtorAgent": {
+                                        "financialInstitution": {
+                                            "branchCode": "",
+                                            "BIC": "SCBLHKHHXXX"
+                                        },
+                                        "clearingSystemId": "003",
+                                        "clearingSystemCode": "",
+                                        "branchCode": ""
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,SG"
+            }
+        },
+        "/collections/v2/ddi/status/{referenceId}": {
+            "get": {
+                "tags": [
+                    "Direct Debit Instruction"
+                ],
+                "summary": "Direct Debit Instruction - Status",
+                "description": "The Direct Debit Instruction - Status API allows for the query of the latest status of a Direct Debit Instruction (DDI) for a given Reference ID. If the reference ID is known, an object describing the identifiers of the instruction and its latest status code and status description is returned. A DDI may have several interim statuses throughout its lifecycle before being Completed or Rejected. These interim statuses will be reflected as Pending status but with a message that indicates the sub-status of the pending DDI. Any update to the DDI status will result in a notification to the WebHook if it has been enabled during the activation process.",
+                "operationId": "ddiStatus_1",
+                "parameters": [
+                    {
+                        "name": "referenceId",
+                        "in": "path",
+                        "description": "Reference ID is a unique direct debit instruction identifier which will allow to query its latest status<br/>maxLength: 35<br/>minLength: 1<br/>pattern: ^[a-zA-Z0-9&()/\\\\-@,.'*\" ]+$<br/>example: A999999999999",
+                        "required": true,
+                        "schema": {
+                            "maxLength": 35,
+                            "minLength": 1,
+                            "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]+$",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiDDIStatus"
+                                },
+                                "example": {
+                                    "referenceId": "38a26ee484344d1d94eadf10c5a4502",
+                                    "paymentContainerId": "9da30825-8b75-41fa-8e3e-0d8dfb1239bd",
+                                    "statusString": "Completed",
+                                    "statusCode": "",
+                                    "timestamp": "2021-06-09T08:52:21.519Z",
+                                    "valueDate": "2021-06-09",
+                                    "reasonInformation": "D13"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "DDI Not found for given reference id",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,SG"
+            }
+        },
+        "/collections/v2/merchant/qrcode/dynamic/generate": {
+            "post": {
+                "tags": [
+                    "QR Code Collections"
+                ],
+                "summary": "QR Code Generation",
+                "description": "The QR Code Generation API exposes an ability to generate a QR Code for scanning by a merchant's customer for collection events. The request contains all parameters of the QR code, except the merchant name and account details, which are derived from the authenticated identity of the API call (i.e. Client Certificate). An example use case of the QR code is for Bill payment. When a Bill is being generated and sent to a retail customer, a QR code can be created specifically for this Bill, containing the beneficiary, amount and bill reference Id. This is information is captured by the Retail payment mobile application and made available through the Credit/Debit notification APIs, this may be used for real-time reconciliation of bill payment. When invoked, the API returns a QR Code in PNG format, encoded as a Base64 string.  The EMVCo content of the QR Code is also returned in the qrContent field.",
+                "operationId": "qRCode_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiQRCodeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiQRCode"
+                                },
+                                "example": {
+                                    "qrCodeBase64": "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",
+                                    "qrContent": "00020101021252040000530384054040.005802HK620901051234526160012hk.com.hkicl6304b891",
+                                    "width": 600,
+                                    "height": 600
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK"
+            }
+        },
+        "/collections/v2/virtual-account/create": {
+            "post": {
+                "tags": [
+                    "Virtual Accounts"
+                ],
+                "summary": "Virtual Account (VA) - Create",
+                "description": "The Virtual Account (VA) - Create API provides the ability to create virtual accounts that are mapped to single physical account with multiple or single currency and multiple physical accounts with different currencies. Virtual Accounts have Part A identifying an Operating unit (OPU) and part B identifying the supplier.",
+                "operationId": "virtualAccountCreate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiVirtualAccountCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiVirtualAccountCreateResponse"
+                                },
+                                "example": {
+                                    "virtualAccountNumber": "CLIENT998877B66",
+                                    "status": "PENDING",
+                                    "iban": "KZ5590238934023248812"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Currently the VAM feature is not supported in your country. Please check with support",
+                                    "errorCode": "AER-7XX"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                },
+                "x-markets": "HK, SG, MY, IN, PH, BD, AE"
+            }
+        },
+        "/collections/v2/virtual-account/delete": {
+            "post": {
+                "tags": [
+                    "Virtual Accounts"
+                ],
+                "summary": "Virtual Account (VA) - Delete",
+                "description": "The Virtual Account (VA) - Delete API provides the ability to delete virtual accounts that are mapped to single physical account with multiple or single currency and multiple physical accounts with different currencies. Virtual Accounts have Part A identifying an Operating unit (OPU) and part B identifying the supplier.",
+                "operationId": "virtualAccountDelete_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiVirtualAccountCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiVirtualAccountCreateResponse"
+                                },
+                                "example": {
+                                    "virtualAccountNumber": "CLIENT998877B66",
+                                    "status": "PENDING",
+                                    "iban": "KZ5590238934023248812"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Currently the VAM feature is not supported in your country. Please check with support",
+                                    "errorCode": "AER-7XX"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                },
+                "x-markets": "HK, SG, MY, IN, PH, BD, AE"
+            }
+        },
+        "/collections/v2/virtual-account/status/{clientReferenceId}": {
+            "get": {
+                "tags": [
+                    "Virtual Accounts"
+                ],
+                "summary": "Virtual Account (VA) - Status Enquiry",
+                "description": "The Virtual Account (VA) - Status Enquiry API provides the status of a previously submitted Virtual Account Maintenance (VAM) request.",
+                "operationId": "virtualAccountStatus_1",
+                "parameters": [
+                    {
+                        "name": "clientReferenceId",
+                        "in": "path",
+                        "description": "Client Reference ID to retrieve Virtual Account Maintenance (VAM) request status<br/>maxLength: 50<br/>minLength: 1<br/>example: ABC12345",
+                        "required": true,
+                        "schema": {
+                            "maxLength": 50,
+                            "minLength": 1,
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiVirtualAccountStatus"
+                                }
+                            },
+                            "application/json": {
+                                "example": {
+                                    "virtualAccountNumber": "CLIENT998877B66",
+                                    "status": "PENDING",
+                                    "statusDescription": null,
+                                    "iban": "KZ5590238934023248812"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Currently the VAM feature is not supported in your country. Please check with support",
+                                    "errorCode": "AER-7XX"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                },
+                "x-markets": "HK, SG, MY, IN, PH, BD, AE"
+            }
+        },
+        "/collections/v2/virtual-account/update": {
+            "post": {
+                "tags": [
+                    "Virtual Accounts"
+                ],
+                "summary": "Virtual Account (VA) - Update",
+                "description": "The Virtual Account (VA)- Update API provides the ability to update virtual account details that are mapped to single physical account with multiple or single currency and multiple physical accounts with different currencies. Virtual Accounts have Part A identifying an Operating unit (OPU) and part B identifying the supplier.",
+                "operationId": "virtualAccountUpdate_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiVirtualAccountCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiVirtualAccountCreateResponse"
+                                },
+                                "example": {
+                                    "virtualAccountNumber": "CLIENT998877B66",
+                                    "status": "PENDING",
+                                    "iban": "KZ5590238934023248812"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "errorMessage": "Currently the VAM feature is not supported in your country. Please check with support",
+                                    "errorCode": "AER-7XX"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                },
+                "x-markets": "HK, SG, MY, IN, PH, BD, AE"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "OpenApiDirectDebitAuthorizationReport": {
+                "required": [
+                    "comments",
+                    "mandateId",
+                    "referenceId",
+                    "status",
+                    "statusMessage",
+                    "timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "mandateId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Mandate ID",
+                        "example": "XX9999999"
+                    },
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Unique Reference ID specified on DDA Request",
+                        "example": "TS76737676763"
+                    },
+                    "status": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Status of Mandate - Pending, Completed, Rejected",
+                        "example": "Pending"
+                    },
+                    "statusCode": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Rejection Code - only provided if Status is Rejected. For all pending status, it will be empty.",
+                        "example": "DTL1044"
+                    },
+                    "statusMessage": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Status Description if Status is Completed or Pending. Rejection Description if Status is Rejected",
+                        "example": "Processing at Payer Bank"
+                    },
+                    "comments": {
+                        "maxItems": 100,
+                        "minItems": 0,
+                        "type": "array",
+                        "description": "Additional Information",
+                        "example": "Sent to FPS",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "Indicates the date and time of the status change. Use for reconciliation. Timezone is in UTC",
+                        "format": "date-time",
+                        "example": "2019-01-01T02:29:05.92Z"
+                    }
+                }
+            },
+            "OpenAPIDirectDebitAuthorization": {
+                "required": [
+                    "creditor",
+                    "creditorAccount",
+                    "creditorAgent",
+                    "currencyCode",
+                    "debtor",
+                    "debtorAccount",
+                    "debtorAgent",
+                    "debtorReference",
+                    "paymentLimit",
+                    "referenceId"
+                ],
+                "type": "object",
+                "properties": {
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]+$",
+                        "type": "string",
+                        "description": "Unique Reference ID",
+                        "example": "A999999999999"
+                    },
+                    "debtorAccount": {
+                        "$ref": "#/components/schemas/OpenApiPaymentAccount"
+                    },
+                    "creditorAccount": {
+                        "$ref": "#/components/schemas/OpenApiPaymentAccount"
+                    },
+                    "debtorAgent": {
+                        "$ref": "#/components/schemas/OpenApiAgent"
+                    },
+                    "creditorAgent": {
+                        "$ref": "#/components/schemas/OpenApiAgent"
+                    },
+                    "creditor": {
+                        "$ref": "#/components/schemas/OpenApiBankParty"
+                    },
+                    "debtor": {
+                        "$ref": "#/components/schemas/OpenApiParty"
+                    },
+                    "paymentLimit": {
+                        "$ref": "#/components/schemas/OpenApiPaymentLimit"
+                    },
+                    "expiryDate": {
+                        "type": "string",
+                        "description": "DDA Expiry Date. If this field is not provided, mandate will be never expired. Format in YYYY-MM-DD",
+                        "format": "date",
+                        "example": "2019-10-10"
+                    },
+                    "effectiveDate": {
+                        "type": "string",
+                        "description": "DDA Effective Date. Format in YYYY-MM-DD. Default as Present Date",
+                        "format": "date",
+                        "example": "2018-10-10"
+                    },
+                    "debtorReference": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Unique Debtor Reference ID (MandateId)",
+                        "example": "12341234"
+                    },
+                    "debtorIdentificationDocumentIds": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string",
+                            "description": "Debtor Identification Documents Details. Country ID Card Number, Passport Number, Business Registration Number, Certificate of Incorporation Number and Others",
+                            "example": "{ \"hkId\" : \"A1234567\", \"passport\" : \"12345677\", \"CI\" : \"123456\", \"others\": \"123456789\") "
+                        }
+                    },
+                    "currencyCode": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Collection Currency - ISO Currency Code",
+                        "example": "HKD"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "DDA Type",
+                        "example": "DDMU (default)",
+                        "enum": [
+                            "DDMU",
+                            "DDMP",
+                            "DDMC"
+                        ]
+                    },
+                    "mandateType": {
+                        "type": "string",
+                        "description": "Mandate Type",
+                        "example": "Variable (default)",
+                        "enum": [
+                            "Fixed",
+                            "Variable"
+                        ]
+                    },
+                    "sequenceType": {
+                        "type": "string",
+                        "description": "Sequence Type",
+                        "example": "Recurring (default)",
+                        "enum": [
+                            "Recurring",
+                            "OneOff"
+                        ]
+                    },
+                    "frequencyType": {
+                        "type": "string",
+                        "description": "Frequency Type",
+                        "example": "Monthly (default)",
+                        "enum": [
+                            "Daily",
+                            "Weekly",
+                            "Fortnightly",
+                            "Monthly",
+                            "Quarterly",
+                            "Half_Yearly",
+                            "Yearly",
+                            "IntraDay"
+                        ]
+                    },
+                    "requestInstancesAllowed": {
+                        "type": "integer",
+                        "description": "Request Instances Allowed",
+                        "format": "int32"
+                    },
+                    "countryCode": {
+                        "maxLength": 2,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "ISO 2-characters country code - Used to identify the country of request origination"
+                    }
+                }
+            },
+            "OpenApiAddress": {
+                "type": "object",
+                "properties": {
+                    "line_1": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Address Line 1"
+                    },
+                    "line_2": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Address Line 2"
+                    },
+                    "line_3": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Address Line 3"
+                    },
+                    "city": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "City"
+                    },
+                    "state": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "State"
+                    },
+                    "postcode": {
+                        "maxLength": 25,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Postal Code"
+                    },
+                    "country": {
+                        "maxLength": 45,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Country"
+                    }
+                }
+            },
+            "OpenApiAgent": {
+                "type": "object",
+                "properties": {
+                    "financialInstitution": {
+                        "$ref": "#/components/schemas/OpenApiFinancialInstitution"
+                    },
+                    "clearingSystemId": {
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9]+$",
+                        "type": "string",
+                        "description": "Clearing System Branch Identifier"
+                    },
+                    "clearingSystemCode": {
+                        "type": "string",
+                        "description": "Clearing System Branch Code"
+                    },
+                    "branchCode": {
+                        "type": "string",
+                        "description": "Branch Code"
+                    }
+                }
+            },
+            "OpenApiBankParty": {
+                "required": [
+                    "legalEntityId",
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "legalEntityId": {
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "pattern": "^[0-9]+$",
+                        "type": "string",
+                        "description": "Legal Entity ID / Customer ID<br>Mandatory if Country Code is SG",
+                        "example": "11111111"
+                    },
+                    "name": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]+$",
+                        "type": "string",
+                        "description": "Your Company Name / Creditor Name<br>Mandatory if Country Code is SG",
+                        "example": "Client Corp Inc."
+                    }
+                }
+            },
+            "OpenApiContact": {
+                "type": "object",
+                "properties": {
+                    "phoneNumber": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Contact Phone Number",
+                        "example": "+001-11111111"
+                    },
+                    "mobileNumber": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Contact Mobile Number",
+                        "example": "+001-11111111"
+                    },
+                    "emailAddress": {
+                        "maxLength": 150,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+                        "type": "string",
+                        "description": "Contact Email Address"
+                    },
+                    "faxNumber": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Contact Fax Number"
+                    },
+                    "name": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]*$",
+                        "type": "string",
+                        "description": "Contact Full Name"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "OpenApiFinancialInstitution": {
+                "required": [
+                    "BIC"
+                ],
+                "type": "object",
+                "properties": {
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiAddress"
+                    },
+                    "branchCode": {
+                        "type": "string",
+                        "description": "Branch Code"
+                    },
+                    "name": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Financial Institution Name"
+                    },
+                    "BIC": {
+                        "maxLength": 11,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9]+$",
+                        "type": "string",
+                        "description": "Financial Institution, Business Identifier Code<br>Mandatory for SG",
+                        "example": "SCBLSGSGXXX"
+                    }
+                }
+            },
+            "OpenApiIdentity": {
+                "required": [
+                    "id",
+                    "identityType"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "maxLength": 18,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Identification Number",
+                        "example": "FPS123456"
+                    },
+                    "identityType": {
+                        "maxLength": 12,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Identification Type",
+                        "example": "FPS"
+                    }
+                }
+            },
+            "OpenApiParty": {
+                "required": [
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]+$",
+                        "type": "string",
+                        "description": "Debtor Full Name",
+                        "example": "John Doe"
+                    },
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiAddress"
+                    },
+                    "contact": {
+                        "$ref": "#/components/schemas/OpenApiContact"
+                    },
+                    "identity": {
+                        "$ref": "#/components/schemas/OpenApiIdentity"
+                    }
+                }
+            },
+            "OpenApiPaymentAccount": {
+                "required": [
+                    "id",
+                    "identifierType"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9]+$",
+                        "type": "string",
+                        "description": "Account Number with no bank code and branch code. It should not be a Credit Card Account or Joint Account. Creditor Account Number and Debtor Account Number are mandatory for SG.",
+                        "example": "11111111111111"
+                    },
+                    "identifierType": {
+                        "type": "string",
+                        "description": "Account Identifier Type, defaulted as BBAN",
+                        "example": "IBAN",
+                        "enum": [
+                            "BBAN",
+                            "IBAN",
+                            "Other"
+                        ]
+                    },
+                    "accountType": {
+                        "type": "string",
+                        "description": "Account Type",
+                        "example": "CASH",
+                        "enum": [
+                            "CACC",
+                            "CASH",
+                            "CHAR",
+                            "CISH",
+                            "COMM",
+                            "CPAC",
+                            "LLSV",
+                            "LOAN",
+                            "MGLD",
+                            "MOMA",
+                            "NREX",
+                            "ODFT",
+                            "ONDP",
+                            "OTHR",
+                            "SACC",
+                            "SLRY",
+                            "SVGS",
+                            "TAXE",
+                            "TRAN",
+                            "TRAS"
+                        ]
+                    }
+                }
+            },
+            "OpenApiPaymentLimit": {
+                "required": [
+                    "maximumBatchAmount",
+                    "maximumTransactionAmount",
+                    "periodicity"
+                ],
+                "type": "object",
+                "properties": {
+                    "maximumTransactionAmount": {
+                        "type": "number",
+                        "description": "Maximum Transaction Amount. 0 or less are accepted amount in API however the eDDA will get rejected by Core banking system. Format in 9999999999999.99. Default as 9999999999999.99",
+                        "example": 100000
+                    },
+                    "maximumBatchAmount": {
+                        "type": "number",
+                        "description": "Maximum Batch Amount. Not used, to be made optional",
+                        "example": 1000000
+                    },
+                    "periodicity": {
+                        "type": "string",
+                        "description": "Payment Limit Periodicity Type - Adhoc, Daily(default), Weekly,Fortnightly, Monthly, Quarterly, Half_Yearly, IntraDay, Yearly",
+                        "example": "Adhoc",
+                        "enum": [
+                            "Adhoc",
+                            "Daily",
+                            "Weekly",
+                            "Fortnightly",
+                            "Monthly",
+                            "Quarterly",
+                            "Half_Yearly",
+                            "Yearly",
+                            "IntraDay"
+                        ]
+                    }
+                }
+            },
+            "OpenApiDDIStatus": {
+                "required": [
+                    "paymentContainerId",
+                    "referenceId",
+                    "statusString",
+                    "timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "paymentContainerId": {
+                        "maxLength": 36,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Unique reference assigned by the bank",
+                        "example": "111f111-111f-1111-9cf4-111ecd111dd1"
+                    },
+                    "statusString": {
+                        "maxLength": 10,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Status Description. Expected values are Pending, Completed, Rejected",
+                        "example": "Completed"
+                    },
+                    "statusCode": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Status Code assigned by the bank",
+                        "example": "DTL1063"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "Timestamp of status update",
+                        "format": "date-time",
+                        "example": "2018-12-21T06:57:10.17Z"
+                    },
+                    "reasonInformation": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Status Description if Status is Completed or Pending, Rejection Description if Status is Rejected"
+                    },
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Unique Reference ID",
+                        "example": "A999999999999"
+                    },
+                    "valueDate": {
+                        "type": "string",
+                        "description": "Credit Date for Collection is captured here (based on the core banking application server's location)",
+                        "format": "date"
+                    }
+                }
+            },
+            "OpenAPIDirectDebitInstruction": {
+                "required": [
+                    "debtor",
+                    "instructedAmount",
+                    "mandateId",
+                    "referenceId"
+                ],
+                "type": "object",
+                "properties": {
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9&()/\\-@,.'*\" ]+$",
+                        "type": "string",
+                        "description": "Unique Reference ID",
+                        "example": "A999999999999"
+                    },
+                    "debtorAccount": {
+                        "$ref": "#/components/schemas/OpenApiPaymentAccount"
+                    },
+                    "creditorAccount": {
+                        "$ref": "#/components/schemas/OpenApiPaymentAccount"
+                    },
+                    "instructedAmount": {
+                        "$ref": "#/components/schemas/OpenApiDenominatedAmount"
+                    },
+                    "purpose": {
+                        "type": "string",
+                        "description": "Purpose <table> <tr> <th>Country</th> <th>Purpose Code</th> </tr> <tr> <td>HK</td> <td>BKDF,BKFE,BKFM,BKIP,BKPP,CBLK,CDCB,CDCD,CDCS,CDDP,CDOC,CDQC,ETUP,FCOL,MTUP,ACCT,<br> CASH,COLL,CSDB,DEPT,INTC,LIMA,NETT,BFWD,CCIR,CCPC,CCPM,CCSM,CRDS,CRPR,CRSP,CRTL,<br> EQPT,EQUS,EXPT,EXTD,FIXI,FWBC,FWCC,FWSB,FWSC,MARG,MBSB,MBSC,MGCC,MGSC,OCCC,OPBC,<br> OPCC,OPSB,OPSC,OPTN,OTCD,REPO,RPBC,RPCC,RPSB,RPSC,RVPO,SBSC,SCIE,SCIR,SCRP,SHBC,<br> SHCC,SHSL,SLEB,SLOA,SWBC,SWCC,SWPT,SWSB,SWSC,TBAS,TBBC,TBCC,TRCP,AGRT,AREN,BEXP,<br> BOCE,COMC,CPYR,GDDS,GDSV,GSCB,LICF,MP2B,POPE,ROYA,SCVE,SUBS,SUPP,TRAD,CHAR,COMT,<br> MP2P,ECPG,ECPR,ECPU,EPAY,CLPR,COMP,DBTC,GOVI,HLRP,INPC,INSU,INTE,LBRI,LIFI,LOAN,<br> LOAR,PENO,PPTI,RELG,RINP,TRFD,FORW,FXNT,ADMG,ADVA,BCDM,BCFG,BLDM,BNET,CBFF,CBFR,<br> CCRD,CDBL,CFEE,CGDD,CORT,COST,CPKC,DCRD,DSMT,DVPM,EDUC,FACT,FAND,FCPM,FEES,GOVT,<br> ICCP,IDCP,IHRP,INSM,IVPT,MCDM,MCFG,MSVC,NOWS,OCDM,OCFG,OFEE,OTHR,PADD,PTSP,RCKE,<br> RCPT,REBT,REFU,RENT,REOD,RIMB,RPNT,RRBN,RVPM,SLPI,SPLT,STDY,TBAN,TBIL,TCSC,TELI,<br> TMPG,TPRI,TPRP,TRNC,TRNC,TRVC,WEBI,ANNI,CAFI,CFDI,CMDT,DERI,DIVD,FREX,HEDG,INVS,<br> PRME,SAVG,SECU,SEPI,TREA,UNIT,FNET,FUTR,ANTS,CVCF,DMEQ,DNTS,HLTC,HLTI,HSPC,ICRF,<br> LTCF,MAFC,MDCS,VIEW,CDEP,SWFP,SWPP,SWRS,SWUF,ADCS,AEMP,ALLW,ALMY,BBSC,BECH,BENE,<br> BONU,CCHD,COMM,CSLP,GFRP,GVEA,GVEB,GVEC,GVED,GWLT,HREC,PAYR,PEFC,PENS,PRCP,RHBS,<br> SALA,SSBE,LBIN,LCOL,LFEE,LMEQ,LMFI,LMRK,LREB,LREV,LSFL,ESTX,FWLV,GSTX,HSTX,INTX,<br> NITX,PTXP,RDTX,TAXS,VATX,WHLD,TAXR,B112,BR12,TLRF,TLRR,AIRB,BUSB,FERB,RLWY,TRPT,<br> CBTV,ELEC,ENRG,GASB,NWCH,NWCM,OTLC,PHON,UBIL,WTER,DDBILL,DDTOPU,DDECOM,DDOTHR,<br> CXSALA,CXMRCH,CXBSNS,CXPSNL</td> </tr> <tr> <td>SG</td> <td>BEXP,CBTV,CCRD,CHAR,COLL,COMM,CPKC,CSDB,DCRD,DIVD,DNTS,EDUC,FCPM,FWLV,GDDS,GOVI,<br> GSTX,HSPC,IHRP,INSU,INTC,INTE,INVS,IVPT,LOAN,MDCS,NITX,OTHR,PHON,PTXP,RDTX,REBT,<br> REFU,RENT,STDY,SUPP,TAXS,TBIL,TCSC,TRAD,TREA,TRPT,UBIL,WHLD </td> </tr> </table>",
+                        "example": "OFEE",
+                        "enum": [
+                            "BKDF",
+                            "BKFE",
+                            "BKFM",
+                            "BKIP",
+                            "BKPP",
+                            "CBLK",
+                            "CDCB",
+                            "CDCD",
+                            "CDCS",
+                            "CDDP",
+                            "CDOC",
+                            "CDQC",
+                            "ETUP",
+                            "FCOL",
+                            "MTUP",
+                            "ACCT",
+                            "CASH",
+                            "COLL",
+                            "CSDB",
+                            "DEPT",
+                            "INTC",
+                            "LIMA",
+                            "NETT",
+                            "BFWD",
+                            "CCIR",
+                            "CCPC",
+                            "CCPM",
+                            "CCSM",
+                            "CRDS",
+                            "CRPR",
+                            "CRSP",
+                            "CRTL",
+                            "EQPT",
+                            "EQUS",
+                            "EXPT",
+                            "EXTD",
+                            "FIXI",
+                            "FWBC",
+                            "FWCC",
+                            "FWSB",
+                            "FWSC",
+                            "MARG",
+                            "MBSB",
+                            "MBSC",
+                            "MGCC",
+                            "MGSC",
+                            "OCCC",
+                            "OPBC",
+                            "OPCC",
+                            "OPSB",
+                            "OPSC",
+                            "OPTN",
+                            "OTCD",
+                            "REPO",
+                            "RPBC",
+                            "RPCC",
+                            "RPSB",
+                            "RPSC",
+                            "RVPO",
+                            "SBSC",
+                            "SCIE",
+                            "SCIR",
+                            "SCRP",
+                            "SHBC",
+                            "SHCC",
+                            "SHSL",
+                            "SLEB",
+                            "SLOA",
+                            "SWBC",
+                            "SWCC",
+                            "SWPT",
+                            "SWSB",
+                            "SWSC",
+                            "TBAS",
+                            "TBBC",
+                            "TBCC",
+                            "TRCP",
+                            "AGRT",
+                            "AREN",
+                            "BEXP",
+                            "BOCE",
+                            "COMC",
+                            "CPYR",
+                            "GDDS",
+                            "GDSV",
+                            "GSCB",
+                            "LICF",
+                            "MP2B",
+                            "POPE",
+                            "ROYA",
+                            "SCVE",
+                            "SUBS",
+                            "SUPP",
+                            "TRAD",
+                            "CHAR",
+                            "COMT",
+                            "MP2P",
+                            "ECPG",
+                            "ECPR",
+                            "ECPU",
+                            "EPAY",
+                            "CLPR",
+                            "COMP",
+                            "DBTC",
+                            "GOVI",
+                            "HLRP",
+                            "INPC",
+                            "INSU",
+                            "INTE",
+                            "LBRI",
+                            "LIFI",
+                            "LOAN",
+                            "LOAR",
+                            "PENO",
+                            "PPTI",
+                            "RELG",
+                            "RINP",
+                            "TRFD",
+                            "FORW",
+                            "FXNT",
+                            "ADMG",
+                            "ADVA",
+                            "BCDM",
+                            "BCFG",
+                            "BLDM",
+                            "BNET",
+                            "CBFF",
+                            "CBFR",
+                            "CCRD",
+                            "CDBL",
+                            "CFEE",
+                            "CGDD",
+                            "CORT",
+                            "COST",
+                            "CPKC",
+                            "DCRD",
+                            "DSMT",
+                            "DVPM",
+                            "EDUC",
+                            "FACT",
+                            "FAND",
+                            "FCPM",
+                            "FEES",
+                            "GOVT",
+                            "ICCP",
+                            "IDCP",
+                            "IHRP",
+                            "INSM",
+                            "IVPT",
+                            "MCDM",
+                            "MCFG",
+                            "MSVC",
+                            "NOWS",
+                            "OCDM",
+                            "OCFG",
+                            "OFEE",
+                            "OTHR",
+                            "PADD",
+                            "PTSP",
+                            "RCKE",
+                            "RCPT",
+                            "REBT",
+                            "REFU",
+                            "RENT",
+                            "REOD",
+                            "RIMB",
+                            "RPNT",
+                            "RRBN",
+                            "RVPM",
+                            "SLPI",
+                            "SPLT",
+                            "STDY",
+                            "TBAN",
+                            "TBIL",
+                            "TCSC",
+                            "TELI",
+                            "TMPG",
+                            "TPRI",
+                            "TPRP",
+                            "TRNC",
+                            "TRVC",
+                            "WEBI",
+                            "ANNI",
+                            "CAFI",
+                            "CFDI",
+                            "CMDT",
+                            "DERI",
+                            "DIVD",
+                            "FREX",
+                            "HEDG",
+                            "INVS",
+                            "PRME",
+                            "SAVG",
+                            "SECU",
+                            "SEPI",
+                            "TREA",
+                            "UNIT",
+                            "FNET",
+                            "FUTR",
+                            "ANTS",
+                            "CVCF",
+                            "DMEQ",
+                            "DNTS",
+                            "HLTC",
+                            "HLTI",
+                            "HSPC",
+                            "ICRF",
+                            "LTCF",
+                            "MAFC",
+                            "MDCS",
+                            "VIEW",
+                            "CDEP",
+                            "SWFP",
+                            "SWPP",
+                            "SWRS",
+                            "SWUF",
+                            "ADCS",
+                            "AEMP",
+                            "ALLW",
+                            "ALMY",
+                            "BBSC",
+                            "BECH",
+                            "BENE",
+                            "BONU",
+                            "CCHD",
+                            "COMM",
+                            "CSLP",
+                            "GFRP",
+                            "GVEA",
+                            "GVEB",
+                            "GVEC",
+                            "GVED",
+                            "GWLT",
+                            "HREC",
+                            "PAYR",
+                            "PEFC",
+                            "PENS",
+                            "PRCP",
+                            "RHBS",
+                            "SALA",
+                            "SSBE",
+                            "LBIN",
+                            "LCOL",
+                            "LFEE",
+                            "LMEQ",
+                            "LMFI",
+                            "LMRK",
+                            "LREB",
+                            "LREV",
+                            "LSFL",
+                            "ESTX",
+                            "FWLV",
+                            "GSTX",
+                            "HSTX",
+                            "INTX",
+                            "NITX",
+                            "PTXP",
+                            "RDTX",
+                            "TAXS",
+                            "VATX",
+                            "WHLD",
+                            "TAXR",
+                            "B112",
+                            "BR12",
+                            "TLRF",
+                            "TLRR",
+                            "AIRB",
+                            "BUSB",
+                            "FERB",
+                            "RLWY",
+                            "TRPT",
+                            "CBTV",
+                            "ELEC",
+                            "ENRG",
+                            "GASB",
+                            "NWCH",
+                            "NWCM",
+                            "OTLC",
+                            "PHON",
+                            "UBIL",
+                            "WTER",
+                            "DDBILL",
+                            "DDTOPU",
+                            "DDECOM",
+                            "DDOTHR",
+                            "CXSALA",
+                            "CXMRCH",
+                            "CXBSNS",
+                            "CXPSNL"
+                        ]
+                    },
+                    "chargerBearer": {
+                        "type": "string",
+                        "description": "Charger Bearer",
+                        "example": "DEBT (default)",
+                        "enum": [
+                            "DEBT",
+                            "CRED",
+                            "SHAR",
+                            "SLEV"
+                        ]
+                    },
+                    "mandateId": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Mandate ID",
+                        "example": "XX9999999"
+                    },
+                    "creditor": {
+                        "$ref": "#/components/schemas/OpenApiBankParty"
+                    },
+                    "debtor": {
+                        "$ref": "#/components/schemas/OpenApiParty"
+                    },
+                    "creditorAgent": {
+                        "$ref": "#/components/schemas/OpenApiAgent"
+                    },
+                    "debtorAgent": {
+                        "$ref": "#/components/schemas/OpenApiAgent"
+                    },
+                    "countryCode": {
+                        "maxLength": 2,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "ISO 2-characters country code - Used to identify the country of request origination<br>Mandatory for SG, if blank default as HK"
+                    },
+                    "valueDate": {
+                        "type": "string",
+                        "description": "DDI Value Date",
+                        "format": "date"
+                    }
+                }
+            },
+            "OpenApiDenominatedAmount": {
+                "required": [
+                    "amount",
+                    "currencyCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "currencyCode": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "ISO Currency Code. Defaulted as HKD if Country Code is HK or blank. If Country Code is SG, mandatory to indicate as SGD.",
+                        "example": "SGD"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "Amount in local currency units. Format in 9999999999999.99",
+                        "example": 12000.12
+                    }
+                }
+            },
+            "OpenApiQRCode": {
+                "type": "object",
+                "properties": {
+                    "qrCodeBase64": {
+                        "type": "string",
+                        "description": "QR Code Base64 Representation"
+                    },
+                    "qrContent": {
+                        "type": "string",
+                        "description": "QR Code Content"
+                    },
+                    "width": {
+                        "type": "integer",
+                        "description": "QR Code Width",
+                        "format": "int32"
+                    },
+                    "height": {
+                        "type": "integer",
+                        "description": "QR Code Height",
+                        "format": "int32"
+                    }
+                }
+            },
+            "DenominatedAmount": {
+                "required": [
+                    "amount",
+                    "currencyCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "currencyCode": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "ISO Currency Code. Defaulted as local currency code",
+                        "example": "EUR"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "description": "Amount in local currency units. Format in 9999999999999.99",
+                        "example": 12000.12
+                    }
+                }
+            },
+            "OpenApiQRCodeRequest": {
+                "type": "object",
+                "properties": {
+                    "logoImageBase64": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "$ref": "#/components/schemas/DenominatedAmount"
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "description": "Country Code"
+                    },
+                    "merchantCity": {
+                        "type": "string",
+                        "description": "Merchant City"
+                    },
+                    "billNumber": {
+                        "type": "string",
+                        "description": "Bill Number"
+                    },
+                    "referenceLabel": {
+                        "type": "string",
+                        "description": "Reference Label"
+                    },
+                    "storeLabel": {
+                        "type": "string",
+                        "description": "Store Label"
+                    },
+                    "merchantName": {
+                        "type": "string",
+                        "description": "Merchant Name"
+                    },
+                    "proxyType": {
+                        "type": "string",
+                        "description": "Proxy Type",
+                        "example": "Mobile",
+                        "enum": [
+                            "FpsId",
+                            "Mobile",
+                            "NRIC",
+                            "UEN",
+                            "EmailAddress"
+                        ]
+                    },
+                    "proxyValue": {
+                        "type": "string",
+                        "description": "Proxy Value"
+                    },
+                    "expiryDateTime": {
+                        "type": "string",
+                        "description": "Expiry Date and Time",
+                        "format": "date-time"
+                    },
+                    "imageResolution": {
+                        "type": "string",
+                        "description": "Image resolution (VeryHigh, High, Normal), default is Normal.  High resolution should generally be used for use cases where the image will be printed.  Normal resolution is optimised for quality and transfer size for web/mobile based delivery.",
+                        "enum": [
+                            "VeryHigh",
+                            "High",
+                            "Normal",
+                            "HighGreyscale",
+                            "NormalGreyscale"
+                        ]
+                    }
+                }
+            },
+            "OpenApiVirtualAccountCreateResponse": {
+                "required": [
+                    "status",
+                    "virtualAccountNumber"
+                ],
+                "type": "object",
+                "properties": {
+                    "virtualAccountNumber": {
+                        "maxLength": 34,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Final Virtual Account Number - (Part A + Part B)",
+                        "example": "CLIENT998877B66"
+                    },
+                    "status": {
+                        "maxLength": 7,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Status of the VAM request",
+                        "example": "PENDING",
+                        "enum": [
+                            "SUCCESS",
+                            "PENDING",
+                            "FAILURE"
+                        ]
+                    },
+                    "iban": {
+                        "maxLength": 34,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "International Bank Account Number (IBAN), it is available only for the country that is enabled for IBAN",
+                        "example": "KZ5590238934023248812"
+                    }
+                }
+            },
+            "OpenApiVirtualAccountStatus": {
+                "required": [
+                    "status",
+                    "virtualAccountNumber"
+                ],
+                "type": "object",
+                "properties": {
+                    "virtualAccountNumber": {
+                        "maxLength": 34,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Final Virtual Account Number - (Part A + Part B)",
+                        "example": "CLIENT998877B66"
+                    },
+                    "status": {
+                        "maxLength": 7,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Status of the VAM request",
+                        "example": "PENDING",
+                        "enum": [
+                            "SUCCESS",
+                            "PENDING",
+                            "FAILURE"
+                        ]
+                    },
+                    "statusDescription": {
+                        "type": "string",
+                        "description": "Status description of the VAM request",
+                        "example": "VAM Record already exist"
+                    },
+                    "iban": {
+                        "maxLength": 34,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "International Bank Account Number (IBAN), it is available only for the country that is enabled for IBAN",
+                        "example": "KZ5590238934023248812"
+                    }
+                }
+            },
+            "OpenApiVirtualAccountCreateRequest": {
+                "required": [
+                    "clientId",
+                    "clientReferenceId",
+                    "countryCode",
+                    "payorName",
+                    "virtualAccountNumber"
+                ],
+                "type": "object",
+                "properties": {
+                    "clientReferenceId": {
+                        "maxLength": 50,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Reference Number of instruction",
+                        "example": "ABC12345"
+                    },
+                    "clientId": {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Your VA ID - Part A",
+                        "example": "CLIENTID"
+                    },
+                    "virtualAccountNumber": {
+                        "maxLength": 34,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Final Virtual Account Number - (Part A + Part B)",
+                        "example": "CLIENTID88991A1"
+                    },
+                    "payorName": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "pattern": "^[a-zA-Z0-9 ]*$",
+                        "type": "string",
+                        "description": "Payor Name",
+                        "example": "John Doe"
+                    },
+                    "payorNameLocal": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9 \\p{L}]*$",
+                        "type": "string",
+                        "description": "Payor Name specified in Local Language",
+                        "example": "毛东"
+                    },
+                    "payorReference": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9]*$",
+                        "type": "string",
+                        "description": "A Unique reference number provided to a payor/receiver like Customer ID, etc.",
+                        "example": "CLIENTID1XOAV"
+                    },
+                    "paymentReference": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9]*$",
+                        "type": "string",
+                        "description": "A Unique reference number provided to corporate payor's payment for easy reconciliation of payments.",
+                        "example": "TRX1234"
+                    },
+                    "emailId": {
+                        "maxLength": 256,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9@.,_,-]*$",
+                        "type": "string",
+                        "description": "Sender/Receiver email address. In case of Collections, payors email address. In case of Payments, receiver's email address.",
+                        "example": "john_doe@example.com"
+                    },
+                    "mobileNo": {
+                        "maxLength": 256,
+                        "minLength": 0,
+                        "pattern": "^[0-9+]*$",
+                        "type": "string",
+                        "description": "Sender/Receiver mobile number. In case of Collections, payor's mobile number. In case of Payments, receiver's mobile number.",
+                        "example": "990011100"
+                    },
+                    "productIndicator": {
+                        "type": "string",
+                        "description": "Product Indicator<br>If blank, Bank will default this request as VAC (Virtual Account for Collections)",
+                        "example": "VAP",
+                        "enum": [
+                            "VAP",
+                            ""
+                        ]
+                    },
+                    "countryCode": {
+                        "maxLength": 2,
+                        "minLength": 2,
+                        "type": "string",
+                        "description": "ISO 2-characters country code  - Used to identify the country of request origination",
+                        "example": "SG"
+                    }
+                }
+            }
+        }
+    }
+}

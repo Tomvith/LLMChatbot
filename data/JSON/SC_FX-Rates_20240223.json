@@ -1,0 +1,252 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FX Rates",
+    "description": "\n##### Introduction\nThe Open API serves the business functions associated with **FX Rates** offered by the bank. The operations and the features supported in this API are described in the following sections.\n<hr />\n<h5>Authentication</h5>\n<p>To make a request to any of the APIs, the Client has to present an Access Token, following the OAuth 2.0 specifications. Here is the API endpoint for getting an OAuth 2.0 Token.</p>\n<p><strong>https:\\/\\/api.sc.com\\/retail\\/v1\\/oauth2\\/token</strong></p> Following are the request parameters to be passed to the Token endpoint.\n<hr />\n<h5>Parameters</h5>\n <table>\n  <thead>\n    <tr>\n      <th width='15%'>Key</th>\n      <th width='85%'>Value</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>grant_type</td>\n      <td>Indicates the type of grant being presented in exchange for an access token and possibly a refresh token, for more details, please refer to the table below</td>\n    </tr>\n    <tr>\n      <td>client_id</td>\n      <td>The public identifier for the application, obtained when the caller first registered the application</td>\n    </tr>\n    <tr>\n      <td>client_secret</td>\n      <td>The application’s client secret. This ensures that the request to get the access token is made only from the application, and not from a potential attacker that may have intercepted the authorization code.</td>\n    </tr>\n    </tbody>\n</table> <hr /> <table>\n  <thead>\n    <tr>\n      <th width='15%'>Grant Type</th>\n      <th width='85%'>Usage</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Client credentials</td>\n      <td>For the client app to identify itself to the SC API platform, the <code> /token </code> endpoint has to be called with query param <code>grant_type</code> set to <code>client_credentials</code></td>\n    </tr>\n    <tr>\n      <td>Auth-code based grant</td>\n      <td>For the client app to identify itself to the SC API platform, the <code> /token </code> endpoint has to be called with query param <code>grant_type</code> set to <code>auth_code_grant</code></td>\n    </tr>\n  </tbody>\n</table>\n<hr />\n<h5>Error Handling</h5>\nThe API endpoints return an error response whenever the request could not be processed successfully. In such scenarios, API provides the clients with a precise Application Error codes and description in the error payload associated with HTTP Status codes 4xx or 5xx. \n <br>The table below provides a list of such possible Application Errors, for effective error handling of API consumers.\n<table>\n  <thead>\n    <tr>\n      <th width='20%'>Response error code</th>\n      <th width='80%'>Detail</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>FX001</td>\n      <td>Parameter conditions \"currency\" not met for actual request parameters</td>\n    </tr>\n    <tr>\n      <td>FX002</td>\n      <td>Invalid currency code(s).</td>\n    </tr>\n    <tr>\n      <td>FX003</td>\n      <td>Unsupported currency pair(s).</td>\n    </tr>\n    <tr>\n      <td>FX004</td>\n      <td>Internal connection error.</td>\n    </tr>\n    <tr>\n      <td>FX005</td>\n      <td>Internal server error.</td>\n    </tr>\n  </tbody>\n</table>\n",
+    "contact": {
+      "name": "SC API Support"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://sandbox-api.sc.com/retail/v1",
+      "description": "aXess Sandbox"
+    },
+    {
+      "url": "https://api.sc.com/retail/{version}",
+      "description": "Production",
+      "variables": {
+        "version": {
+          "description": "The Open API endpoints are accessible via https only",
+          "enum": [
+            "v1"
+          ],
+          "default": "v1"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "FX Rates",
+      "description": "FX Rates service offered for Retail customers.",
+      "x-subcategory": "FX Rates"
+    }
+  ],
+  "x-tagGroups": [
+    {
+      "name": "Resource",
+      "tags": [
+        "FX Rates"
+      ]
+    }
+  ],
+  "paths": {
+    "/fx-rates": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "FX Rates"
+        ],
+        "summary": "List of FX Rates",
+        "description": "This end point is to retrieve the foreign currency exchange rate details against HKD by default, or else a valid currency pair must be provided.",
+        "parameters": [
+          {
+            "name": "Transaction-ID",
+            "in": "header",
+            "description": "Optional, It is an unique ID to be entered by the caller to idenitfy this particuar request for tracking and logging purposes, if this value did not present in the request header, a random UUID will be generated internally.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "required": true,
+            "description": "Currency code(s) to be used for the conversion. \n 1. If only single currency code provided (i.e.: USD), the conversion will always be against the HKD. In this example, it will be USDHKD \n 2. If the currency pair(s) provided, seperated by comma (i.e.: currency=AUDHKD,SGDUSD) the conversion will be retrieved according to the respective currency pairs.\n    If any of the pair contains invalid currency code, the service shall return the 400 error.\nList of supported currency pairs: \nAUDCAD, AUDCHF, AUDCNH, AUDHKD, AUDJPY, AUDNZD, AUDSGD, AUDUSD, CADCHF, CADCNH, CADHKD, CADJPY, CADSGD, CHFCNH, CHFHKD, CHFJPY, CHFSGD, CNHHKD, EURAUD, EURCAD, EURCHF, EURCNH, EURGBP, EURHKD, EURJPY, EURNZD, EURSGD, EURUSD, GBPAUD, GBPCAD, GBPCHF, GBPCNH, GBPHKD, GBPJPY, GBPNZD, GBPSGD, GBPUSD, JPYCNH, JPYHKD, NZDCAD, NZDCHF, NZDCNH, NZDHKD, NZDJPY, NZDSGD, NZDUSD, SGDCNH, SGDHKD, SGDJPY, USDCAD, USDCHF, USDCNH, USDHKD, USDJPY, USDSGD",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-markets": "HK",
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/rates"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request due to invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized request, required a valid OAuth2 token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/gatewayerror"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Timeout error occurred",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "rate": {
+        "type": "object",
+        "title": "rate",
+        "description": "FX Rates details",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "currency pair"
+          },
+          "buy-price": {
+            "type": "string",
+            "description": "Buy price, this is the rate at which we buy the second currency from  the first currency. For example USDHKD = 7.8056, which means buying  HKD with 1 USD will get 7.8056 HKD"
+          },
+          "sell-price": {
+            "type": "string",
+            "description": "Sell price, this is the rate at which we sell the second currency for  the first currency. For example USDHKD = 7.8740, which means selling  7.8740 HKD will get 1 USD."
+          },
+          "last-updated": {
+            "type": "string",
+            "description": "last updated date/time in UTC. \nformat: YYYYMMDDHHMMSS (i.e.: 20181016062813)"
+          },
+          "service-fee": {
+            "type": "string",
+            "description": "Service fee"
+          }
+        }
+      },
+      "rates": {
+        "type": "array",
+        "description": "List of rate object",
+        "items": {
+          "$ref": "#/components/schemas/rate"
+        },
+        "example": [
+          {
+            "currency": "USDHKD,",
+            "buy-price": "7.8056",
+            "sell-price": "7.8740",
+            "last-updated": "20181022074113",
+            "service-fee": "0"
+          }
+        ]
+      },
+      "error": {
+        "description": "Error object details",
+        "title": "error",
+        "required": [
+          "id",
+          "code",
+          "detail"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The transaction id from the request header, if the transaction id was not present in the request header, a generated random UUID will shown here for tracking purposes.",
+            "type": "string"
+          },
+          "code": {
+            "description": "an application-specific error code",
+            "type": "string"
+          },
+          "detail": {
+            "description": "a human-readable explanation specific to this occurrence of the problem",
+            "type": "string"
+          }
+        }
+      },
+      "errors": {
+        "description": "List of error object",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/error"
+        }
+      },
+      "gatewayerror": {
+        "description": "API Gateway Error object details",
+        "title": "API Gateway Error",
+        "required": [
+          "msgId",
+          "errCd",
+          "errMsg"
+        ],
+        "type": "object",
+        "properties": {
+          "msgId": {
+            "description": "The unique message id idenitfy this particular API call",
+            "type": "string"
+          },
+          "errCd": {
+            "description": "an internal error code",
+            "type": "string"
+          },
+          "errMsg": {
+            "description": "a human-readable explanation specific to this occurrence of the problem",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

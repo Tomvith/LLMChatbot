@@ -1,0 +1,459 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking - Reporting",
+        "description": "**API Banking - Reporting**\nProvides functionality to download reports Reporting APIs allow customers to access end of day statements or general supporting documentation.",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company License",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.standardchartered.com/openapi"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Reporting",
+            "description": "Reporting APIs provide functionality to download reports. It empowers customer to access end of day statements or general supporting documentation.",
+            "x-subcategory": "Reporting"
+        }
+    ],
+    "paths": {
+        "/reporting/v1/content/{product}/{type}/{reportName}/{asOf}": {
+            "get": {
+                "tags": [
+                    "Reporting"
+                ],
+                "summary": "Download Report",
+                "description": "The Download Report API provides the ability to download latest reports such as end of day statements report or general supporting documentation report. It acts as an alternative to SFTP based Host2Host for access to files-based content such as PDFs, DOCX, XLSX, CSV. When successfully executed it returns the HTTP header and the response body as a binary stream of the report files. Applicable Reports - QLDS0010R, E_140, E_139, MT940, MT940A, MT942, CAMT52, CAMT53, MT940-UTF8, MT942-UTF8. Webhook notification will be sent to the client when report is available.",
+                "operationId": "getReportContent",
+                "parameters": [
+                    {
+                        "name": "asOf",
+                        "in": "path",
+                        "description": "Reporting Date - format yyyy-mm-dd",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "Product Category - Collections, Payments, Account",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "description": "Product Type - DDA, DDI, Payment Status, Statement",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "reportName",
+                        "in": "path",
+                        "description": "Report Name - QLDS0010R, E_140, E_139, MT940, MT942, CAMT52, CAMT53, MT940-UTF8, MT942-UTF8",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Report is not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,PH,ID,VN,IN,BD,LK,NP,AE,PK,QA,BH,JO,NG,ZA,KE,UG,TZ,CM,GH,ZM,CI,GB,US"
+            }
+        },
+        "/reporting/v2/content/{product}/{type}/{reportName}/{asOf}": {
+            "get": {
+                "tags": [
+                    "Reporting"
+                ],
+                "summary": "Download Report",
+                "description": "The Download Report API provides the ability to download latest reports such as end of day statements report or general supporting documentation report. It acts as an alternative to SFTP based Host2Host for access to files-based content such as PDFs, DOCX, XLSX, CSV. When successfully executed it returns the HTTP header and the response body as a binary stream of the report files. Applicable Reports - QLDS0010R, E_140, E_139, MT940, MT940A, MT942, CAMT52, CAMT53, MT940-UTF8, MT942-UTF8. Webhook notification will be sent to the client when report is available.",
+                "operationId": "getReportContent_1",
+                "parameters": [
+                    {
+                        "name": "asOf",
+                        "in": "path",
+                        "description": "Reporting Date - format yyyy-mm-dd",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "Product Category - Collections, Payments, Account",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "description": "Product Type - DDA, DDI, Payment Status, Statement",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "reportName",
+                        "in": "path",
+                        "description": "Report Name - QLDS0010R, E_140, E_139, MT940, MT940A, MT942, CAMT52, CAMT53, MT940-UTF8, MT942-UTF8",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Report is not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,CN,SG,PH,ID,VN,IN,NP,AE,PK,QR,BH,SA,NG,SA,KE,UG,TZ,GH,ZM,CI,MU,GB,US"
+            }
+        },
+        "/reporting/v2/content/{product}/{type}/{reportName}/{asOf}/list": {
+            "get": {
+                "tags": [
+                    "Reporting"
+                ],
+                "summary": "Download single/multiple reports",
+                "description": "The Download single/multiple reports API provides an ability to download reports such as end of day statements or general supporting documentation. By default it returns all the reports available for that particular day else filters the reports based on the query parameter fetchReportType. fetchReportType - LATEST returns the latest report for that particular day. fetchReportType - PENDING returns all the pending reports which are not downloaded for that particular day. It acts as an alternative to SFTP based Host2Host for access to file based content such as PDFs, DOCX, XLSX, CSV. When successfully executed it returns the response body as a json object listing all the report details with content as Base64 string.",
+                "operationId": "getReportsContent",
+                "parameters": [
+                    {
+                        "name": "asOf",
+                        "in": "path",
+                        "description": "Reporting Date - format yyyy-mm-dd",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "Product Category - Collections, Payments, Account",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "description": "Product Type - DDA, DDI, Payment Status, Statement ",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "reportName",
+                        "in": "path",
+                        "description": "Report Name - QLDS0010R, E_140, E_139, MT940, MT940A, MT942, CAMT52, CAMT53, MT940-UTF8, MT942-UTF8",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "fetchReportType",
+                        "in": "query",
+                        "description": "Fetch Report Type - LATEST, PENDING\nLATEST - Sends the latest report of the day in response\nPENDING - Sends the pending reports which are not downloaded yet in response\nDEFAULT - Sends all the reports available for the particular day in response (Default behaviour of API if there is no query param)",
+                        "schema": {
+                            "type": "string",
+                            "default": "DEFAULT",
+                            "enum": [
+                                "LATEST",
+                                "PENDING",
+                                "DEFAULT"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiReportsResponse"
+                                },
+                                "example": {
+                                    "groupId": "UAASTS1",
+                                    "reportName": "CAMT52",
+                                    "reports": [
+                                        {
+                                            "id": "d71334c15303",
+                                            "dateTimeStamp": "2021-01-21T00:00:00.000Z",
+                                            "content": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvXGL"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "404": {
+                        "description": "Report is not found",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "x-markets": "HK,CN,SG,PH,ID,VN,IN,NP,AE,PK,QR,BH,SA,NG,SA,KE,UG,TZ,GH,ZM,CI,MU,GB,US"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "OpenApiReport": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Report ID",
+                        "example": "d71334c15303"
+                    },
+                    "dateTimeStamp": {
+                        "type": "string",
+                        "description": "Report date",
+                        "format": "date",
+                        "example": "2021-01-21T00:00:00.000Z"
+                    },
+                    "content": {
+                        "type": "string",
+                        "description": "Base64 encoded string of report content",
+                        "example": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvXGL"
+                    }
+                },
+                "description": "List of Reports"
+            },
+            "OpenApiReportsResponse": {
+                "type": "object",
+                "properties": {
+                    "groupId": {
+                        "type": "string",
+                        "description": "Client Registered Group ID"
+                    },
+                    "reportName": {
+                        "type": "string",
+                        "description": "Report Name",
+                        "example": "CAMT52"
+                    },
+                    "reports": {
+                        "type": "array",
+                        "description": "List of Reports",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiReport"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

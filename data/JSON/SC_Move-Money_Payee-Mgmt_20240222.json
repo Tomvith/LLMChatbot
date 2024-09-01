@@ -1,0 +1,1567 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking – Payee Management APIs",
+        "description": "**API Banking – Payee Management APIs** <br>Payee Management APIs enable you to digitise your regular beneficiaries/suppliers/vendors account details in the system and make direct e-payment to beneficiaries",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company License",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.standardchartered.com/openapi"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Payee Management",
+            "description": "Payee Management APIs enable you to digitise your regular beneficiaries/suppliers/vendors account details in the system and make direct e-payment to beneficiaries",
+            "x-subcategory": "Move Money"
+        }
+    ],
+    "paths": {
+        "/payees/v2/bulk/create": {
+            "post": {
+                "tags": [
+                    "Payee Management"
+                ],
+                "summary": "Create Bulk Payee",
+                "description": "The Create Bulk Payee API exposes the ability to create multiple payees in a single shot. Upon successful validation of required parameters it returns an acknowledgement as a representation that a payee request was received successfully. To check the status of a specific payee, you are required to use the Retrieve Payee Details API and/or subscribe to notifications via webhook, which provides the current status of the payee.",
+                "operationId": "createBulkPayee_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiBulkPayeeMsg"
+                            },
+                            "example": null
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "202": {
+                        "description": "Success with acknowledgment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPayeeAck"
+                                },
+                                "example": {
+                                    "batchId": "BCD12",
+                                    "batchCount": 10,
+                                    "messageId": "111111-11111",
+                                    "correlationId": "INTERNAL1234567893",
+                                    "status": "RECEIVED",
+                                    "timestamp": "2021-05-27T09:52:32.529+0000"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiExceptionRes"
+                                },
+                                "example": {
+                                    "errorMessage": "header.batchCount does not match with the number of payees provided",
+                                    "errorCode": "AER-1222"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    }
+                },
+                "x-markets": "IN,SG"
+            }
+        },
+        "/payees/v2/create": {
+            "post": {
+                "tags": [
+                    "Payee Management"
+                ],
+                "summary": "Create Payee",
+                "description": "The Create Payee API exposes the ability to create a single payee. Upon successful validation of required parameters it returns an acknowledgement as a representation that a payee request was received successfully. To check the status of a specific payee, you are required to use the Retrieve Payee Details API and/or subscribe to notifications via webhook, which provides the current status of the payee.",
+                "operationId": "createPayee_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPayeeMsg"
+                            },
+                            "example": null
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "202": {
+                        "description": "Success with acknowledgment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPayeeAck"
+                                },
+                                "example": {
+                                    "payeeNickname": "payeeNickName",
+                                    "messageId": "111111-11111",
+                                    "correlationId": "INTERNAL1234567893",
+                                    "status": "RECEIVED",
+                                    "timestamp": "2021-05-27T09:52:32.529+0000"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiExceptionRes"
+                                },
+                                "example": {
+                                    "errorMessage": "Duplicate payee request detected",
+                                    "errorCode": "AER-1113"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    }
+                },
+                "x-markets": "IN,SG"
+            }
+        },
+        "/payees/v2/delete": {
+            "post": {
+                "tags": [
+                    "Payee Management"
+                ],
+                "summary": "Delete Payee",
+                "description": "The Delete Payee API exposes the ability to delete existing single payee. Upon successful validation of required parameters it returns an acknowledgement as a representation that a payee deletion request was received successfully. After deletion, this payee record will not be available for payment initiation. To check the status of a specific payee, you are required to use the Retrieve Payee Details API and/or subscribe to notifications via webhook, which provides the current status of the payee.",
+                "operationId": "deletePayee_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPayeeDeleteReq"
+                            },
+                            "example": null
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "202": {
+                        "description": "Success with acknowledgment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPayeeAck"
+                                },
+                                "example": {
+                                    "payeeNickname": "payeeNickName",
+                                    "messageId": "111111-11111",
+                                    "correlationId": "INTERNAL1234567893",
+                                    "status": "RECEIVED",
+                                    "timestamp": "2021-05-27T09:52:32.529+0000"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiExceptionRes"
+                                },
+                                "example": {
+                                    "errorMessage": "Payee Not found",
+                                    "errorCode": "AER-1115"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    }
+                },
+                "x-markets": "IN,SG"
+            }
+        },
+        "/payees/v2/{payeeNickName}": {
+            "get": {
+                "tags": [
+                    "Payee Management"
+                ],
+                "summary": "Retrieve Payee Details",
+                "description": "The Retrieve Payee Details API provides you the ability to query a payee details based on a given payee nickname. As a response it will return a list of active and inactive payees along with its statuses",
+                "operationId": "payeeRetrieve_1",
+                "parameters": [
+                    {
+                        "name": "payeeNickName",
+                        "in": "path",
+                        "description": "Payee ID which is used to retrieve payee details",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": null
+                        }
+                    },
+                    {
+                        "name": "messageId",
+                        "in": "header",
+                        "description": "Unique Identifier for the transaction. This should be a unique tracking value (GUID) to identify the request, it is used for audit & support",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": null
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPayeeDtl"
+                                },
+                                "example": {
+                                    "payee": {
+                                        "nickName": "payeeNickName",
+                                        "payeeStatus": "COMPLETED",
+                                        "name": "John Doe",
+                                        "postalAddress": {
+                                            "line_1": "221B",
+                                            "line_2": "Baker Street",
+                                            "line_3": "London",
+                                            "postcode": "110001",
+                                            "country": "IN"
+                                        },
+                                        "contact": {
+                                            "phoneNumber": "+91-1234567890",
+                                            "mobileNumber": "+91-1234567890",
+                                            "emailAddress": "username@gmail.com",
+                                            "faxNumber": "+91-1231234567",
+                                            "taxId": "1234567890"
+                                        },
+                                        "identity": [
+                                            {
+                                                "id": "123456781234",
+                                                "identityType": "Aadhar Id"
+                                            }
+                                        ],
+                                        "jointPayeeName": "John Watson",
+                                        "jointPayeeIdentity": "123456789ABCD",
+                                        "jointPayeeIdentityType": "SW, LC",
+                                        "payeeExtension": {
+                                            "addressLinesLocalLanguage": [
+                                                "address line 1 in local language",
+                                                "address line 2 in local language"
+                                            ],
+                                            "nameLocalLanguage": [
+                                                "string"
+                                            ],
+                                            "notesToPayeeLocalLanguage": [
+                                                "Notes line 1 in local language",
+                                                "Notes line 2 in local language"
+                                            ]
+                                        },
+                                        "payeeInfoExtension": {
+                                            "mwp": "Y",
+                                            "payeeType": "I, C, G",
+                                            "notesToPayee": [
+                                                "Notes line 1",
+                                                "Notes line 2"
+                                            ]
+                                        },
+                                        "payeeAgent": {
+                                            "financialInstitution": {
+                                                "postalAddress": {
+                                                    "line_1": "221B",
+                                                    "line_2": "Baker Street",
+                                                    "line_3": "London",
+                                                    "country": "IN"
+                                                },
+                                                "branchCode": "12345",
+                                                "subBranchcode": "123",
+                                                "clearingSystemId": "SCBLIDJXBDG",
+                                                "name": "Standard Chartered Bank",
+                                                "BIC": "string",
+                                                "type": "SW, LC"
+                                            }
+                                        },
+                                        "account": [
+                                            {
+                                                "id": "11111111111111",
+                                                "identifierType": "IBAN"
+                                            }
+                                        ],
+                                        "intermediaryAgent": {
+                                            "financialInstitution": {
+                                                "postalAddress": {
+                                                    "line_1": "221B",
+                                                    "line_2": "Baker Street",
+                                                    "line_3": "London",
+                                                    "country": "IN"
+                                                },
+                                                "name": "Standard Chartered Bank",
+                                                "BIC": "string",
+                                                "type": "SW, LC"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "Success with acknowledgment",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiExceptionRes"
+                                },
+                                "example": {
+                                    "errorMessage": "Payee Not found",
+                                    "errorCode": "AER-1115"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    }
+                },
+                "x-markets": "IN,SG"
+            }
+        },
+        "/payees/v2/list": {
+            "get": {
+                "tags": [
+                    "Payee Management"
+                ],
+                "summary": "Retrieve Payee Details List",
+                "description": "The Retrieve Payee Details List API allows you to retrieve a full list of created payees which you are authorised to access based on authentication process. As a response it will return a paginated list of active and inactive payees along with its statuses",
+                "operationId": "payeeRetrieveList_1",
+                "parameters": [
+                    {
+                        "name": "messageId",
+                        "in": "header",
+                        "description": "Unique Identifier for the transaction. This should be a unique tracking value (GUID) to identify the request, it is used for audit & support",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": null
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number of payee details response.Defaulted to 1",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "example": null
+                        }
+                    },
+                    {
+                        "name": "payeeStatus",
+                        "in": "query",
+                        "description": "Status of the payee. Defaulted to ALL",
+                        "schema": {
+                            "type": "string",
+                            "example": null
+                        }
+                    },
+                    {
+                        "name": "countryCode",
+                        "in": "query",
+                        "description": "Country of the payee.Defaulted to ALL",
+                        "schema": {
+                            "type": "string",
+                            "example": null
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPayeeDtls"
+                                },
+                                "example": {
+                                    "payees": [
+                                        {
+                                            "nickName": "JohnDoe1993",
+                                            "payeeStatus": "FULLY_AUTHORIZED",
+                                            "name": "John Doe",
+                                            "postalAddress": {
+                                                "country": "IN"
+                                            }
+                                        },
+                                        {
+                                            "nickName": "GlennJames1999",
+                                            "payeeStatus": "FULLY_AUTHORIZED",
+                                            "name": "Glenn James",
+                                            "postalAddress": {
+                                                "country": "IN"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "202": {
+                        "description": "Success with acknowledgment",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiExceptionRes"
+                                },
+                                "example": {
+                                    "errorMessage": "Invalid value for countryCode: IND",
+                                    "errorCode": "AER-1214"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    }
+                },
+                "x-markets": "IN,SG"
+            }
+        },
+        "/payees/v2/update": {
+            "post": {
+                "tags": [
+                    "Payee Management"
+                ],
+                "summary": "Update Payee",
+                "description": "The Update Payee API exposes the ability to update a single payee. Upon successful validation of required parameters it returns an acknowledgement as a representation that a payee update request was received successfully. To check the status of a specific payee, you are required to use the Retrieve Payee Details API and/or subscribe to notifications via webhook, which provides the current status of the payee.",
+                "operationId": "updatePayee_1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiPayeeMsg"
+                            },
+                            "example": null
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "202": {
+                        "description": "Success with acknowledgment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiPayeeAck"
+                                },
+                                "example": {
+                                    "payeeNickname": "payeeNickName",
+                                    "messageId": "111111-11111",
+                                    "correlationId": "INTERNAL1234567893",
+                                    "status": "RECEIVED",
+                                    "timestamp": "2021-05-27T09:52:32.529+0000"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiExceptionRes"
+                                },
+                                "example": {
+                                    "errorMessage": "Payee Not found",
+                                    "errorCode": "AER-1115"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {
+                            "application/json": {
+                                "example": null
+                            }
+                        }
+                    }
+                },
+                "x-markets": "IN,SG"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "OpenApiPayeeAck": {
+                "required": [
+                    "correlationId",
+                    "status",
+                    "timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "payeeNickname": {
+                        "type": "string",
+                        "description": "Unique payee ID",
+                        "example": "payeeNickName"
+                    },
+                    "messageId": {
+                        "type": "string",
+                        "description": "Unique ID from client",
+                        "example": "111111-11111"
+                    },
+                    "correlationId": {
+                        "type": "string",
+                        "description": "Unique ID generated internally",
+                        "example": "INTERNAL1234567893"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Status message",
+                        "example": "RECEIVED"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "Timestamp of acknowledgement generation",
+                        "format": "date-time",
+                        "example": null
+                    }
+                },
+                "example": null
+            },
+            "OpenApiExceptionRes": {
+                "type": "object",
+                "properties": {
+                    "errorMessage": {
+                        "type": "string",
+                        "description": "Root cause/error description",
+                        "example": "Invalid message"
+                    },
+                    "errorCode": {
+                        "type": "string",
+                        "description": "Application error code",
+                        "example": "AER-1000"
+                    }
+                },
+                "example": null
+            },
+            "OpenApiAddress": {
+                "required": [
+                    "country"
+                ],
+                "type": "object",
+                "properties": {
+                    "postcode": {
+                        "type": "string",
+                        "description": "Postal Code",
+                        "example": "110001"
+                    },
+                    "country": {
+                        "type": "string",
+                        "description": "Country of the payee",
+                        "example": "IN"
+                    },
+                    "line_2": {
+                        "type": "string",
+                        "description": "Address Line 2",
+                        "example": "Baker Street"
+                    },
+                    "line_1": {
+                        "type": "string",
+                        "description": "Address Line 1",
+                        "example": "221B"
+                    },
+                    "line_3": {
+                        "type": "string",
+                        "description": "Address Line 3",
+                        "example": "London"
+                    }
+                },
+                "description": "Postal address of payee",
+                "example": null
+            },
+            "OpenApiBulkPayeeHeader": {
+                "required": [
+                    "batchCount",
+                    "batchId",
+                    "countryCode",
+                    "messageId",
+                    "messageSender"
+                ],
+                "type": "object",
+                "properties": {
+                    "messageSender": {
+                        "type": "string",
+                        "description": "Message sender's name",
+                        "example": "Corp Inc."
+                    },
+                    "messageId": {
+                        "type": "string",
+                        "description": "Unique identifier for the operation. This should be a unique tracking value (GUID) to identify the request, it is used for audit & support",
+                        "example": "111111-1111111"
+                    },
+                    "batchId": {
+                        "type": "string",
+                        "description": "Unique identifier for a batch of bulk payees",
+                        "example": "BAPI213322"
+                    },
+                    "batchCount": {
+                        "type": "integer",
+                        "description": "Number of payees to be created",
+                        "format": "int32",
+                        "example": 22
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "description": "Client's ISO country code",
+                        "example": "SG"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "Message timestamp",
+                        "format": "date-time",
+                        "example": "2019-01-14T02:41:58.119Z"
+                    }
+                },
+                "description": "Header details in client's request body",
+                "example": null
+            },
+            "OpenApiBulkPayeeMsg": {
+                "required": [
+                    "header",
+                    "payees"
+                ],
+                "type": "object",
+                "properties": {
+                    "header": {
+                        "$ref": "#/components/schemas/OpenApiBulkPayeeHeader"
+                    },
+                    "payees": {
+                        "type": "array",
+                        "description": "List of payees, and bank details in client's request body",
+                        "example": null,
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiPayee"
+                        }
+                    }
+                },
+                "example": null
+            },
+            "OpenApiContact": {
+                "type": "object",
+                "properties": {
+                    "phoneNumber": {
+                        "type": "string",
+                        "description": "Contact phone number with country dial code",
+                        "example": "+91-1234567890"
+                    },
+                    "mobileNumber": {
+                        "type": "string",
+                        "description": "Contact mobile number with country dial code",
+                        "example": "+91-1234567890"
+                    },
+                    "emailAddress": {
+                        "type": "string",
+                        "description": "Contact email address",
+                        "example": "username@gmail.com"
+                    },
+                    "faxNumber": {
+                        "type": "string",
+                        "description": "Contact fax number with country dial code",
+                        "example": "+91-1231234567"
+                    },
+                    "taxId": {
+                        "type": "string",
+                        "description": "Tax ID",
+                        "example": "1234567890"
+                    }
+                },
+                "description": "Contact details of payee",
+                "example": null
+            },
+            "OpenApiFinancialInstitution": {
+                "type": "object",
+                "properties": {
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiPayeeAgentAddress"
+                    },
+                    "branchCode": {
+                        "type": "string",
+                        "description": "Branch Code",
+                        "example": "12345"
+                    },
+                    "clearingSystemId": {
+                        "type": "string",
+                        "description": "Local clearing bank code, for example IFSC Code for India",
+                        "example": "SBIN0031510"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Financial Institution Name",
+                        "example": "Standard Chartered Bank"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Financial Institution type, SW for SWIFT Payment and LC for local payment",
+                        "example": "SW, LC",
+                        "enum": [
+                            "CH",
+                            "LC",
+                            "AC",
+                            "SW",
+                            "CP",
+                            "FW",
+                            "SC",
+                            "TX"
+                        ]
+                    },
+                    "subBranchcode": {
+                        "type": "string",
+                        "description": "Sub branch code",
+                        "example": "123"
+                    },
+                    "BIC": {
+                        "type": "string",
+                        "description": "Financial Institution, BIC code of branch",
+                        "example": "SCBLSGSGXXX"
+                    }
+                },
+                "description": "Details of the financial institution",
+                "example": null
+            },
+            "OpenApiIdentity": {
+                "required": [
+                    "id",
+                    "identityType"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Identification Number. Validations for id <table stype=\"width:100%\"> <tr> <th>Value</th> <th>Validation</th> <th>Example</th> </tr> <tr> <td>Aadhaar ID</td> <td>length 12 and only numeric</td> <td>123456789123</td> </tr> <tr> <td>MMID</td> <td>max length 7</td> <td>1234567</td> </tr> <tr> <td>MMID MobileNum</td> <td>max length 10</td> <td>1234567890</td> </tr> <tr> <td>MWP</td> <td>Enter mobilewallet provider name</td> <td>IMTIN,IMTINPAY</td> </tr> <tr> <td>MWP MobileNum</td> <td>Enter mobile number with valid pattern</td> <td>1234567890/1234</td> </tr> <tr> <td>MOBILENO</td> <td>Country specific validation & only numeric, max length 10 for IN, max length 8 for SG</td> <td>1234567890 for IN</td> </tr> <tr> <td>VPA</td> <td>maxLength 34</td> <td>abc@okscb</td> </tr> <tr> <td>NRIC</td> <td>maxLength 9</td> <td>S1234567G</td> </tr> <tr> <td>UEN</td> <td>max length 13</td> </tr> </table>",
+                        "example": "123456781234"
+                    },
+                    "identityType": {
+                        "type": "string",
+                        "description": "Identification Type. <br> <table><tr><th>Country</th><th>Accepted values</th></tr> <tr> <td>IN</td><td>Aadhaar ID, MMID, MMID MobileNum, MWP, MWP MobileNum, VPA</td> </tr><tr> <td>SG</td><td>UEN, NRIC, MOBILENO</td> </tr></table>",
+                        "example": "Aadhaar ID"
+                    }
+                },
+                "description": "Additional payment methods details subject to payee's country",
+                "example": null
+            },
+            "OpenApiIntermediaryAgent": {
+                "type": "object",
+                "properties": {
+                    "financialInstitution": {
+                        "$ref": "#/components/schemas/OpenApiIntermediaryAgentFinancialInstitution"
+                    }
+                },
+                "description": "Intermediary Bank details",
+                "example": null
+            },
+            "OpenApiIntermediaryAgentAddress": {
+                "type": "object",
+                "properties": {
+                    "postcode": {
+                        "type": "string",
+                        "description": "Postal Code",
+                        "example": "110001"
+                    },
+                    "country": {
+                        "type": "string",
+                        "description": "Country of the intermediary payee agent",
+                        "example": "IN"
+                    },
+                    "line_1": {
+                        "type": "string",
+                        "description": "Address Line 1",
+                        "example": "221B"
+                    },
+                    "line_2": {
+                        "type": "string",
+                        "description": "Address Line 2",
+                        "example": "Baker Street"
+                    },
+                    "line_3": {
+                        "type": "string",
+                        "description": "Address Line 3",
+                        "example": "London"
+                    }
+                },
+                "description": "Postal code of intermediary bank",
+                "example": null
+            },
+            "OpenApiIntermediaryAgentFinancialInstitution": {
+                "type": "object",
+                "properties": {
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiIntermediaryAgentAddress"
+                    },
+                    "branchCode": {
+                        "type": "string",
+                        "description": "Branch Code",
+                        "example": "12345"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Financial Institution type, SW for SWIFT Payment and LC for local payment",
+                        "example": "SW, LC",
+                        "enum": [
+                            "LC",
+                            "CH",
+                            "SW",
+                            "AC",
+                            "FW",
+                            "CP",
+                            "TX",
+                            "SC"
+                        ]
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Financial Institution Name",
+                        "example": "Standard Chartered Bank"
+                    },
+                    "subBranchcode": {
+                        "type": "string",
+                        "description": "Sub branch code",
+                        "example": "123"
+                    },
+                    "BIC": {
+                        "type": "string",
+                        "description": "Financial Institution, BIC code of branch",
+                        "example": "SCBLSGSGXXX"
+                    }
+                },
+                "description": "Details of intermediary bank",
+                "example": null
+            },
+            "OpenApiPayee": {
+                "required": [
+                    "name",
+                    "nickName",
+                    "postalAddress"
+                ],
+                "type": "object",
+                "properties": {
+                    "nickName": {
+                        "type": "string",
+                        "description": "Unique Client Reference ID for the payee",
+                        "example": "A999999999999"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Full Name",
+                        "example": "John Doe"
+                    },
+                    "contact": {
+                        "$ref": "#/components/schemas/OpenApiContact"
+                    },
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiAddress"
+                    },
+                    "jointPayeeName": {
+                        "type": "string",
+                        "description": "Name of the secondary Beneficiary",
+                        "example": "James Watson"
+                    },
+                    "identity": {
+                        "type": "array",
+                        "description": "Additional payment methods details subject to payee's country",
+                        "example": null,
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiIdentity"
+                        }
+                    },
+                    "jointPayeeIdentityType": {
+                        "type": "string",
+                        "description": "Identity type of the secondary Beneficiary",
+                        "example": "SW, LC"
+                    },
+                    "jointPayeeIdentity": {
+                        "type": "string",
+                        "description": "Identity of the secondary Beneficiary",
+                        "example": "123456789ABC"
+                    },
+                    "payeeInfoExtension": {
+                        "$ref": "#/components/schemas/OpenApiPayeeInfoExtension"
+                    },
+                    "payeeExtension": {
+                        "$ref": "#/components/schemas/OpenApiPayeeExtension"
+                    },
+                    "account": {
+                        "type": "array",
+                        "description": "Beneficiary account details",
+                        "example": null,
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiPayeeAccount"
+                        }
+                    },
+                    "payeeAgent": {
+                        "$ref": "#/components/schemas/OpenApiPayeeAgent"
+                    },
+                    "intermediaryAgent": {
+                        "$ref": "#/components/schemas/OpenApiIntermediaryAgent"
+                    }
+                },
+                "description": "Payee and bank details in client's request body",
+                "example": null
+            },
+            "OpenApiPayeeAccount": {
+                "required": [
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique Account Number",
+                        "example": "11111111111111"
+                    },
+                    "identifierType": {
+                        "type": "string",
+                        "description": "Account Identifier Type",
+                        "example": "IBAN",
+                        "enum": [
+                            "IBAN"
+                        ]
+                    }
+                },
+                "description": "Beneficiary account details",
+                "example": null
+            },
+            "OpenApiPayeeAgent": {
+                "required": [
+                    "financialInstitution"
+                ],
+                "type": "object",
+                "properties": {
+                    "financialInstitution": {
+                        "$ref": "#/components/schemas/OpenApiFinancialInstitution"
+                    }
+                },
+                "description": "Beneficiary bank details",
+                "example": null
+            },
+            "OpenApiPayeeAgentAddress": {
+                "type": "object",
+                "properties": {
+                    "postcode": {
+                        "type": "string",
+                        "description": "Postal Code",
+                        "example": "110001"
+                    },
+                    "country": {
+                        "type": "string",
+                        "description": "Country of the payee agent",
+                        "example": "IN"
+                    },
+                    "line_1": {
+                        "type": "string",
+                        "description": "Address Line 1",
+                        "example": "221B"
+                    },
+                    "line_2": {
+                        "type": "string",
+                        "description": "Address Line 2",
+                        "example": "Baker Street"
+                    },
+                    "line_3": {
+                        "type": "string",
+                        "description": "Address Line 3",
+                        "example": "London"
+                    }
+                },
+                "description": "Postal code of payee bank",
+                "example": null
+            },
+            "OpenApiPayeeExtension": {
+                "type": "object",
+                "properties": {
+                    "addressLinesLocalLanguage": {
+                        "type": "array",
+                        "description": "Address Details in local language",
+                        "example": null,
+                        "items": {
+                            "type": "string",
+                            "description": "Address Details in local language",
+                            "example": null
+                        }
+                    },
+                    "nameLocalLanguage": {
+                        "type": "array",
+                        "description": "Name in local language",
+                        "example": null,
+                        "items": {
+                            "type": "string",
+                            "description": "Name in local language",
+                            "example": null
+                        }
+                    },
+                    "notesToPayeeLocalLanguage": {
+                        "type": "array",
+                        "description": "Payee notes in local language",
+                        "example": null,
+                        "items": {
+                            "type": "string",
+                            "description": "Payee notes in local language",
+                            "example": null
+                        }
+                    }
+                },
+                "description": "Details in payee's local language",
+                "example": null
+            },
+            "OpenApiPayeeInfoExtension": {
+                "required": [
+                    "mwp"
+                ],
+                "type": "object",
+                "properties": {
+                    "mwp": {
+                        "type": "string",
+                        "description": "Set to 'Y' if mobile wallet payment present otherwise 'N'",
+                        "example": "Y"
+                    },
+                    "payeeType": {
+                        "type": "string",
+                        "description": "PayeeTypes - (I)Individual, (C)Corporate, (G)Government",
+                        "example": "I, C, G"
+                    },
+                    "notesToPayee": {
+                        "type": "array",
+                        "description": "Payee notes",
+                        "example": null,
+                        "items": {
+                            "type": "string",
+                            "description": "Payee notes",
+                            "example": null
+                        }
+                    }
+                },
+                "description": "Additional payee details",
+                "example": null
+            },
+            "OpenApiPayeeHeader": {
+                "required": [
+                    "countryCode",
+                    "messageId",
+                    "messageSender"
+                ],
+                "type": "object",
+                "properties": {
+                    "messageSender": {
+                        "type": "string",
+                        "description": "Message sender's name",
+                        "example": "Corp Inc."
+                    },
+                    "messageId": {
+                        "type": "string",
+                        "description": "Unique identifier for the transaction. This should be a unique tracking value (GUID) to identify the request, it is used for audit & support",
+                        "example": "111111-1111111"
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "description": "Client's ISO country code",
+                        "example": "SG"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "Message timestamp",
+                        "format": "date-time",
+                        "example": "2019-01-14T02:41:58.119Z"
+                    }
+                },
+                "description": "Header details in client's request body",
+                "example": null
+            },
+            "OpenApiPayeeMsg": {
+                "required": [
+                    "header",
+                    "payee"
+                ],
+                "type": "object",
+                "properties": {
+                    "header": {
+                        "$ref": "#/components/schemas/OpenApiPayeeHeader"
+                    },
+                    "payee": {
+                        "$ref": "#/components/schemas/OpenApiPayee"
+                    }
+                },
+                "example": null
+            },
+            "OpenApiPayeeDeleteReq": {
+                "required": [
+                    "header",
+                    "payeeNickName"
+                ],
+                "type": "object",
+                "properties": {
+                    "header": {
+                        "$ref": "#/components/schemas/OpenApiPayeeHeader"
+                    },
+                    "payeeNickName": {
+                        "type": "string",
+                        "description": "Nickname of the payee to be deleted",
+                        "example": "Sherlock Holmes"
+                    }
+                },
+                "example": null
+            },
+            "OpenApiPayeeDtl": {
+                "type": "object",
+                "properties": {
+                    "payee": {
+                        "$ref": "#/components/schemas/OpenApiPayeeRes"
+                    }
+                },
+                "example": null
+            },
+            "OpenApiPayeeRes": {
+                "required": [
+                    "nickName",
+                    "payeeStatus"
+                ],
+                "type": "object",
+                "properties": {
+                    "nickName": {
+                        "type": "string",
+                        "description": "Unique client reference ID for the payee",
+                        "example": "payeeNickName"
+                    },
+                    "payeeStatus": {
+                        "type": "string",
+                        "description": "Latest payee status",
+                        "example": "COMPLETED"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Full Name",
+                        "example": "John Doe"
+                    },
+                    "postalAddress": {
+                        "$ref": "#/components/schemas/OpenApiAddress"
+                    },
+                    "contact": {
+                        "$ref": "#/components/schemas/OpenApiContact"
+                    },
+                    "identity": {
+                        "type": "array",
+                        "description": "Additional payment methods details for a payee",
+                        "example": null,
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiIdentity"
+                        }
+                    },
+                    "jointPayeeName": {
+                        "type": "string",
+                        "description": "Name of the secondary beneficiary",
+                        "example": "John Watson"
+                    },
+                    "jointPayeeIdentity": {
+                        "type": "string",
+                        "description": "Joint payee identity",
+                        "example": "123456789ABCD"
+                    },
+                    "jointPayeeIdentityType": {
+                        "type": "string",
+                        "description": "Joint payee type",
+                        "example": "SW, LC"
+                    },
+                    "payeeExtension": {
+                        "$ref": "#/components/schemas/OpenApiPayeeExtension"
+                    },
+                    "payeeInfoExtension": {
+                        "$ref": "#/components/schemas/OpenApiPayeeInfoExtension"
+                    },
+                    "payeeAgent": {
+                        "$ref": "#/components/schemas/OpenApiPayeeAgent"
+                    },
+                    "account": {
+                        "type": "array",
+                        "description": "Payee's accounts details",
+                        "example": null,
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiPayeeAccount"
+                        }
+                    },
+                    "intermediaryAgent": {
+                        "$ref": "#/components/schemas/OpenApiIntermediaryAgent"
+                    }
+                },
+                "description": "List of payees and their details present with the bank",
+                "example": null
+            },
+            "OpenApiPayeeDtls": {
+                "type": "object",
+                "properties": {
+                    "payees": {
+                        "type": "array",
+                        "description": "List of payees and their details present with the bank",
+                        "example": null,
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiPayeeRes"
+                        }
+                    }
+                },
+                "example": null
+            }
+        }
+    }
+}

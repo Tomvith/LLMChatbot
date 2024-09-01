@@ -1,0 +1,348 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking - SWIFT gpi Tracker",
+        "description": "**API Banking - SWIFT gpi Tracker**\r\n\r\nFacilitates the retrieval of the payment gpi information as received from the SWIFT gpi Tracker, for payments initiated by Standard Chartered on the SWIFT network.\r\n\r\n",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company Licence",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.standardchartered.com/openapi"
+        }
+    ],
+    "tags": [
+        {
+            "name": "SWIFT gpi Tracker Status",
+            "description": "Facilitates the retrieval of the payment gpi information as received from the SWIFT gpi Tracker, for payments initiated by Standard Chartered on the SWIFT network",
+            "x-subcategory": "Move Money"
+        }
+    ],
+    "paths": {
+        "/gpi/v2/tracker-status": {
+            "post": {
+                "tags": [
+                    "SWIFT gpi Tracker Status"
+                ],
+                "summary": "gpi Tracker Status",
+                "description": "The <b>SWIFT gpi Tracker Status API</b> exposes the ability to retrieve the contents of the SWIFT gpi Tracker for a number of payments, based on their UETRs. <p>It returns  the history of the payment events, as reported by SWIFT, for each gpi-participating bank involved in the settlement process for that particular payment. <p>To be tracked, a payment needs to have been released by Standard Chartered via the SWIFT network, which is the case for most cross-border transactions, and to another bank. The first tracked event is when a participant bank provides an update to SWIFT (sending to another bank and settlement process, or rejection), which SWIFT sends to Standard Chartered. <p><b>How to find the UETR:</b> If the payment was initiated by the customer via a Payment Initiation API, the UETR was returned by the API response in the field <i>\"internalTrackerId\"</i>. It can also be retrieved via the Payment Status Inquiry API. If the payment was instructed by other means (manual, file-based or SWIFT) then customers can use S2B Web or other reporting means to retrieve the UETR and use this tracker endpoint.",
+                "operationId": "tracker-Status",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OpenApiTrackerRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiTrackerStatuses"
+                                },
+                                "example": {
+                                    "trackerStatuses": [
+                                        {
+                                            "uetr": "5aa6b593-b715-482f-a6b5-1234567890ab",
+                                            "paymentEvent": [
+                                                {
+                                                    "paymentStatus": "ACCC",
+                                                    "paymentStatusReason": "ACCC",
+                                                    "paymentStatusDesc": "Beneficiary account has been credited",
+                                                    "statusDateTime": "2022-08-24T06:43:43.000+0000",
+                                                    "transactionDateTime": "2022-08-24T12:08:00.000+0000",
+                                                    "from": "FROMBICAXXX/TOBICBBBXXX",
+                                                    "to": "TOBICBBBXXX",
+                                                    "settledCurrency": "USD",
+                                                    "settledAmount": 2698370.45,
+                                                    "chargeAmount": 8.27,
+                                                    "charges": [
+                                                        {
+                                                            "amount": 0,
+                                                            "currency": "USD"
+                                                        },
+                                                        {
+                                                            "amount": 25,
+                                                            "currency": "USD"
+                                                        },
+                                                        {
+                                                            "amount": 13,
+                                                            "currency": "USD"
+                                                        },
+                                                        {
+                                                            "amount": 8.27,
+                                                            "currency": "USD"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "paymentStatus": "ACSP",
+                                                    "paymentStatusReason": "G002",
+                                                    "paymentStatusDesc": "Settlement in Progress",
+                                                    "statusDateTime": "2022-08-23T22:39:22.000+0000",
+                                                    "transactionDateTime": "2022-08-23T19:30:00.000+0000",
+                                                    "from": "FROMBICAXXX/TOBICBBBXXX",
+                                                    "to": "TOBICBBBXXX",
+                                                    "settledCurrency": "USD",
+                                                    "settledAmount": 2698378.72,
+                                                    "charges": []
+                                                },
+                                                {
+                                                    "paymentStatus": "ACSP",
+                                                    "paymentStatusReason": "G000",
+                                                    "paymentStatusDesc": "Pushed to GPI Agent",
+                                                    "statusDateTime": "2022-08-23T20:56:01.000+0000",
+                                                    "transactionDateTime": "2022-08-23T17:05:00.000+0000",
+                                                    "from": "FROMBICAXXX/TOBICBBBXXX",
+                                                    "to": "FROMBICAXXX/TOBICBBBXXX",
+                                                    "settledCurrency": "USD",
+                                                    "chargeBearer": "BEN",
+                                                    "settledAmount": 2698378.72,
+                                                    "chargeAmount": 13,
+                                                    "settlementMethod": "INDA",
+                                                    "charges": [
+                                                        {
+                                                            "amount": 0,
+                                                            "currency": "USD"
+                                                        },
+                                                        {
+                                                            "amount": 25,
+                                                            "currency": "USD"
+                                                        },
+                                                        {
+                                                            "amount": 13,
+                                                            "currency": "USD"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {}
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "HK,TW,SG,MY,TH,PH,ID,VN,IN,BD,AE,PK,MU,GB,US",
+                "x-codegen-request-body-name": "body"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "OpenApiTrackerStatuses": {
+                "type": "object",
+                "properties": {
+                    "trackerStatuses": {
+                        "type": "array",
+                        "description": "Status Details",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiTrackerStatus"
+                        }
+                    }
+                }
+            },
+            "OpenApiPaymentEventCharges": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Amount",
+                        "example": "10.0"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "description": "Currency",
+                        "example": "USD"
+                    }
+                }
+            },
+            "OpenApiTrackerStatus": {
+                "type": "object",
+                "properties": {
+                    "uetr": {
+                        "maxLength": 36,
+                        "type": "string",
+                        "description": "uetr",
+                        "example": "12026920-3dfe-4863-a145-6f5685717aaa"
+                    },
+                    "paymentEvent": {
+                        "type": "array",
+                        "description": "Payment Event",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiPaymentEvent"
+                        }
+                    }
+                }
+            },
+            "OpenApiTrackerRequest": {
+                "required": [
+                    "uetrs"
+                ],
+                "type": "object",
+                "properties": {
+                    "uetrs": {
+                        "maxItems": 200,
+                        "type": "array",
+                        "description": "uetrs",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "12026920-3dfe-4863-a145-6f5685717aaa",
+                            "5aa6b593-b715-482f-a6b5-93ababababab"
+                        ]
+                    },
+                    "since": {
+                        "type": "string",
+                        "description": "Date",
+                        "example": "2022-06-10T13:21:02.000+0000"
+                    }
+                }
+            },
+            "OpenApiPaymentEvent": {
+                "type": "object",
+                "properties": {
+                    "paymentReferenceNumber": {
+                        "type": "string",
+                        "description": "Payment Reference Number",
+                        "example": "abc123"
+                    },
+                    "from": {
+                        "type": "string",
+                        "description": "From",
+                        "example": "BANABEBBXXX"
+                    },
+                    "to": {
+                        "type": "string",
+                        "description": "To",
+                        "example": "BANBUS33XXX"
+                    },
+                    "paymentStatus": {
+                        "type": "string",
+                        "description": "Payment Status",
+                        "example": "ACSP"
+                    },
+                    "paymentStatusReason": {
+                        "type": "string",
+                        "description": "Payment Status Reason",
+                        "example": "G000"
+                    },
+                    "paymentStatusDesc": {
+                        "type": "string",
+                        "description": "Payment Status Description",
+                        "example": "Pushed to GPI Agent"
+                    },
+                    "statusDateTime": {
+                        "type": "string",
+                        "description": "Status Date Time",
+                        "example": "2022-06-10T09:55:53.000+0000"
+                    },
+                    "transactionDateTime": {
+                        "type": "string",
+                        "description": "timestamp",
+                        "example": "2022-06-10T09:55:53.000+0000"
+                    },
+                    "settlementMethod": {
+                        "type": "string",
+                        "description": "Settlement Method",
+                        "example": "INDA"
+                    },
+                    "sourceCurrency": {
+                        "type": "string",
+                        "description": "Source Currency",
+                        "example": "USD"
+                    },
+                    "targetCurrency": {
+                        "type": "string",
+                        "description": "Target Currency",
+                        "example": "SGD"
+                    },
+                    "settledCurrency": {
+                        "type": "string",
+                        "description": "Settled Currency",
+                        "example": "USD"
+                    },
+                    "exchangeRate": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Exchange Rate",
+                        "example": 1.4
+                    },
+                    "chargeBearer": {
+                        "type": "string",
+                        "description": "Charge Bearer",
+                        "example": "SHAR"
+                    },
+                    "settledAmount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Settled Amount",
+                        "example": 1000
+                    },
+                    "chargeAmount": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Charge Amount",
+                        "example": 12
+                    },
+                    "clearingSystem": {
+                        "type": "string",
+                        "description": "Clearing System",
+                        "example": "FW"
+                    },
+                    "charges": {
+                        "type": "array",
+                        "description": "Charges",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiPaymentEventCharges"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

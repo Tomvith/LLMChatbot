@@ -1,0 +1,1976 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Products & Services",
+    "description": "\n##### Introduction\n\nThe Open API serves the business functions associated with **Products and Services**\noffered by the bank. The operations and the features supported in this API\nare described in the following sections.\n\n<hr />\n\n##### Authentication\n\nTo make a request to any of the APIs, the Client has to present an Access\nToken, following the OAuth 2.0 specifications. Here is the API endpoint for getting an OAuth 2.0 Token.\n\n<p><strong>https:\\/\\/api.sc.com\\/retail\\/v1\\/oauth2\\/token</strong></p>\nFollowing are the request parameters to be passed to the Token endpoint.\n\n<hr />\n\n ##### Parameters\n\n <table>\n  <thead>\n    <tr>\n      <th width='15%'>Key</th>\n      <th width='85%'>Value</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>grant_type</td>\n      <td>Indicates the type of grant being presented in exchange for an access token and possibly a refresh token, for more details, please refer to the table below</td>\n    </tr>\n    <tr>\n      <td>client_id</td>\n      <td>The public identifier for the application, obtained when the caller first registered the application</td>\n    </tr>\n    <tr>\n      <td>client_secret</td>\n      <td>The application’s client secret. This ensures that the request to get the access token is made only from the application, and not from a potential attacker that may have intercepted the authorization code.</td>\n    </tr>\n    </tbody>\n</table>\n\n<hr/>\n\n<table>\n  <thead>\n    <tr>\n      <th width='15%'>Grant Type</th>\n      <th width='85%'>Usage</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Client credentials</td>\n      <td>For the client app to identify itself to the SC API platform, the <code> /token </code> endpoint has to be called with query param <code>grant_type</code> set to <code>client_credentials</code></td>\n    </tr>\n    <tr>\n      <td>Auth-code based grant</td>\n      <td>For the client app to identify itself and its user to the SC API platform, the <code> /token </code> endpoint has to be called with query param <code>grant_type</code> set to <code>auth_code_grant</code></td>\n    </tr>\n  </tbody>\n</table>\n\n<hr />\n\n##### Error Handling\n\nThe API endpoints return an error response whenever the request could not be processed successfully. In such scenarios, API provides the clients with a precise Application Error code and description in the error payload associated with HTTP Status codes 4xx or 5xx. \n <br>The table below provides a list of such possible Application Errors, for effective error handling of API consumers.\n\n<table>\n  <thead>\n    <tr>\n      <th width='20%'>Response error code</th>\n      <th width='80%'>Detail</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>E0101</td>\n      <td>Input data is not valid</td>\n    </tr>\n    <tr>\n      <td>E0102</td>\n      <td>Invalid query parameters</td>\n    </tr>\n    <tr>\n      <td>E0103</td>\n      <td>Requested resource not found</td>\n    </tr>\n  </tbody>\n</table>\n",
+    "termsOfService": "https://www.sc.com/en/terms-of-use/",
+    "contact": {
+      "name": "Developer Portal",
+      "url": "https://www.developer.sc.com",
+      "email": "dp@sc.com"
+    },
+    "version": "1.0.0",
+    "license": {
+      "name": "Company Licence",
+      "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://sandbox-api.sc.com/retail/v1",
+      "description": "aXess Sandbox"
+    },
+    {
+      "url": "https://api.sc.com/retail/{version}",
+      "description": "Production",
+      "variables": {
+        "version": {
+          "description": "The Open API endpoints are accessible via https only",
+          "enum": [
+            "v1"
+          ],
+          "default": "v1"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Products",
+      "description": "Information on products and services for Retail customers.",
+      "x-subcategory": "Retail Products"
+    }
+  ],
+  "x-tagGroups": [
+    {
+      "name": "Resource",
+      "tags": [
+        "Products"
+      ]
+    },
+    {
+      "name": "References",
+      "tags": [
+        "Reference Codes"
+      ]
+    }
+  ],
+  "paths": {
+    "/products": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "Products"
+        ],
+        "description": "Returns a collection of Products and Services offered",
+        "summary": "List of Products",
+        "operationId": "GetProductsList",
+        "parameters": [
+          {
+            "name": "transaction-id",
+            "in": "header",
+            "required": true,
+            "description": "Unique transaction reference identifier for the API request",
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "\nA category code that can be used to filter the output list\n\n<table>\n  <thead>\n    <tr>\n      <th width='15%'>Code</th>\n      <th width='85%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>CC</td>\n      <td>Credit Cards</td>\n    </tr>\n    <tr>\n      <td>PL</td>\n      <td>Personal Loans</td>\n    </tr>\n    <tr>\n      <td>CA</td>\n      <td>Current Accounts</td>\n    </tr>\n    <tr>\n      <td>SA</td>\n      <td>Savings Accounts</td>\n    </tr>\n    <tr>\n      <td>Inv</td>\n      <td>Investments</td>\n    </tr>\n    <tr>\n      <td>Ins</td>\n      <td>Insurance</td>\n    </tr>\n    <tr>\n      <td>ML</td>\n      <td>Mortgages</td>\n    </tr>\n    <tr>\n      <td>TD</td>\n      <td>Time Deposit Accounts</td>\n    </tr>\n  </tbody>\n</table>\n",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CC",
+                "PL",
+                "CA",
+                "SA",
+                "Inv",
+                "Ins",
+                "ML",
+                "TD"
+              ]
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "Indicates the language code in which the product details are to be returned.",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "en-US",
+                "zh-HK"
+              ],
+              "default": "en-US"
+            }
+          }
+        ],
+        "x-markets": "HK",
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products-info"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                },
+                "example": [
+                  {
+                    "id": "666437a3244",
+                    "code": "E0101",
+                    "detail": "Language entered does not exist",
+                    "source": "/retail/v1/products"
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                },
+                "example": [
+                  {
+                    "id": "1289n4214",
+                    "code": "E0103",
+                    "detail": "Endpoint entered is invalid",
+                    "source": "No handler found for GET /retail/v1/prod"
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                },
+                "example": {
+                  "msgId": "18912h9",
+                  "errCd": "123",
+                  "errMsg": "fault at /retail/v1/products timeout while waiting for read"
+                }
+              }
+            }
+          }
+        },
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    },
+    "/product-categories": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "Products"
+        ],
+        "description": "Returns a list of Product categories",
+        "summary": "List of Product Categories",
+        "operationId": "GetProductCategories",
+        "parameters": [
+          {
+            "name": "transaction-id",
+            "in": "header",
+            "required": true,
+            "description": "Unique transaction reference identifier for the API request",
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            }
+          }
+        ],
+        "x-markets": "HK",
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/product-categories"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id": "1289n4214",
+                    "code": "E0103",
+                    "detail": "Endpoint entered is invalid",
+                    "source": "No handler found for GET /retail/v1/product-cat"
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                },
+                "example": {
+                  "msgId": "18124645",
+                  "errCd": "123",
+                  "errMsg": "fault at /retail/v1/product-categories timeout while waiting for read"
+                }
+              }
+            }
+          }
+        },
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "product-categories": {
+        "description": "List of Product categories",
+        "type": "object",
+        "properties": {
+          "lang": {
+            "description": "Language code",
+            "type": "string"
+          },
+          "categories": {
+            "description": "List of Categories",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/product-category"
+            }
+          }
+        },
+        "example": {
+          "lang": "en-US",
+          "categories": [
+            {
+              "category-name": "Credit Cards",
+              "category-code": "CC",
+              "products": [
+                {
+                  "product-name": "Simply Cash Cashback Card",
+                  "product-code": "1241-1241"
+                },
+                {
+                  "product-name": "Standard Chartered Platinum Credit Card",
+                  "product-code": "CC"
+                }
+              ]
+            },
+            {
+              "category-name": "Current Accounts",
+              "category-code": "CA",
+              "products": [
+                {
+                  "product-name": "USD and RMB Current Account",
+                  "product-code": "DDA-CA"
+                },
+                {
+                  "product-name": "HKD Current Account",
+                  "product-code": "DDA-CA"
+                }
+              ]
+            },
+            {
+              "category-name": "Savings Accounts",
+              "category-code": "SA",
+              "products": [
+                {
+                  "product-name": "Integrated Deposits Account",
+                  "product-code": "DDA-RM"
+                },
+                {
+                  "product-name": "Foreign Currency Time Deposit",
+                  "product-code": "CDA"
+                }
+              ]
+            },
+            {
+              "category-name": "Mortgages",
+              "category-code": "Mortgages",
+              "products": [
+                {
+                  "product-name": "Mortgage Saver Home Loan Solution"
+                },
+                {
+                  "product-name": "Reverse Mortgage Programme"
+                }
+              ]
+            },
+            {
+              "category-name": "Personal Loans",
+              "category-code": "PL",
+              "products": [
+                {
+                  "product-name": "Personal Instalment Loan"
+                },
+                {
+                  "product-name": "Wealth Lending"
+                }
+              ]
+            },
+            {
+              "category-name": "Investments",
+              "category-code": "Inv",
+              "products": [
+                {
+                  "product-name": "Investment Fund Services",
+                  "product-code": "UT"
+                },
+                {
+                  "product-name": "Securities Services",
+                  "product-code": "SXA"
+                }
+              ]
+            },
+            {
+              "category-name": "Insurance",
+              "category-code": "Ins",
+              "products": [
+                {
+                  "product-name": "Travel Insurance"
+                },
+                {
+                  "product-name": "Accident Insurance"
+                }
+              ]
+            },
+            {
+              "category-name": "Time Deposit Account",
+              "category-code": "TD",
+              "products": [
+                {
+                  "product-name": "Foreign Currency Time Deposit",
+                  "product-code": "CDA"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "product-category": {
+        "type": "object",
+        "properties": {
+          "category-name": {
+            "description": "Name of the category",
+            "type": "string"
+          },
+          "category-code": {
+            "description": "Short code for the category. This can be used to filter the results of Product and Service list API.",
+            "type": "string"
+          },
+          "products": {
+            "description": "A code to uniquely identify the product",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "product-name": {
+                  "description": "Name of the product",
+                  "type": "string"
+                },
+                "product-code": {
+                  "description": "Short code to identify the product.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "products-info": {
+        "description": "List of Products offered by the bank",
+        "type": "object",
+        "properties": {
+          "credit-cards": {
+            "description": "List of Credit card products",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/credit-card"
+            }
+          },
+          "personal-loans": {
+            "description": "List of Personal Loan products",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/personal-loan"
+            }
+          },
+          "current-accounts": {
+            "description": "List of Current account products",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/casa"
+            }
+          },
+          "savings-accounts": {
+            "description": "List of Savings account products",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/casa"
+            }
+          },
+          "time-deposit-accounts": {
+            "description": "List of Time Deposit products",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/casa"
+            }
+          },
+          "insurance": {
+            "description": "List of Insurance products",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/insurance"
+            }
+          },
+          "investments": {
+            "description": "List of Investment products",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/investment"
+            }
+          },
+          "mortgages": {
+            "description": "List of Mortgage products",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/mortgage"
+            }
+          }
+        },
+        "example": {
+          "credit-cards": [
+            {
+              "product-name": "Priority Banking Credit Card",
+              "product-description": "Standard Chartered Priority Banking Credit Card",
+              "product-url": "https://www.sc.com/hk/credit-cards/priority-banking/",
+              "card-category": "Bonus Points",
+              "fee-waiver": "Waived, a maximum of 3 supplementary cards can be issued",
+              "annual-fee": "HKD2,400",
+              "product-code": "1097-833",
+              "sub-product-code": "833",
+              "segment": [
+                "personal"
+              ],
+              "category-name": "Credit Cards",
+              "category-code": "CC",
+              "currency": "HKD",
+              "eligibility": [
+                {
+                  "documents": [
+                    "Only applicable to Priority Banking clients. Please contact our branch staff for the application details."
+                  ]
+                }
+              ],
+              "benefits": [
+                {
+                  "summary-title": "Priority Banking 360° Rewards",
+                  "description": "Earn 360° Rewards Points not only on your card spends, but on all your accounts with us. You will earn up to 50,000 points every month based on your designated banking products / services."
+                },
+                {
+                  "summary-title": "Up to 3X 360° Rewards Points",
+                  "description": "Earn 3X points on overseas spending, 2X points on local spending and 1X point on insurance payment all year-round. Better yet, there is no limit on the 360° Rewards Points you can earn."
+                },
+                {
+                  "summary-title": "Priority Pass Airport Lounge Privileges",
+                  "description": "As a principal cardholder, you can enjoy complimentary access to over 1,000 Priority Pass airport lounges all over the world within your first \"Card Membership Year\"."
+                },
+                {
+                  "summary-title": "Complimentary Travel Accident Insurance worth up to USD1,000,000",
+                  "description": "Enjoy our complimentary Travel Accident Insurance with a coverage of personal accident on public transport up to USD1,000,000."
+                },
+                {
+                  "summary-title": "Airport Limousine Services",
+                  "description": "Enjoy 48% off local airport limousine service between Hong Kong International Airport and your local address in Hong Kong."
+                },
+                {
+                  "summary-title": "Free Beverage Upgrade at Starbucks",
+                  "description": "Complimentary upgrade with purchase of any Tall or above-sized handcrafted beverage at Starbucks, from Tall size to Grande size or from Grande size to Venti size for all hot / cold beverages."
+                }
+              ],
+              "features": [
+                {
+                  "title": "Annual Fee Waiver",
+                  "data": "Priority Banking customers have no annual fee on the Priority Banking Credit Card."
+                },
+                {
+                  "title": "Complimentary Supplementary Card",
+                  "data": "We would like to extend the same recognition to your spouse and family. 3 complimentary supplementary cards are available upon request."
+                },
+                {
+                  "title": "360° Rewards Points Validity",
+                  "data": "Up to 3 years validity for 360° Rewards Points earned from your Priority Banking Credit Card."
+                },
+                {
+                  "title": "Visa payWave",
+                  "data": "Enjoy the fast and secure payments with Visa payWave feature."
+                }
+              ]
+            }
+          ],
+          "current-accounts": [
+            {
+              "product-name": "HKD Current Account",
+              "product-description": "With the Standard Chartered Current Account, you will not only have the convenience of a cheque book, but you also have the added bonus of no-bounce cheque protection.",
+              "product-url": "https://www.sc.com/hk/deposits/current-accounts/hkd-current-account/",
+              "min-maintenance-balance": "HKD1,000",
+              "product-apply-url": "https://www.sc.com/hk/save/integrated-deposits-account/apply/step/intro",
+              "product-code": "DDA-CA",
+              "sub-product-code": "CA",
+              "segment": [
+                "personal"
+              ],
+              "category-name": "Current Accounts",
+              "category-code": "CA",
+              "currency": "HKD",
+              "initial-deposit": "HKD1,000",
+              "eligibility": [
+                {
+                  "age": {
+                    "min": "18"
+                  },
+                  "documents": [
+                    "Hong Kong Permanent Identity Card (You have to provide Passport or Document of Identity Proof when visit branch if you are not holding Hong Kong Permanent Identity Card.)"
+                  ]
+                }
+              ],
+              "benefits": [
+                {
+                  "summary-title": "With the Standard Chartered Current Account, you will not only have the convenience of a cheque book, but you also have the added bonus of no-bounce cheque protection."
+                }
+              ],
+              "features": [
+                {
+                  "title": "Overdraft Protection",
+                  "data": "Enjoy Current Account Overdraft Protection for clearing cheques and autopays*."
+                },
+                {
+                  "title": "Minimum Balance",
+                  "data": "Minimum opening balance as low as HK$1,000."
+                },
+                {
+                  "title": "Autopay Setup",
+                  "data": "One-stop autopay setup."
+                },
+                {
+                  "title": "e-Cheque",
+                  "data": "With effect from 7 December 2015, we will allow presentment of e-Cheques for deposit with us (as Payee Bank) using the e-Cheque Drop Box Service provided by the Clearing House."
+                }
+              ],
+              "terms-and-conditions": [
+                {
+                  "tnc-summary": "+ Important Note: Current Account Overdraft Protection is not applicable to all staff of Standard Chartered Bank (Hong Kong) Limited (the \"Bank\") or any persons who have relationship with directors/controllers/employees with lending authority."
+                },
+                {
+                  "tnc-summary": "* A protection limit of 95% of your HKD Deposits and 80% of your foreign currency deposits (Renminbi deposits is excluded) or the accumulated overdraft amount not exceeding HK$40,000, whichever is lower."
+                }
+              ],
+              "fees-and-charges": [
+                {
+                  "type": "Please refer to the Service Charges https://av.sc.com/hk/content/docs/hk-service-charges-en.pdf"
+                }
+              ]
+            }
+          ],
+          "savings-accounts": [
+            {
+              "product-name": "HKD Savings Account",
+              "product-description": "With a simple and flexible Standard Chartered Savings Account, you can see your money grows and enjoy the convenience of around-the-clock banking services.",
+              "product-url": "https://www.sc.com/hk/deposits/savings-accounts/hkd-savings-account/",
+              "min-maintenance-balance": "HKD1,000",
+              "deposit-rates": "Please refer to the latest board rate https://www.sc.com/hk/deposits/board-rates/",
+              "product-apply-url": "https://www.sc.com/hk/save/integrated-deposits-account/apply/step/intro",
+              "product-code": "DDA-SE",
+              "sub-product-code": "SE",
+              "segment": [
+                "personal"
+              ],
+              "category-name": "Savings Accounts",
+              "category-code": "SA",
+              "currency": "HKD",
+              "initial-deposit": "HKD1,000",
+              "eligibility": [
+                {
+                  "age": {
+                    "min": "11"
+                  },
+                  "documents": [
+                    "Hong Kong Permanent Identity Card (You have to provide Passport or Document of Identity Proof when visit branch if you are not holding Hong Kong Permanent Identity Card.)"
+                  ]
+                }
+              ],
+              "benefits": [
+                {
+                  "summary-title": "With a simple and flexible Standard Chartered Savings Account, you can see your money grows and enjoy the convenience of around-the-clock banking services."
+                }
+              ],
+              "features": [
+                {
+                  "title": "Interest Bearing",
+                  "data": "Daily compound interest."
+                },
+                {
+                  "title": "Opening Balance",
+                  "data": "Minimum opening balance just as low as HK$1,000*. * Not applicable to Click-a-Count."
+                },
+                {
+                  "title": "Autopay Setup",
+                  "data": "One-stop autopay setup."
+                },
+                {
+                  "title": "e-Cheque",
+                  "data": "With effect from 7 December 2015, we will allow presentment of e-Cheques for deposit with us (as Payee Bank) using the e-Cheque Drop Box Service provided by the Clearing House."
+                }
+              ],
+              "terms-and-conditions": [
+                {
+                  "tnc-summary": "Remark:",
+                  "tnc-details": "* Not applicable to Click-a-Count."
+                }
+              ],
+              "fees-and-charges": [
+                {
+                  "type": "Please refer to the Service Charges https://av.sc.com/hk/content/docs/hk-service-charges-en.pdf"
+                }
+              ]
+            }
+          ],
+          "mortgages": [
+            {
+              "product-name": "Mortgage Saver Home Loan Solution",
+              "product-description": "Mortgage $aver have the interest earned from your deposits offset the mortgage expense by reducing the outstanding principal of your loan.",
+              "product-url": "https://www.sc.com/hk/mortgages/home-property-loans/mortgage-saver/",
+              "interest-type": "HIBOR",
+              "ltv": "Up to 60%",
+              "property-type": "Residential / Commercial",
+              "product-apply-url": "https://www.sc.com/hk/borrow/mortgage/apply/?",
+              "product-code": "MA",
+              "sub-product-code": "MA",
+              "segment": [
+                "personal"
+              ],
+              "category-name": "Mortgages",
+              "category-code": "Mortgages",
+              "currency": "HKD",
+              "eligibility": [
+                {
+                  "age": {
+                    "min": "18"
+                  },
+                  "documents": [
+                    "- Proof of personal income (please refer to details below) Documents required for a 60% or under mortgage loan application: Regular Salary Earner: A bank passbook/monthly statement showing salary records for the last 2 months Non-regular Salary Earner: A bank passbook/monthly statement showing salary records for the last 6 months The latest tax return",
+                    " or pay slips (bearing the name of the employer) for the last 3 months; or Proof of employment showing the job title and monthly salary of the applicant Self-employed (state ownership %): A copy of a valid business registration",
+                    " and A bank passbook/monthly statement of the applicant and the company showing deposits and withdrawals for the last four months",
+                    " and The latest annual tax return or audited financial report of the company",
+                    " and Proof of shares allocation or state on the mortgage application your % of ownership in the company Rental Income Earner: A valid lease agreement with a residual term of 6 or more months"
+                  ]
+                }
+              ],
+              "benefits": [
+                {
+                  "summary-title": "Mortgage Asia Miles Reward",
+                  "description": "Earn up to 680,000 Asia Miles with a drawdown of HKD4,000,000 mortgage loan"
+                },
+                {
+                  "summary-title": "Home BonusPack with exclusive benefits",
+                  "description": "Free Priority/ Premium/ Easy Banking plan with credit card, 360° reward and welcome offers."
+                },
+                {
+                  "summary-title": "Free Mortgage Preliminary Assessment Service",
+                  "description": "Before buying your property, get a free pre-assessment of the loan amount available to you, so you know what you can afford."
+                },
+                {
+                  "summary-title": "'1-Day Mortgage Preliminary Approval' Service Pledge",
+                  "description": "Get a quick assessment of your formal mortgage application in just one day."
+                },
+                {
+                  "summary-title": "Comparison Tool of Mortgage Plan",
+                  "description": "A calculator to show interest paid/earned between MortgageOne, Mortgage $aver and Prime Deposit Linked."
+                },
+                {
+                  "summary-title": "Get online property valuation",
+                  "description": "https://www.sc.com/hk/others/property-valuation.html"
+                }
+              ],
+              "features": [
+                {
+                  "title": "Maximise your Interest Earning",
+                  "data": "Deposits in the Mortgage $aver Current Account enjoy the same interest rate as your mortgage loan"
+                },
+                {
+                  "title": "Reduce your Mortgage Interest Expenses",
+                  "data": "Interests earned from your deposits directly reduces the outstanding of the mortgage, so your total mortgage interest expenses will be less"
+                },
+                {
+                  "title": "Flexible Access to Your Funds",
+                  "data": "Manage, deposit or withdraw funds from your Mortgage $aver Current Account at any time."
+                },
+                {
+                  "title": "Deposit Protection Scheme",
+                  "data": "Deposits in Mortgage $aver Current Account are qualified for protection under the Deposit Protection Scheme up to a limit of HK$500,000 per depositor."
+                }
+              ],
+              "terms-and-conditions": [
+                {
+                  "tnc-summary": "Mortgage Facility Terms",
+                  "tnc-url": "https://www.sc.com/hk/_document/pdf/en/mortgage_facility_terms.pdf"
+                },
+                {
+                  "tnc-summary": "Key Facts Statement for Residential Mortgage Loan",
+                  "tnc-url": "https://av.sc.com/hk/content/docs/kfs-residential-mortgage-loan.pdf"
+                },
+                {
+                  "tnc-summary": "Service Charges",
+                  "tnc-url": "https://av.sc.com/hk/content/docs/hk-service-charges-en.pdf"
+                }
+              ],
+              "loan-amount": [
+                {
+                  "min": "https://www.sc.com/hk/mortgages/buy-home/mortgage_online_assessment/",
+                  "interest-spread": "H + 1.3% (Please call the Bank for the exact pricing and check the promotion page for special pricing)",
+                  "tenor": "Up to 30 years"
+                }
+              ]
+            }
+          ],
+          "personal-loans": [
+            {
+              "product-name": "Personal Instalment Loan",
+              "product-description": "Personal Instalment Loan - Standard Chartered Bank Hong Kong",
+              "product-url": "https://www.sc.com/hk/loans/personal-instalment-loan/",
+              "handling-fee": "Waived",
+              "product-code": "PIL",
+              "sub-product-code": "PIL",
+              "segment": [
+                "personal"
+              ],
+              "category-name": "Personal Loans",
+              "category-code": "PL",
+              "currency": "HKD",
+              "eligibility": [
+                {
+                  "age": {
+                    "min": "20",
+                    "max": "64"
+                  },
+                  "annual-income": {
+                    "min": "HKD 96,000"
+                  }
+                }
+              ],
+              "benefits": [
+                {
+                  "summary-title": "Online Offers",
+                  "description": "Online offers up to HK$500 cash coupon"
+                },
+                {
+                  "summary-title": "High Loan amount",
+                  "description": "Up to HKD2,000,000 or 18x salary (whichever is lower)"
+                },
+                {
+                  "summary-title": "Low Interest Rate",
+                  "description": "APR as low as 2.38%"
+                },
+                {
+                  "summary-title": "Quick and Easy",
+                  "description": "1-hour loan disbursement"
+                },
+                {
+                  "summary-title": "7-day Service Pledge",
+                  "description": "waiver on early redemption fees and charge + 0% Handleing Fee"
+                },
+                {
+                  "summary-title": "Online Service Pledge",
+                  "description": "Application submitted before noon will be followed up within the same business day"
+                }
+              ],
+              "loan-amount": [
+                {
+                  "min": "5,000",
+                  "max": "2,000,000",
+                  "tenor": "6"
+                }
+              ]
+            }
+          ],
+          "investments": [
+            {
+              "product-name": "Investment Fund Services",
+              "product-description": "Our Investment Fund Services offer hundreds of investment funds from major fund houses, covering major fund types",
+              "product-url": "https://www.sc.com/hk/investment/investment-fund-services/",
+              "investment-category": "Investment Funds",
+              "product-apply-url": "https://ibank.standardchartered.com.hk/nfs/login.htm?lang=en_US&_ga=2.257494219.1325012134.1540173175-1999600087.1527817639",
+              "product-code": "UT",
+              "sub-product-code": "UT-IFS",
+              "segment": [
+                "business",
+                "personal",
+                "priority"
+              ],
+              "category-name": "Investments",
+              "category-code": "Inv",
+              "currency": "HKD, USD, AUD, NZD, EUR, GBP, RMB, CAD, SGD",
+              "eligibility": [
+                {
+                  "nationality": "Not US Persons/ EEA residents"
+                }
+              ],
+              "benefits": [
+                {
+                  "summary-title": "Select Funds",
+                  "description": "1. Fund Library: Powered by Morningstar allows you to compare and research funds in just a few clicks\r\n\r\n \t https://www.sc.com/hk/investment/investment-fund-services/research-fund-now/ \r\n\r\n2. Funds Select: List of quality funds in different asset classes based on in depth research\r\n\r\n \t https://av.sc.com/hk/content/docs/hk-funds-select.pdf \r\n\r\n&nbsp;"
+                },
+                {
+                  "summary-title": "Online Investment Fund Account Opening",
+                  "description": "Instant account opening of Investment Fund Services\r\n\r\n \t https://www.sc.com/hk/investment/online-investment-account-opening/#privileges \r\n\r\n&nbsp;\r\n\r\n&nbsp;"
+                },
+                {
+                  "summary-title": "Online Unit Trusts",
+                  "description": "Now you can manage your portfolio online anytime, anywhere\r\n\r\n \t https://www.sc.com/hk/utonline/faq/ \r\n \t https://ibank.standardchartered.com.hk/nfs/login.htm?lang=en_US&amp;_ga=2.125512906.1705394487.1523322840-105523949.1516775633 \r\n\r\n&nbsp;"
+                },
+                {
+                  "summary-title": "Monthly Investment Plan",
+                  "description": "Our Monthly Investment Plan helps you reach financial goals faster and easier\r\n\r\n \t https://www.sc.com/hk/promotion/invest/utmip/ \r\n"
+                }
+              ],
+              "features": [
+                {
+                  "title": "Fund Library",
+                  "data": "Powered by Morningstar allows you to compare and research funds in just a few clicks"
+                },
+                {
+                  "title": "Online Investment Fund Account Opening",
+                  "data": "Instant account opening of Investment Fund Services"
+                },
+                {
+                  "title": "Online Unit Trust",
+                  "data": "Now you can manage your portfolio online anytime, anywhere"
+                },
+                {
+                  "title": "Monthly Investment Plan",
+                  "data": "Our Monthly Investment Plan helps you reach financial goals faster and easier"
+                }
+              ],
+              "terms-and-conditions": [
+                {
+                  "tnc-summary": "Investment Fund Services Terms &amp; Conditions",
+                  "tnc-url": "https://av.sc.com/hk/content/docs/hk-gn219.pdf"
+                }
+              ],
+              "fees-and-charges": [
+                {
+                  "type": "Fee of online unit trust",
+                  "currency": "HKD, USD, AUD, NZD, EUR, GBP, RMB, CAD, SGD",
+                  "amount": "Flat 2%"
+                },
+                {
+                  "type": "Fee at branches",
+                  "currency": "HKD, USD, AUD, NZD, EUR, GBP, RMB, CAD, SGD",
+                  "amount": "https://www.sc.com/hk/investment/investpro/",
+                  "description": "Investment Funds Subscription Fee Discounts depends on customer's investment zone/segment"
+                },
+                {
+                  "type": "Fee on Monthly Investment Plan",
+                  "currency": "HKD, USD, AUD, NZD, EUR, GBP, RMB, CAD, SGD",
+                  "amount": "https://www.sc.com/hk/promotion/invest/utmip/",
+                  "description": "Monthly Investment Plan Subscription Fee Discounts depends on monthly investment amount"
+                }
+              ]
+            }
+          ],
+          "insurance": [
+            {
+              "product-name": "Travel Insurance",
+              "product-description": "Single Trip Allianz Travel Protect Deluxe Plan to Asia up to 7 days at HK$80",
+              "product-url": "https://www.sc.com/hk/insurance/general-insurance/travel-insurance/",
+              "insurance-category": "Travel Insurance",
+              "product-apply-url": "https://www.allianz-travel-insure.com.hk/en/?_ga=2.58875946.68811950.1539576267-695105885.1522199113",
+              "product-code": "TI",
+              "sub-product-code": "TI",
+              "segment": [
+                "business",
+                "personal",
+                "priority"
+              ],
+              "category-name": "Insurance",
+              "category-code": "Ins",
+              "currency": "HKD",
+              "eligibility": [
+                {
+                  "nationality": "HK residents only",
+                  "age": {
+                    "min": "3 months",
+                    "max": "85"
+                  }
+                }
+              ],
+              "benefits": [
+                {
+                  "summary-title": "Personal Accident Benefits",
+                  "description": "Up to HK$2,000,000 in Personal Accident benefits"
+                },
+                {
+                  "summary-title": "Medical Expenses",
+                  "description": "Up to HK$1,000,000 of comprehensive Medical Expenses cover"
+                },
+                {
+                  "summary-title": "No-Show Tickets Refunded",
+                  "description": "Get reimbursement of ticket costs for unattended events"
+                }
+              ],
+              "terms-and-conditions": [
+                {
+                  "tnc-summary": "Term and Conditions",
+                  "tnc-url": "https://www.sc.com/hk/insurance/general-insurance/travel-insurance/?pid=nav_travel_en"
+                }
+              ],
+              "coverage-charges": [
+                {
+                  "coverage-type": "Standard Plan"
+                },
+                {
+                  "coverage-type": "Deluxe Plan"
+                },
+                {
+                  "coverage-type": "Annual Trip x Deluxe Plan",
+                  "premium-annually": "HKD 1,898"
+                }
+              ]
+            }
+          ],
+          "time-deposit-accounts": [
+            {
+              "product-name": "HKD Time Deposit",
+              "product-description": "With Standard Chartered HK Dollar Time Deposits Account, you may enjoy higher interest returns over a savings account.",
+              "product-url": "https://www.sc.com/hk/deposits/time-deposits/hkd-time-deposit/",
+              "min-maintenance-balance": "HKD10,000",
+              "deposit-rates": "Please refer to the latest preferential rate rate on Time Deposit https://www.sc.com/hk/deposits/hot-time-deposit-interest-rate/",
+              "product-code": "CDA",
+              "sub-product-code": "CDA",
+              "segment": [
+                "personal"
+              ],
+              "category-name": "Time Deposit Accounts",
+              "category-code": "TD",
+              "currency": "HKD",
+              "initial-deposit": "HKD10,000",
+              "eligibility": [
+                {
+                  "age": {
+                    "min": "18"
+                  },
+                  "documents": [
+                    "Hong Kong Permanent Identity Card (You have to provide Passport or Document of Identity Proof when visit branch if you are not holding Hong Kong Permanent Identity Card.)"
+                  ]
+                }
+              ],
+              "benefits": [
+                {
+                  "summary-title": "With Standard Chartered HKD Time Deposit, you may enjoy higher interest returns over a savings account."
+                }
+              ],
+              "features": [
+                {
+                  "title": "Higher Return",
+                  "data": "You may enjoy higher interest returns over a savings account."
+                },
+                {
+                  "title": "Opening Balance",
+                  "data": "Minimum time deposit amount is as low as HKD10,000."
+                },
+                {
+                  "title": "Various Tenor Available",
+                  "data": "Choose your own deposit period - from 1 week to 5 years."
+                }
+              ],
+              "fees-and-charges": [
+                {
+                  "type": "Please refer to the Service Charges https://av.sc.com/hk/content/docs/hk-service-charges-en.pdf"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "credit-card": {
+        "type": "object",
+        "properties": {
+          "product-name": {
+            "description": "Name of the product",
+            "type": "string"
+          },
+          "product-url": {
+            "description": "Link to SC website for this product",
+            "type": "string"
+          },
+          "product-code": {
+            "description": "A code to uniquely identify the product",
+            "type": "string"
+          },
+          "segment": {
+            "description": "Segment in which the product is offered for",
+            "type": "string"
+          },
+          "category": {
+            "description": "Category of the product",
+            "type": "string"
+          },
+          "sub-category": {
+            "description": "Sub- category of the product",
+            "type": "string"
+          },
+          "currency": {
+            "description": "Currency code in which the product is offered",
+            "type": "string"
+          },
+          "annual-fee": {
+            "description": "Annual fee applicable to this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "supplementary-fee": {
+            "description": "Supplementary fee applicable to this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "merchant-acquirer": {
+            "description": "Acquiring Merchant",
+            "type": "string"
+          },
+          "product-description": {
+            "description": "Description of the product",
+            "type": "string"
+          },
+          "product-apply-url": {
+            "description": "Link to bank's website to apply for this product",
+            "type": "string"
+          },
+          "benefits": {
+            "description": "List of Benefits offered by this product",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/benefit"
+            }
+          },
+          "eligibility": {
+            "description": "List of Eligibility criteria",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/cc-eligibility"
+            }
+          },
+          "features": {
+            "description": "List of product features",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/feature"
+            }
+          },
+          "terms-and-conditions": {
+            "description": "List of terms and conditions",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/terms-and-conditions"
+            }
+          }
+        }
+      },
+      "personal-loan": {
+        "type": "object",
+        "properties": {
+          "product-name": {
+            "description": "Name of the product",
+            "type": "string"
+          },
+          "product-url": {
+            "description": "Link to SC website for this product",
+            "type": "string"
+          },
+          "product-code": {
+            "description": "A code to uniquely identify the product",
+            "type": "string"
+          },
+          "segment": {
+            "description": "Segment in which the product is offered for",
+            "type": "string"
+          },
+          "category": {
+            "description": "Category of the product",
+            "type": "string"
+          },
+          "currency": {
+            "description": "Currency code in which the product is offered",
+            "type": "string"
+          },
+          "annual-fee": {
+            "description": "Annual fee applicable to this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "handling-fee": {
+            "description": "Handling fee applicable to this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "loan-type": {
+            "description": "Type of loan",
+            "type": "string"
+          },
+          "initial-deposit": {
+            "description": "Initial deposit amount for the loan",
+            "type": "number",
+            "format": "decimal"
+          },
+          "product-description": {
+            "description": "Description of the product",
+            "type": "string"
+          },
+          "product-apply-url": {
+            "description": "Link to bank's website to apply for this product",
+            "type": "string"
+          },
+          "benefits": {
+            "description": "List of Benefits offered by this product",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/benefit"
+            }
+          },
+          "eligibility": {
+            "description": "List of Eligibility criteria",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pl-eligibility"
+            }
+          },
+          "features": {
+            "description": "List of product features",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/feature"
+            }
+          },
+          "loan-amounts": {
+            "description": "List of product features",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pl-loan-amount"
+            }
+          },
+          "terms-and-conditions": {
+            "description": "List of terms and conditions",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/terms-and-conditions"
+            }
+          }
+        }
+      },
+      "casa": {
+        "type": "object",
+        "properties": {
+          "product-name": {
+            "description": "Name of the product",
+            "type": "string"
+          },
+          "product-url": {
+            "description": "Link to SC website for this product",
+            "type": "string"
+          },
+          "product-code": {
+            "description": "A code to uniquely identify the product",
+            "type": "string"
+          },
+          "segment": {
+            "description": "Segment in which the product is offered for",
+            "type": "string"
+          },
+          "category": {
+            "description": "Category of the product",
+            "type": "string"
+          },
+          "currency": {
+            "description": "Currency code in which the product is offered",
+            "type": "string"
+          },
+          "min-opening-balance": {
+            "description": "Minimun amount to be deposit to open an account",
+            "type": "number",
+            "format": "decimal"
+          },
+          "min-maintenance-balance": {
+            "description": "Minimum amount to be maintained in the account",
+            "type": "number",
+            "format": "decimal"
+          },
+          "deposit-rates": {
+            "description": "Interest rates in percentage, applicable to the deposits",
+            "type": "number",
+            "format": "decimal"
+          },
+          "annual-fee": {
+            "description": "Annual fee applicable to this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "supplementary-fee": {
+            "description": "Supplementary fee applicable to this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "merchant-acquirer": {
+            "description": "Acquiring Merchant",
+            "type": "string"
+          },
+          "product-description": {
+            "description": "Description of the product",
+            "type": "string"
+          },
+          "product-apply-url": {
+            "description": "Link to bank's website to apply for this product",
+            "type": "string"
+          },
+          "benefits": {
+            "description": "List of Benefits offered by this product",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/benefit"
+            }
+          },
+          "eligibility": {
+            "description": "List of Eligibility criteria",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/casa-eligibility"
+            }
+          },
+          "features": {
+            "description": "List of product features",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/feature"
+            }
+          },
+          "charges": {
+            "description": "List of Eligibility criteria",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/casa-charge"
+            }
+          },
+          "terms-and-conditions": {
+            "description": "List of terms and conditions",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/terms-and-conditions"
+            }
+          }
+        }
+      },
+      "insurance": {
+        "type": "object",
+        "properties": {
+          "product-name": {
+            "description": "Name of the product",
+            "type": "string"
+          },
+          "product-url": {
+            "description": "Link to SC website for this product",
+            "type": "string"
+          },
+          "product-code": {
+            "description": "A code to uniquely identify the product",
+            "type": "string"
+          },
+          "segment": {
+            "description": "Segment in which the product is offered for",
+            "type": "string"
+          },
+          "category": {
+            "description": "Category of the product",
+            "type": "string"
+          },
+          "sub-category": {
+            "description": "Sub- category of the product",
+            "type": "string"
+          },
+          "currency": {
+            "description": "Currency code in which the product is offered",
+            "type": "string"
+          },
+          "product-description": {
+            "description": "Description of the product",
+            "type": "string"
+          },
+          "product-apply-url": {
+            "description": "Link to bank's website to apply for this product",
+            "type": "string"
+          },
+          "benefits": {
+            "description": "List of Benefits offered by this product",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/benefit"
+            }
+          },
+          "coverage": {
+            "description": "List of coverage details of this product",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/insurance-coverage"
+            }
+          },
+          "eligibility": {
+            "description": "List of Eligibility criteria",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/insurance-eligibility"
+            }
+          },
+          "features": {
+            "description": "List of product features",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/feature"
+            }
+          },
+          "terms-and-conditions": {
+            "description": "List of terms and conditions",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/terms-and-conditions"
+            }
+          }
+        }
+      },
+      "investment": {
+        "type": "object",
+        "properties": {
+          "product-name": {
+            "description": "Name of the product",
+            "type": "string"
+          },
+          "product-url": {
+            "description": "Link to SC website for this product",
+            "type": "string"
+          },
+          "product-code": {
+            "description": "A code to uniquely identify the product",
+            "type": "string"
+          },
+          "segment": {
+            "description": "Segment in which the product is offered for",
+            "type": "string"
+          },
+          "category": {
+            "description": "Category of the product",
+            "type": "string"
+          },
+          "sub-category": {
+            "description": "Sub- category of the product",
+            "type": "string"
+          },
+          "currency": {
+            "description": "Currency code in which the product is offered",
+            "type": "string"
+          },
+          "min-opening-balance": {
+            "description": "Minimum opening balance applicable to this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "tenor": {
+            "description": "Tenure of offered product",
+            "type": "string"
+          },
+          "product-description": {
+            "description": "Description of the product",
+            "type": "string"
+          },
+          "product-apply-url": {
+            "description": "Link to bank's website to apply for this product",
+            "type": "string"
+          },
+          "rates": {
+            "description": "List of Benefits offered by this product",
+            "type": "object",
+            "properties": {
+              "deposit-rates-tenor": {
+                "description": "Tenore of the deposit",
+                "type": "number"
+              },
+              "deposit-rates-value": {
+                "description": "Rate of interest",
+                "type": "number"
+              }
+            }
+          },
+          "benefits": {
+            "description": "List of Benefits offered by this product",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/benefit"
+            }
+          },
+          "charges": {
+            "description": "List of charges applicable for this product",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/investment-charge"
+            }
+          },
+          "eligibility": {
+            "description": "List of Eligibility criteria",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/investment-eligibility"
+            }
+          },
+          "features": {
+            "description": "List of product features",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/feature"
+            }
+          },
+          "terms-and-conditions": {
+            "description": "List of terms and conditions",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/terms-and-conditions"
+            }
+          }
+        }
+      },
+      "mortgage": {
+        "type": "object",
+        "properties": {
+          "product-name": {
+            "description": "Name of the product",
+            "type": "string"
+          },
+          "product-url": {
+            "description": "Link to SC website for this product",
+            "type": "string"
+          },
+          "product-code": {
+            "description": "A code to uniquely identify the product",
+            "type": "string"
+          },
+          "segment": {
+            "description": "Segment in which the product is offered for",
+            "type": "string"
+          },
+          "category": {
+            "description": "Category of the product",
+            "type": "string"
+          },
+          "currency": {
+            "description": "Currency code in which the product is offered",
+            "type": "string"
+          },
+          "initial-deposit": {
+            "description": "Initial deposit amount for the loan",
+            "type": "number",
+            "format": "decimal"
+          },
+          "product-description": {
+            "description": "Description of the product",
+            "type": "string"
+          },
+          "product-apply-url": {
+            "description": "Link to bank's website to apply for this product",
+            "type": "string"
+          },
+          "benefits": {
+            "description": "List of Benefits offered by this product",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/benefit"
+            }
+          },
+          "eligibility": {
+            "description": "List of Eligibility criteria",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/mortgage-eligibility"
+            }
+          },
+          "features": {
+            "description": "List of product features",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/feature"
+            }
+          },
+          "loan-amounts": {
+            "description": "List of product features",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/mortgage-loan-amount"
+            }
+          },
+          "terms-and-conditions": {
+            "description": "List of terms and conditions",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/terms-and-conditions"
+            }
+          }
+        }
+      },
+      "benefit": {
+        "type": "object",
+        "properties": {
+          "summary-title": {
+            "description": "Benefit summary",
+            "type": "string"
+          },
+          "description": {
+            "description": "Details of the benefit",
+            "type": "string"
+          }
+        }
+      },
+      "feature": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "string",
+            "type": "string"
+          },
+          "description": {
+            "description": "string",
+            "type": "string"
+          }
+        }
+      },
+      "terms-and-conditions": {
+        "type": "object",
+        "properties": {
+          "tnc-title": {
+            "description": "string",
+            "type": "string"
+          },
+          "tnc-summary": {
+            "description": "string",
+            "type": "string"
+          },
+          "tnc-url": {
+            "description": "string",
+            "type": "string"
+          }
+        }
+      },
+      "casa-charge": {
+        "type": "object",
+        "properties": {
+          "charge-type": {
+            "description": "Type of charge",
+            "type": "string"
+          },
+          "charge-amount": {
+            "description": "Amount to be charged",
+            "type": "number",
+            "format": "decimal"
+          }
+        }
+      },
+      "casa-eligibility": {
+        "type": "object",
+        "properties": {
+          "age-min": {
+            "description": "Minimum age requirement to be eligible for this product",
+            "type": "number",
+            "format": "integer"
+          },
+          "age-max": {
+            "description": "Maximum age requirement to be eligible for this product",
+            "type": "number",
+            "format": "integer"
+          },
+          "annual-income-min": {
+            "description": "Minimum annual income required to be eligible for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "annual-income-max": {
+            "description": "Minimum annual income required to be eligible for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "documents": {
+            "description": "Supporting documents required to apply for this product",
+            "type": "string"
+          }
+        }
+      },
+      "cc-eligibility": {
+        "type": "object",
+        "properties": {
+          "age-min": {
+            "description": "Minimum age requirement to be eligible for this product",
+            "type": "number",
+            "format": "integer"
+          },
+          "age-max": {
+            "description": "Maximum age requirement to be eligible for this product",
+            "type": "number",
+            "format": "integer"
+          },
+          "annual-income-min": {
+            "description": "Minimum annual income required to be eligible for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "annual-income-max": {
+            "description": "Minimum annual income required to be eligible for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "documents": {
+            "description": "Supporting documents required to apply for this product",
+            "type": "string"
+          },
+          "loan-purpose": {
+            "description": "Purpose of loan",
+            "type": "string"
+          }
+        }
+      },
+      "pl-eligibility": {
+        "type": "object",
+        "properties": {
+          "age-min": {
+            "description": "Minimum age requirement to be eligible for this product",
+            "type": "number",
+            "format": "integer"
+          },
+          "age-max": {
+            "description": "Maximum age requirement to be eligible for this product",
+            "type": "number",
+            "format": "integer"
+          },
+          "annual-income-min": {
+            "description": "Minimum annual income required to be eligible for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "annual-income-max": {
+            "description": "Minimum annual income required to be eligible for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "documents": {
+            "description": "Supporting documents required to apply for this product",
+            "type": "string"
+          },
+          "loan-purpose": {
+            "description": "Purpose of loan",
+            "type": "string"
+          }
+        }
+      },
+      "pl-loan-amount": {
+        "type": "object",
+        "properties": {
+          "min": {
+            "description": "Minimum loan amount for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "max": {
+            "description": "Maximum loan amount for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "tenor": {
+            "description": "Maximum loan tenure",
+            "type": "number",
+            "format": "integer"
+          },
+          "loan-apr": {
+            "description": "Annual percentage rate",
+            "type": "number",
+            "format": "decimal"
+          },
+          "monthly-payment": {
+            "description": "Monthly repayment amount",
+            "type": "number",
+            "format": "decimal"
+          }
+        }
+      },
+      "insurance-eligibility": {
+        "type": "object",
+        "properties": {
+          "nationality": {
+            "description": "Nationality of the Client",
+            "type": "string"
+          },
+          "age-min": {
+            "description": "Minimum age requirement to be eligible for this product",
+            "type": "number",
+            "format": "integer"
+          },
+          "age-max": {
+            "description": "Maximum age requirement to be eligible for this product",
+            "type": "number",
+            "format": "integer"
+          },
+          "annual-income-min": {
+            "description": "Minimum annual income required to be eligible for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "annual-income-max": {
+            "description": "Minimum annual income required to be eligible for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "documents": {
+            "description": "Supporting documents required to apply for this product",
+            "type": "string"
+          }
+        }
+      },
+      "insurance-coverage": {
+        "type": "object",
+        "properties": {
+          "coverage-type": {
+            "description": "Coverage type for this product",
+            "type": "string"
+          },
+          "coverage-benefits": {
+            "description": "Coverage benefits for this product",
+            "type": "string"
+          },
+          "range-category": {
+            "description": "Category Range for benefits",
+            "type": "string"
+          },
+          "range-sub-category": {
+            "description": "Sub-category for benefits",
+            "type": "string"
+          },
+          "range-premium-annually": {
+            "description": "Annual premium amount range",
+            "type": "string"
+          },
+          "range-premium-monthly": {
+            "description": "Monthly premium amount range",
+            "type": "string"
+          },
+          "range-premium-onetime": {
+            "description": "One-time premium amount range",
+            "type": "string"
+          }
+        }
+      },
+      "investment-charge": {
+        "type": "object",
+        "properties": {
+          "charge-type": {
+            "description": "Type of charge",
+            "type": "string"
+          },
+          "charge-currency": {
+            "description": "Currency of fee charged",
+            "type": "string"
+          },
+          "charge-fee": {
+            "description": "Amount to be charged",
+            "type": "number",
+            "format": "decimal"
+          },
+          "charge-description": {
+            "description": "Description of charge",
+            "type": "string"
+          }
+        }
+      },
+      "investment-eligibility": {
+        "type": "object",
+        "properties": {
+          "nationality": {
+            "description": "Nationality of the Client",
+            "type": "string"
+          },
+          "age-min": {
+            "description": "Minimum age requirement to be eligible for this product",
+            "type": "number",
+            "format": "integer"
+          },
+          "age-max": {
+            "description": "Maximum age requirement to be eligible for this product",
+            "type": "number",
+            "format": "integer"
+          },
+          "annual-income-min": {
+            "description": "Minimum annual income required to be eligible for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "annual-income-max": {
+            "description": "Minimum annual income required to be eligible for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "documents": {
+            "description": "Supporting documents required to apply for this product",
+            "type": "string"
+          }
+        }
+      },
+      "mortgage-eligibility": {
+        "type": "object",
+        "properties": {
+          "age-min": {
+            "description": "Minimum age requirement to be eligible for this product",
+            "type": "number",
+            "format": "integer"
+          },
+          "age-max": {
+            "description": "Maximum age requirement to be eligible for this product",
+            "type": "number",
+            "format": "integer"
+          },
+          "annual-income-min": {
+            "description": "Minimum annual income required to be eligible for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "annual-income-max": {
+            "description": "Maximum annual income required to be eligible for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "documents": {
+            "description": "Supporting documents required to apply for this product",
+            "type": "string"
+          }
+        }
+      },
+      "mortgage-loan-amount": {
+        "type": "object",
+        "properties": {
+          "min": {
+            "description": "Minimum loan amount for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "max": {
+            "description": "Maximum loan amount for this product",
+            "type": "number",
+            "format": "decimal"
+          },
+          "tenor": {
+            "description": "Maximum loan tenure",
+            "type": "number",
+            "format": "integer"
+          },
+          "loan-apr": {
+            "description": "Annual percentage rate",
+            "type": "number",
+            "format": "decimal"
+          },
+          "monthly-payment": {
+            "description": "Monthly repayment amount",
+            "type": "number",
+            "format": "decimal"
+          }
+        }
+      },
+      "error": {
+        "description": "Error object details",
+        "title": "error",
+        "required": [
+          "id",
+          "code",
+          "detail"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "a unique identifier for this particular occurrence of error",
+            "type": "string"
+          },
+          "code": {
+            "description": "an application-specific error code",
+            "type": "string"
+          },
+          "detail": {
+            "description": "a human-readable explanation specific to this occurrence of the problem",
+            "type": "string"
+          },
+          "source": {
+            "description": "reference to the source of the error. e.g. a URI query parameter caused the error or an attribute in the request object",
+            "type": "string"
+          }
+        }
+      },
+      "errors": {
+        "description": "List of user object",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/error"
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

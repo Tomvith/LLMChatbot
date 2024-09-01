@@ -1,0 +1,649 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking - Notifications and Subscriptions APIs",
+        "description": "*API Banking - Notifications and Subscriptions APIs* Provides real-time push of events (callbacks) to client API/WebHook. Notifications APIs provide real-time push notification of events through our guaranteed WebHook delivery mechanism. Through these APIs, client can manage notifications subscription and receive various real-time notifications.",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company Licence",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.standardchartered.com/openapi"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Subscription",
+            "description": "Facilitates notifications subscription management. Notification Subscriptions APIs allow you to create and update subscription for specified notification type, as well as to retrieve current subscription details.",
+            "x-subcategory": "Notifications and Subscriptions"
+        }
+    ],
+    "paths": {
+        "/subscriptions/v2": {
+            "get": {
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Notification Subscription - Retrieve All",
+                "description": "The Notification Subscription - Retrieve All API provides an ability to request all current notifications subscription details applicable to the user. This API can be used to retrieve details by providing relevant notification type. Supported Notification Types: account-status, credit-debit-advice, transaction-advice, payment-status, dda-status, ddi-status, virtual-account-status, custody-status, newsflash,  payee-account-details, payee-status, finance-request-status. Upon a successful call, API will return information on whether subscription is activated and what filters are applied for a given notification type. To retrieve details for a specific notification type, Notification Subscription - Retrieve by Notification Type API should be used.",
+                "operationId": "getSubscriptions",
+                "responses": {
+                    "200": {
+                        "description": "Success with data. Returns all the latest notifications subscription details.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/NotificationSubscription"
+                                },
+                                "example": {
+                                    "credit-debit-advice": {
+                                        "deliveryType": "CONSUMEAPI",
+                                        "webhookPath": "",
+                                        "filters": [
+                                            {
+                                                "filterType": "ALLOW",
+                                                "fieldName": "accountIdentifier.bankCode",
+                                                "fieldValues": [
+                                                    "SCBLNGLAXXX",
+                                                    "SCBLSG22",
+                                                    "SCBLINBBXXX"
+                                                ]
+                                            },
+                                            {
+                                                "filterType": "BLOCK",
+                                                "fieldName": "postExecutionBalance.amount",
+                                                "fieldValues": [
+                                                    "123.45",
+                                                    "123"
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    "payment-status": {
+                                        "deliveryType": "WEBHOOKDELIVERY",
+                                        "webhookPath": "/payment/transaction-status",
+                                        "filters": []
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errorCode": {
+                                            "type": "string"
+                                        },
+                                        "errorMessage": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "errorCode": "AER-400",
+                                        "errorMessage": "eventType or groupId cannot be blank"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errorCode": {
+                                            "type": "string"
+                                        },
+                                        "errorMessage": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "errorCode": "AER-403",
+                                        "errorMessage": "Auth parameters not supplied"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errorCode": {
+                                            "type": "string"
+                                        },
+                                        "errorMessage": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "errorCode": "AER-404",
+                                        "errorMessage": "Invalid URL"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errorCode": {
+                                            "type": "string"
+                                        },
+                                        "errorMessage": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "errorCode": "AER-500",
+                                        "errorMessage": "Request has encountered an application exception error"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,QA,NG,ZA,KE,UG,TZ,GH,ZM,CI,SA,MU,GB,US"
+            }
+        },
+        "/subscriptions/v2/{notificationType}": {
+            "get": {
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Notification Subscription - Retrieve by Notification Type",
+                "description": "The Notification Subscription - Retrieve by Notification Type API provides an ability to request current notifications subscription details. This API can be used to retrieve details by providing relevant notification type. Supported Notification Types: account-status, credit-debit-advice, transaction-advice, payment-status, dda-status, ddi-status, virtual-account-status, custody-status, newsflash, payee-account-details, payee-status, finance-request-status. Upon a successful call, API will return information on whether subscription is activated and what filters are applied for a given notification type. To retrieve all notification subscriptions client has activated, Notification Subscription - Retrieve All API should be used.",
+                "operationId": "getSubscription",
+                "parameters": [
+                    {
+                        "name": "notificationType",
+                        "in": "path",
+                        "description": "Notification Type, for which notification subscription is retrieved. <br /> <br /> ALLOWED VALUES :- <br /> <br /> - account-status <br /> - credit-debit-advice <br /> - transaction-advice <br /> - payment-status <br /> - dda-status <br /> - ddi-status <br /> - virtual-account-status <br /> - custody-status <br /> - newsflash <br /> - payee-account-details <br /> - payee-status <br /> - finance-request-status",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data. Returns the latest notifications subscription details for the specified notification type.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotificationSubscription"
+                                },
+                                "example": {
+                                    "deliveryType": "WEBHOOKDELIVERY",
+                                    "webhookPath": "/edda/dda-status",
+                                    "filters": []
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errorCode": {
+                                            "type": "string"
+                                        },
+                                        "errorMessage": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "errorCode": "AER-400",
+                                        "errorMessage": "eventType or groupId cannot be blank"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errorCode": {
+                                            "type": "string"
+                                        },
+                                        "errorMessage": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "errorCode": "AER-403",
+                                        "errorMessage": "Auth parameters not supplied"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errorCode": {
+                                            "type": "string"
+                                        },
+                                        "errorMessage": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "errorCode": "AER-404",
+                                        "errorMessage": "Invalid URL"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errorCode": {
+                                            "type": "string"
+                                        },
+                                        "errorMessage": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "errorCode": "AER-500",
+                                        "errorMessage": "Request has encountered an application exception error"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,QA,NG,ZA,KE,UG,TZ,GH,ZM,CI,SA,MU,GB,US"
+            },
+            "post": {
+                "tags": [
+                    "Subscription"
+                ],
+                "summary": "Notification Subscription - Create/Update",
+                "description": "The Notification Subscription -  Create/Update API provides an ability to newly create or update existing subscription. This API can be used to enable or update subscription by providing relevant notification type and required subscription details. To delete subscription, post without request body should be performed. Supported Notification Types: account-status, credit-debit-advice, transaction-advice, payment-status, dda-status, ddi-status, virtual-account-status, custody-status, newsflash,  payee-account-details, payee-status, finance-request-status. As a response, notification subscription details will be received; null will be returned if non-existing subscription is being deleted.",
+                "operationId": "createOrUpdateOrDeleteSubscription",
+                "parameters": [
+                    {
+                        "name": "notificationType",
+                        "in": "path",
+                        "description": "Notification Type, for which notification subscription should be created/updated. <br /> <br /> ALLOWED VALUES :- <br /> <br /> - account-status <br /> - credit-debit-advice <br /> - transaction-advice <br /> - payment-status <br /> - dda-status <br /> - ddi-status <br /> - virtual-account-status <br /> - custody-status <br /> - newsflash <br /> - payee-account-details <br /> - payee-status <br /> - finance-request-status",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "The subscription details used to create a new subscription or to update an existing subscription.\nBody should be empty for deleting an existing subscription.\n",
+                    "content": {
+                        "*/*": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NotificationSubscription"
+                            }
+                        }
+                    },
+                    "required": false
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success with data. Returns the created, updated or deleted notifications subscription details for the specified notification type.\nReturns null if user tries to delete a non-existing subscription.\n",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotificationSubscription"
+                                },
+                                "example": {
+                                    "deliveryType": "WEBHOOKDELIVERY",
+                                    "webhookPath": "/cda/v1/credit-debit-advice",
+                                    "filters": [
+                                        {
+                                            "filterType": "ALLOW",
+                                            "fieldName": "accountIdentifier.bankCode",
+                                            "fieldValues": [
+                                                "SCBLNGLAXXX",
+                                                "SCBLSG22",
+                                                "SCBLINBBXXX"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errorCode": {
+                                            "type": "string"
+                                        },
+                                        "errorMessage": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "errorCode": "AER-400",
+                                        "errorMessage": "eventType or groupId cannot be blank"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errorCode": {
+                                            "type": "string"
+                                        },
+                                        "errorMessage": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "errorCode": "AER-403",
+                                        "errorMessage": "Auth parameters not supplied"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errorCode": {
+                                            "type": "string"
+                                        },
+                                        "errorMessage": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "errorCode": "AER-404",
+                                        "errorMessage": "Invalid URL"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errorCode": {
+                                            "type": "string"
+                                        },
+                                        "errorMessage": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "errorCode": "AER-500",
+                                        "errorMessage": "Request has encountered an application exception error"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,QA,NG,ZA,KE,UG,TZ,GH,ZM,CI,SA,MU,GB,US",
+                "x-codegen-request-body-name": "SubscriptionDetails"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "QueueStatistics": {
+                "required": [
+                    "headOfBacklogTimestamp",
+                    "messageCount"
+                ],
+                "type": "object",
+                "properties": {
+                    "messageCount": {
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "integer",
+                        "description": "The number of the messages available in the current buffer",
+                        "format": "int64",
+                        "example": 1311
+                    },
+                    "headOfBacklogTimestamp": {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "type": "integer",
+                        "description": "The epoch (unix) time of the first message in the current buffer",
+                        "format": "int64",
+                        "example": 1564061013564
+                    }
+                }
+            },
+            "MessageBatch": {
+                "type": "object",
+                "properties": {
+                    "messageId": {
+                        "maxLength": 100,
+                        "type": "string",
+                        "description": "The reference ID for this request"
+                    },
+                    "content": {
+                        "type": "array",
+                        "description": "The payload i.e. events to be sent for this request",
+                        "items": {
+                            "type": "object",
+                            "properties": {}
+                        }
+                    }
+                }
+            },
+            "EventAck": {
+                "required": [
+                    "eventTimestamp",
+                    "id",
+                    "status",
+                    "transactionId"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "maxLength": 100,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The reference ID for this request"
+                    },
+                    "groupId": {
+                        "maxLength": 50,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The Group ID for the client"
+                    },
+                    "ipAddress": {
+                        "maxLength": 15,
+                        "minLength": 7,
+                        "type": "string",
+                        "description": "The ipv4 address of the server which received the request"
+                    },
+                    "eventTimestamp": {
+                        "maxLength": 13,
+                        "minLength": 1,
+                        "type": "integer",
+                        "description": "The epoch (unix) time of when the event (to be marked as success/failed) was received",
+                        "format": "int64",
+                        "example": 1564061013564
+                    },
+                    "transactionId": {
+                        "maxLength": 50,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "The transaction ID or a unique identifier available in the event to be marked as success/failed"
+                    },
+                    "body": {
+                        "type": "string",
+                        "description": "The response body of the event to be marked as success/failed"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "The status of whether the event identified by above transaction ID is marked as successfully received (Ok) or not (Fail)",
+                        "enum": [
+                            "Ok",
+                            "Fail"
+                        ]
+                    }
+                }
+            },
+            "NotificationFilterType": {
+                "maxLength": 5,
+                "minLength": 5,
+                "type": "string",
+                "description": "Specifies whether this filter allows or blocks notifications which satisfy the filter criteria\n* 'ALLOW' - Allows the notification which satisfies this filter criteria\n* 'BLOCK' - Blocks the notification which satisfies this filter criteria\n",
+                "example": "BLOCK",
+                "enum": [
+                    "ALLOW",
+                    "BLOCK"
+                ]
+            },
+            "NotificationDeliveryType": {
+                "maxLength": 15,
+                "minLength": 10,
+                "type": "string",
+                "description": "Specifies how the notifications are to be delivered:\n* 'CONSUMEAPI' - Notifications will be fetched by the client via the consume api\n* 'WEBHOOKDELIVERY' - Notifications will be delivered to the client via WebHook endpoint\n",
+                "example": "WEBHOOKDELIVERY",
+                "enum": [
+                    "CONSUMEAPI",
+                    "WEBHOOKDELIVERY"
+                ]
+            },
+            "NotificationFilter": {
+                "required": [
+                    "fieldName",
+                    "fieldValues",
+                    "filterType"
+                ],
+                "type": "object",
+                "properties": {
+                    "filterType": {
+                        "$ref": "#/components/schemas/NotificationFilterType"
+                    },
+                    "fieldName": {
+                        "type": "string",
+                        "description": "The name of the field in the notification which should be used for filtering. The field name follows the json path convention. For example, to filter based on a field named adviceType in the root object, please use \"adviceType\" as the fieldName. To filter based on a field named accountId inside an object called accountIdentifer in the root object, please use \"accountIdentifier.accountId\" as the fieldName. To filter based on a value at index 1 inside an array named freeText in the root object, please use \"freeText[1]\" as the fieldName.",
+                        "example": "accountIdentifier.accountId"
+                    },
+                    "fieldValues": {
+                        "type": "array",
+                        "description": "The values for the specified field which should be used for filtering. The filter will be satisfied if the field has any of the specified values. For example, to specify a single account id IN5534499 for filtering, please specify [\"IN5534499\"]. To specify multiple account IDs IN9923423, SG00239300 and GB772349 for filtering, please specify [\"IN9923423\", \"SG00239300, \"GB772349\"]. To specify an amount such a 10000, please specify [\"10000\"]. To specify multiple amounts such a 10000, 50000 and 60000, please specify [\"10000\", \"50000\", \"60000\"]. Please note that for numeric values, the strings specified in the value must be in a valid numeric form.",
+                        "example": "[\"10000\", \"50000\", \"60000\"]",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "description": "The json path based filtering mechanism to be applied to messages for this subscription. The filters can be applied to only match values. Range filters to filter values in a certain range or greater than or less than a certain value are not supported."
+            },
+            "NotificationSubscription": {
+                "required": [
+                    "deliveryType"
+                ],
+                "type": "object",
+                "properties": {
+                    "deliveryType": {
+                        "$ref": "#/components/schemas/NotificationDeliveryType"
+                    },
+                    "webhookPath": {
+                        "type": "string",
+                        "description": "The webhook endpoint path where notifications will be delivered. This path will be appended to the base webhook url which has been supplied at the time of activation.\nMandatory if the deliveryType is specified as WEBHOOKDELIVERY.\nFor example, if \"www.thisisthebaseurl.com/webhook\" is specified as the base url at the time of activation activation and the webhookUrl is specified as \"/receive/credit-debit-advice\",\nthen the webhook notification will be delivered to \"www.thisisthebaseurl.com/webhook/receive/credit-debit-advice\"\n",
+                        "example": "/edda/v2/credit-debit-advice"
+                    },
+                    "filters": {
+                        "type": "array",
+                        "description": "Array of filters which will be applied to the notification.\nIf multiple filters are setup for a given notification type, the message for that notification type must satisfy each filter criteria to be delivered successfully.\nIf blank array or null is specified, there will be no filtering of notifications for the subscription.",
+                        "items": {
+                            "$ref": "#/components/schemas/NotificationFilter"
+                        }
+                    }
+                }
+            },
+            "RequestParameters": {
+                "type": "object",
+                "properties": {
+                    "batchSize": {
+                        "type": "integer",
+                        "description": "The maximum number of events (size of the batch) that should be sent in this request, batchSize = 0 refers to all available",
+                        "format": "int64",
+                        "default": 0
+                    },
+                    "messageId": {
+                        "maxLength": 100,
+                        "type": "string",
+                        "description": "The reference ID for this request (if any)",
+                        "default": ""
+                    },
+                    "eventType": {
+                        "maxLength": 100,
+                        "type": "string",
+                        "description": "The type of events/messages to be sent, Supported values : CreditDebitAdvice, default value = \"\" will send CreditDebitAdvice type of events",
+                        "default": ""
+                    }
+                }
+            }
+        }
+    }
+}

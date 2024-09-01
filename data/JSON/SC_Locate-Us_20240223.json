@@ -1,0 +1,490 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Bank Locations",
+    "description": "\n##### Introduction\n\nThe Open API serves the business functions associated with **Bank Locations**. The operations and the features supported in this API are described in the following sections.\n\n<hr />\n\n##### Authentication\n\nTo make a request to any of the APIs, the Client has to present an Access\nToken, following the OAuth 2.0 specifications. Here is the API endpoint for getting an OAuth 2.0 Token.\n\n<p><strong>https:\\/\\/api.sc.com\\/retail\\/v1\\/oauth2\\/token</strong></p>\nFollowing are the request parameters to be passed to the Token endpoint.\n\n<hr />\n\n ##### Parameters\n\n <table>\n  <thead>\n    <tr>\n      <th width='15%'>Key</th>\n      <th width='85%'>Value</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>grant_type</td>\n      <td>Indicates the type of grant being presented in exchange for an access token and possibly a refresh token, for more details, please refer to the table below</td>\n    </tr>\n    <tr>\n      <td>client_id</td>\n      <td>The public identifier for the application, obtained when the caller first registered the application</td>\n    </tr>\n    <tr>\n      <td>client_secret</td>\n      <td>The application’s client secret. This ensures that the request to get the access token is made only from the application, and not from a potential attacker that may have intercepted the authorization code.</td>\n    </tr>\n    </tbody>\n</table>\n\n<hr/>\n\n<table>\n  <thead>\n    <tr>\n      <th width='15%'>Grant Type</th>\n      <th width='85%'>Usage</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Client credentials</td>\n      <td>For the client app to identify itself to the SC API platform, the <code> /token </code> endpoint has to be called with query param <code>grant_type</code> set to <code>client_credentials</code></td>\n    </tr>\n    <tr>\n      <td>Auth-code based grant</td>\n      <td>For the client app to identify itself and its user to the SC API platform, the <code> /token </code> endpoint has to be called with query param <code>grant_type</code> set to <code>auth_code_grant</code></td>\n    </tr>\n  </tbody>\n</table>\n\n<hr />\n\n##### Error Handling\n\nThe API endpoints return an error response whenever the request could not be processed successfully. In such scenarios, API provides the clients with a precise Application Error code and description in the error payload associated with HTTP Status codes 4xx or 5xx. \n <br>The table below provides a list of such possible Application Errors, for effective error handling of API consumers.\n\n<table>\n  <thead>\n    <tr>\n      <th width='20%'>Response error code</th>\n      <th width='80%'>Detail</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>E0101</td>\n      <td>Input data is not valid</td>\n    </tr>\n    <tr>\n      <td>E0102</td>\n      <td>Invalid query parameters</td>\n    </tr>\n    <tr>\n      <td>E0103</td>\n      <td>Requested resource not found</td>\n    </tr>\n  </tbody>\n</table>\n",
+    "termsOfService": "https://www.sc.com/en/terms-of-use/",
+    "contact": {
+      "name": "Developer Portal",
+      "url": "https://www.developer.sc.com",
+      "email": "dp@sc.com"
+    },
+    "version": "1.0.0",
+    "license": {
+      "name": "Company Licence",
+      "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://sandbox-api.sc.com/retail/v1",
+      "description": "aXess Sandbox"
+    },
+    {
+      "url": "https://api.sc.com/retail/{version}",
+      "description": "Production"
+    },
+    {
+      "url": "https://test-api.sc.com/sandboxapi/retail/v1/",
+      "description": "Testing",
+      "variables": {
+        "version": {
+          "description": "The Open API endpoints are accessible via https only",
+          "enum": [
+            "v1"
+          ],
+          "default": "v1"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "Locations",
+      "description": "Details of Standard Chartered ATMs and Branches.",
+      "x-subcategory": "Locate Us"
+    }
+  ],
+  "x-tagGroups": [
+    {
+      "name": "Resource",
+      "tags": [
+        "Locations"
+      ]
+    },
+    {
+      "name": "References",
+      "tags": [
+        "Reference Codes"
+      ]
+    }
+  ],
+  "paths": {
+    "/bank-locations": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": [
+          "Locations"
+        ],
+        "summary": "List of ATM and Branch locations",
+        "description": "Returns information on ATM and Branch locations",
+        "operationId": "GetATMBranchList",
+        "parameters": [
+          {
+            "name": "transaction-id",
+            "in": "header",
+            "required": true,
+            "description": "Unique transaction reference identifier for the API request",
+            "style": "simple",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Parameter to filter results based on type",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "atm",
+                "branch"
+              ],
+              "default": "atm"
+            }
+          }
+        ],
+        "x-markets": "HK",
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/atm-branches"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                },
+                "example": [
+                  {
+                    "id": "1289hd8",
+                    "code": "E0101",
+                    "detail": "Record Not Found for given \"type\" query parameter value",
+                    "source": "/retail/v1/bank-locations"
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                },
+                "example": [
+                  {
+                    "id": "8120dd1",
+                    "code": "E0103",
+                    "detail": "Endpoint entered is invalid",
+                    "source": "No handler found for GET /retail/v1/bank-loc"
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errors"
+                },
+                "example": {
+                  "msgId": "18124645",
+                  "errCd": "123",
+                  "errMsg": "fault at /retail/v1/product-categories timeout while waiting for read"
+                }
+              }
+            }
+          }
+        },
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "atm-branches": {
+        "description": "List of ATM and Branch locations",
+        "type": "object",
+        "properties": {
+          "locations": {
+            "description": "List of Bank locations",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/bank-location"
+            }
+          }
+        },
+        "example": {
+          "locations": [
+            {
+              "id": 107714,
+              "name": "Quarry Bay Branch",
+              "types": [
+                "branch",
+                "priority-banking-centre"
+              ],
+              "address": {
+                "addressLines": [
+                  "Quarry Bay Branch",
+                  "Shop G6, G/F & Shop LG1, LG/F Westlands Gardens, 1027 King's Road, Quarry Bay, Hong Kong"
+                ],
+                "postalCode": "",
+                "latitude": "22.285278",
+                "longitude": "114.21308299999998",
+                "placeId": "",
+                "city": ""
+              },
+              "is-24-hours": false,
+              "regularHours": [
+                {
+                  "openDay": 1,
+                  "closeDay": 1,
+                  "openTime": "09:00 AM",
+                  "closeTime": "05:00 PM"
+                },
+                {
+                  "openDay": 2,
+                  "closeDay": 2,
+                  "openTime": "09:00 AM",
+                  "closeTime": "05:00 PM"
+                },
+                {
+                  "openDay": 3,
+                  "closeDay": 3,
+                  "openTime": "09:00 AM",
+                  "closeTime": "05:00 PM"
+                },
+                {
+                  "openDay": 4,
+                  "closeDay": 4,
+                  "openTime": "09:00 AM",
+                  "closeTime": "05:00 PM"
+                },
+                {
+                  "openDay": 5,
+                  "closeDay": 5,
+                  "openTime": "09:00 AM",
+                  "closeTime": "05:00 PM"
+                },
+                {
+                  "openDay": 6,
+                  "closeDay": 6,
+                  "openTime": "09:00 AM",
+                  "closeTime": "01:00 PM"
+                }
+              ],
+              "services": [
+                "24-hr-express-banking",
+                "counter-services",
+                "personal-banking",
+                "priority-banking-centre",
+                "safe-deposit-vault"
+              ],
+              "telephone": [],
+              "status": "open"
+            },
+            {
+              "id": 102882,
+              "name": "Ying Tung Estate - Mobile Branch",
+              "types": [
+                "branch"
+              ],
+              "address": {
+                "addressLines": [
+                  "Ying Hei House, Ying Tung Estate, Tung Chung, Lantau Island"
+                ],
+                "postalCode": "",
+                "latitude": "22.295719",
+                "longitude": "113.953446",
+                "placeId": "",
+                "city": ""
+              },
+              "is-24-hours": false,
+              "regularHours": [
+                {
+                  "openDay": 4,
+                  "closeDay": 4,
+                  "openTime": "09:00 AM",
+                  "closeTime": "11:00 AM"
+                },
+                {
+                  "openDay": 4,
+                  "closeDay": 4,
+                  "openTime": "12:00 PM",
+                  "closeTime": "04:00 PM"
+                }
+              ],
+              "services": [
+                "counter-services",
+                "personal-banking",
+                "self-service-banking"
+              ],
+              "telephone": [],
+              "status": "open"
+            },
+            {
+              "id": 102883,
+              "name": "Ying Tung Estate - Mobile Branch ATM",
+              "types": [
+                "atm"
+              ],
+              "address": {
+                "addressLines": [
+                  "Ying Hei House, Ying Tung Estate, Tung Chung, Lantau Island"
+                ],
+                "postalCode": "",
+                "latitude": "22.295719",
+                "longitude": "113.953446",
+                "placeId": "",
+                "city": ""
+              },
+              "is-24-hours": false,
+              "regularHours": [
+                {
+                  "openDay": 4,
+                  "closeDay": 4,
+                  "openTime": "09:00 AM",
+                  "closeTime": "11:00 AM"
+                },
+                {
+                  "openDay": 4,
+                  "closeDay": 4,
+                  "openTime": "12:00 PM",
+                  "closeTime": "04:00 PM"
+                }
+              ],
+              "services": [
+                "24hour-hkdrmb-atm"
+              ],
+              "telephone": [],
+              "status": "open"
+            }
+          ]
+        }
+      },
+      "bank-location": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "ATM or Branch location identifier",
+            "type": "string"
+          },
+          "name": {
+            "description": "Descriptive name of the location",
+            "type": "string"
+          },
+          "types": {
+            "description": "Type of service at the location",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "is-24-hours": {
+            "description": "Indicates whether the location operates 24 hours a day",
+            "type": "boolean"
+          },
+          "status": {
+            "description": "Indicates whether the location is closed or open for business.",
+            "type": "string"
+          },
+          "services": {
+            "description": "Services offered at the location",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "telephone": {
+            "description": "Contact numbers for the location",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "address": {
+            "description": "Type of service at the location",
+            "type": "object",
+            "properties": {
+              "addressLines": {
+                "description": "Tenore of the deposit",
+                "type": "string",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "postalCode": {
+                "description": "Postal code of the location",
+                "type": "string"
+              },
+              "latitude": {
+                "description": "Latitude of the location",
+                "type": "string"
+              },
+              "longitude": {
+                "description": "Longitude of the location",
+                "type": "string"
+              },
+              "placeId": {
+                "description": "Name of the Place",
+                "type": "string"
+              },
+              "city": {
+                "description": "Name of the city",
+                "type": "string"
+              }
+            }
+          },
+          "regularHours": {
+            "description": "Business hours of the location",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/location-timing"
+            }
+          }
+        }
+      },
+      "location-timing": {
+        "description": "Type of service at the location",
+        "type": "object",
+        "properties": {
+          "openDay": {
+            "description": "Day of the week",
+            "type": "integer"
+          },
+          "closeDay": {
+            "description": "Day of the week",
+            "type": "integer"
+          },
+          "openTime": {
+            "description": "Opening Time of the day",
+            "type": "string",
+            "format": "date-time"
+          },
+          "closeTime": {
+            "description": "Closing Time of the day",
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "error": {
+        "description": "Error object details",
+        "title": "error",
+        "required": [
+          "id",
+          "code",
+          "detail"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "a unique identifier for this particular occurrence of error",
+            "type": "string"
+          },
+          "code": {
+            "description": "an application-specific error code",
+            "type": "string"
+          },
+          "detail": {
+            "description": "a human-readable explanation specific to this occurrence of the problem",
+            "type": "string"
+          },
+          "source": {
+            "description": "reference to the source of the error. e.g. a URI query parameter caused the error or an attribute in the request object",
+            "type": "string"
+          }
+        }
+      },
+      "errors": {
+        "description": "List of user object",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/error"
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

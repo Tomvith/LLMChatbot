@@ -1,0 +1,4642 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking - Trade",
+        "description": "**API Banking - Trade APIs**. \r\n\r\n API Banking enables Standard Chartered Bank to offer a new way for you to interact with the Bank and to digitally transform your business. API is a quick and efficient way to exchange data between parties, making business data available to you and your nominated partners. Provides you the ability to: submit a Bank Guarantee (BG) free format, submit a Bank Guarantee (BG) / Standby Letter of Credit (SBLC) Application or Amendment Application through your own ERP or through agreed third party intermediary application between you and the Bank; upload and download of supporting documents for a Trade message; receive the Transaction Status Notification Messages.\n\n",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company Licence",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.standardchartered.com/openapi",
+            "variables": {}
+        }
+    ],
+    "tags": [
+        {
+            "name": "Bank Guarantee / Standby Letter of Credit Application",
+            "description": "Allows you to submit and amend a Bank Guarantee / Standby Letter of Credit Application.",
+            "x-subcategory": "Trade"
+        },
+        {
+            "name": "File Management",
+            "description": "Facilitates you to upload and download of a document related to a Trade message.",
+            "x-subcategory": "Trade"
+        },
+        {
+            "name": "Notifications",
+            "description": "Facilitates you to receive the Transaction Status Notification messages sent from Bank and manages webhook mechanism.",
+            "x-subcategory": "Trade"
+        },
+        {
+            "name": "Bank Guarantee - Free Format",
+            "description": "Allows you to submit the free format message.",
+            "x-subcategory": "Trade"
+        },
+        {
+            "name": "Trade Finance Limits",
+            "description": "Get real time trade finance limits for all the enabled products for corporate customer.Utilized amount, Available amount, Limit currency etc will be provided per product as part of the limit details",
+            "x-subcategory": "Trade"
+        }
+    ],
+    "paths": {
+        "/trade/v2/boid/{boid}/country/{countrycode}/limits": {
+            "get": {
+                "tags": [
+                    "Trade Finance Limits"
+                ],
+                "summary": "Trade Limit",
+                "description": "Get real time trade finance limits for all the enabled products for corporate customer based on the given SCB customer's back office reference and country details.Utilized amount, Available amount, Limit currency etc will be provided per product as part of the limit details.",
+                "operationId": "getTradeLimit",
+                "parameters": [
+                    {
+                        "name": "boid",
+                        "in": "path",
+                        "description": "Your Backoffice ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "countrycode",
+                        "in": "path",
+                        "description": "Your Country Code",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TradeLimitDetails"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseLimit"
+                                },
+                                "example": {
+                                    "requestId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "REJECTED",
+                                    "errors": [
+                                        {
+                                            "details": "Invalid Input Details"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StandardResponseLimit"
+                                },
+                                "example": {
+                                    "requestId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "REJECTED",
+                                    "errors": [
+                                        {
+                                            "details": "Internal Server Error"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/trade/v2/boID/{boID}/country/{countryCode}/notification/{notificationID}/detail": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Notification Details - Retrieve",
+                "description": "This API will be invoked when you require additional details on the Bank's Notification Messages. You are required to provide your Backoffice ID, Country Code and the Notification ID. When this API is called using the above stated parameters, Bank will retrieve the corresponding Notification Details Message and send it to you.",
+                "operationId": "getNotificationDetail",
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "header",
+                        "description": "Your Group ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "boID",
+                        "in": "path",
+                        "description": "Your Backoffice ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "countryCode",
+                        "in": "path",
+                        "description": "Your Country Code",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "ISO Country Code",
+                            "enum": [
+                                "AD",
+                                "AE",
+                                "AF",
+                                "AG",
+                                "AI",
+                                "AL",
+                                "AM",
+                                "AO",
+                                "AQ",
+                                "AR",
+                                "AS",
+                                "AT",
+                                "AU",
+                                "AW",
+                                "AX",
+                                "AZ",
+                                "BA",
+                                "BB",
+                                "BD",
+                                "BE",
+                                "BF",
+                                "BG",
+                                "BH",
+                                "BI",
+                                "BJ",
+                                "BL",
+                                "BM",
+                                "BN",
+                                "BO",
+                                "BQ",
+                                "BR",
+                                "BS",
+                                "BT",
+                                "BV",
+                                "BW",
+                                "BY",
+                                "BZ",
+                                "CA",
+                                "CC",
+                                "CD",
+                                "CF",
+                                "CG",
+                                "CH",
+                                "CI",
+                                "CK",
+                                "CL",
+                                "CM",
+                                "CN",
+                                "CO",
+                                "CR",
+                                "CU",
+                                "CV",
+                                "CW",
+                                "CX",
+                                "CY",
+                                "CZ",
+                                "DE",
+                                "DJ",
+                                "DK",
+                                "DM",
+                                "DO",
+                                "DZ",
+                                "EC",
+                                "EE",
+                                "EG",
+                                "EH",
+                                "ER",
+                                "ES",
+                                "ET",
+                                "FI",
+                                "FJ",
+                                "FK",
+                                "FM",
+                                "FO",
+                                "FR",
+                                "GA",
+                                "GB",
+                                "GD",
+                                "GE",
+                                "GF",
+                                "GG",
+                                "GH",
+                                "GI",
+                                "GL",
+                                "GM",
+                                "GN",
+                                "GP",
+                                "GQ",
+                                "GR",
+                                "GS",
+                                "GT",
+                                "GU",
+                                "GW",
+                                "GY",
+                                "HK",
+                                "HM",
+                                "HN",
+                                "HR",
+                                "HT",
+                                "HU",
+                                "ID",
+                                "IE",
+                                "IL",
+                                "IM",
+                                "IN",
+                                "IO",
+                                "IQ",
+                                "IR",
+                                "IS",
+                                "IT",
+                                "JE",
+                                "JM",
+                                "JO",
+                                "JP",
+                                "KE",
+                                "KG",
+                                "KH",
+                                "KI",
+                                "KM",
+                                "KN",
+                                "KP",
+                                "KR",
+                                "KW",
+                                "KY",
+                                "KZ",
+                                "LA",
+                                "LB",
+                                "LC",
+                                "LI",
+                                "LK",
+                                "LR",
+                                "LS",
+                                "LT",
+                                "LU",
+                                "LV",
+                                "LY",
+                                "MA",
+                                "MC",
+                                "MD",
+                                "ME",
+                                "MF",
+                                "MG",
+                                "MH",
+                                "MK",
+                                "ML",
+                                "MM",
+                                "MN",
+                                "MO",
+                                "MP",
+                                "MQ",
+                                "MR",
+                                "MS",
+                                "MT",
+                                "MU",
+                                "MV",
+                                "MW",
+                                "MX",
+                                "MY",
+                                "MZ",
+                                "NA",
+                                "NC",
+                                "NE",
+                                "NF",
+                                "NG",
+                                "NI",
+                                "NL",
+                                "false",
+                                "NP",
+                                "NR",
+                                "NU",
+                                "NZ",
+                                "OM",
+                                "PA",
+                                "PE",
+                                "PF",
+                                "PG",
+                                "PH",
+                                "PK",
+                                "PL",
+                                "PM",
+                                "PN",
+                                "PR",
+                                "PS",
+                                "PT",
+                                "PW",
+                                "PY",
+                                "QA",
+                                "RE",
+                                "RO",
+                                "RS",
+                                "RU",
+                                "RW",
+                                "SA",
+                                "SB",
+                                "SC",
+                                "SD",
+                                "SE",
+                                "SG",
+                                "SH",
+                                "SI",
+                                "SJ",
+                                "SK",
+                                "SL",
+                                "SM",
+                                "SN",
+                                "SO",
+                                "SR",
+                                "SS",
+                                "ST",
+                                "SV",
+                                "SX",
+                                "SY",
+                                "SZ",
+                                "TC",
+                                "TD",
+                                "TF",
+                                "TG",
+                                "TH",
+                                "TJ",
+                                "TK",
+                                "TL",
+                                "TM",
+                                "TN",
+                                "TO",
+                                "TR",
+                                "TT",
+                                "TV",
+                                "TW",
+                                "TZ",
+                                "UA",
+                                "UG",
+                                "UM",
+                                "US",
+                                "UY",
+                                "UZ",
+                                "VA",
+                                "VC",
+                                "VE",
+                                "VG",
+                                "VI",
+                                "VN",
+                                "VU",
+                                "WF",
+                                "WS",
+                                "YE",
+                                "YT",
+                                "ZA",
+                                "ZM",
+                                "ZW",
+                                "SP",
+                                "ALL"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "notificationID",
+                        "in": "path",
+                        "description": "Unique ID assigned to the Notification by Bank, which was sent in the Webhook notification.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request has been accepted for processing.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/NotificationDetail"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The server cannot or will not process the request due to an apparent client error (e.g., malformed request syntax, size too large, invalid request message framing etc).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StandardResponse"
+                                    }
+                                },
+                                "example": {
+                                    "messageID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "REJECTED",
+                                    "errors": [
+                                        {
+                                            "details": "Invalid Input Details"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error due to Database related exception, Transformation related exception, Client related exception or Common exception",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StandardResponse"
+                                    }
+                                },
+                                "example": {
+                                    "messageID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "REJECTED",
+                                    "errors": [
+                                        {
+                                            "details": "HttpClientErrorException"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-markets": "HK,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,JO,NG,ZA,KE,UG,TZ,CM,GH,ZM,CI,ZW,GB,US"
+            }
+        },
+        "/trade/v1/attachment": {
+            "post": {
+                "tags": [
+                    "File Management"
+                ],
+                "summary": "Supporting documents - File Upload",
+                "description": "The Supporting documents - File Upload API will allow you to upload an attachment as a supporting document for a Trade message. Once received, the file will be saved in the Bank's File Management system and the corresponding Message ID will be sent to you.",
+                "operationId": "attachmentUpload",
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "header",
+                        "description": "Your Group ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "boCustomerID",
+                        "in": "header",
+                        "description": "Your Back Office ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "countryCode",
+                        "in": "header",
+                        "description": "Your country code",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/octet-stream": {
+                            "schema": {
+                                "type": "object",
+                                "format": "binary"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK. File will be stored temporarily. Message ID in the response message will be the Reference ID of the file that is to be included in the actual Trade application.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StdResponse"
+                                },
+                                "example": {
+                                    "messageID": "bb1c0ffb-9a9b-43d4-bde3-3c06cc2d02aa",
+                                    "receivedAt": "2020-05-04T17:36:33.565+08:00",
+                                    "status": "PROCESSED"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The server cannot or will not process the request due to an apparent client error (e.g., malformed request syntax, size too large, invalid request message framing etc).",
+                        "content": {
+                            "text/plain": {
+                                "example": "The server cannot process the request as the file size is too large."
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "The response status code indicates that you have sent too many requests.",
+                        "content": {
+                            "text/plain": {
+                                "example": "You have sent too many requests."
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error.",
+                        "content": {
+                            "text/plain": {
+                                "example": "The server encountered an unexpected condition."
+                            }
+                        }
+                    }
+                },
+                "x-markets": "HK,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,JO,NG,ZA,KE,UG,TZ,CM,GH,ZM,CI,ZW,GB,US,CN,SL"
+            }
+        },
+        "/trade/v1/boCustomerID/{boCustomerID}/country/{countryCode}/attachment/{messageID}": {
+            "get": {
+                "tags": [
+                    "File Management"
+                ],
+                "summary": "Supporting documents - File Download",
+                "description": "The Supporting documents - File Download API will allow you to download a document or an attachment. You are required to provide your Backoffice ID, Country Code and the Message ID. Once the call is received by the Bank, the file will be retrieved from the Bank's File Management system, after checking whether the file was uploaded by the same user.",
+                "operationId": "attachmentDownload",
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "header",
+                        "description": "Your Group ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "boCustomerID",
+                        "in": "path",
+                        "description": "Your Backoffice ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "Your Backoffice ID",
+                            "maxLength": 16
+                        }
+                    },
+                    {
+                        "name": "countryCode",
+                        "in": "path",
+                        "description": "Your Country Code",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "IN",
+                            "description": "ISO Country Code",
+                            "enum": [
+                                "AD",
+                                "AE",
+                                "AF",
+                                "AG",
+                                "AI",
+                                "AL",
+                                "AM",
+                                "AO",
+                                "AQ",
+                                "AR",
+                                "AS",
+                                "AT",
+                                "AU",
+                                "AW",
+                                "AX",
+                                "AZ",
+                                "BA",
+                                "BB",
+                                "BD",
+                                "BE",
+                                "BF",
+                                "BG",
+                                "BH",
+                                "BI",
+                                "BJ",
+                                "BL",
+                                "BM",
+                                "BN",
+                                "BO",
+                                "BQ",
+                                "BR",
+                                "BS",
+                                "BT",
+                                "BV",
+                                "BW",
+                                "BY",
+                                "BZ",
+                                "CA",
+                                "CC",
+                                "CD",
+                                "CF",
+                                "CG",
+                                "CH",
+                                "CI",
+                                "CK",
+                                "CL",
+                                "CM",
+                                "CN",
+                                "CO",
+                                "CR",
+                                "CU",
+                                "CV",
+                                "CW",
+                                "CX",
+                                "CY",
+                                "CZ",
+                                "DE",
+                                "DJ",
+                                "DK",
+                                "DM",
+                                "DO",
+                                "DZ",
+                                "EC",
+                                "EE",
+                                "EG",
+                                "EH",
+                                "ER",
+                                "ES",
+                                "ET",
+                                "FI",
+                                "FJ",
+                                "FK",
+                                "FM",
+                                "FO",
+                                "FR",
+                                "GA",
+                                "GB",
+                                "GD",
+                                "GE",
+                                "GF",
+                                "GG",
+                                "GH",
+                                "GI",
+                                "GL",
+                                "GM",
+                                "GN",
+                                "GP",
+                                "GQ",
+                                "GR",
+                                "GS",
+                                "GT",
+                                "GU",
+                                "GW",
+                                "GY",
+                                "HK",
+                                "HM",
+                                "HN",
+                                "HR",
+                                "HT",
+                                "HU",
+                                "ID",
+                                "IE",
+                                "IL",
+                                "IM",
+                                "IN",
+                                "IO",
+                                "IQ",
+                                "IR",
+                                "IS",
+                                "IT",
+                                "JE",
+                                "JM",
+                                "JO",
+                                "JP",
+                                "KE",
+                                "KG",
+                                "KH",
+                                "KI",
+                                "KM",
+                                "KN",
+                                "KP",
+                                "KR",
+                                "KW",
+                                "KY",
+                                "KZ",
+                                "LA",
+                                "LB",
+                                "LC",
+                                "LI",
+                                "LK",
+                                "LR",
+                                "LS",
+                                "LT",
+                                "LU",
+                                "LV",
+                                "LY",
+                                "MA",
+                                "MC",
+                                "MD",
+                                "ME",
+                                "MF",
+                                "MG",
+                                "MH",
+                                "MK",
+                                "ML",
+                                "MM",
+                                "MN",
+                                "MO",
+                                "MP",
+                                "MQ",
+                                "MR",
+                                "MS",
+                                "MT",
+                                "MU",
+                                "MV",
+                                "MW",
+                                "MX",
+                                "MY",
+                                "MZ",
+                                "NA",
+                                "NC",
+                                "NE",
+                                "NF",
+                                "NG",
+                                "NI",
+                                "NL",
+                                "NO",
+                                "NP",
+                                "NR",
+                                "NU",
+                                "NZ",
+                                "OM",
+                                "PA",
+                                "PE",
+                                "PF",
+                                "PG",
+                                "PH",
+                                "PK",
+                                "PL",
+                                "PM",
+                                "PN",
+                                "PR",
+                                "PS",
+                                "PT",
+                                "PW",
+                                "PY",
+                                "QA",
+                                "RE",
+                                "RO",
+                                "RS",
+                                "RU",
+                                "RW",
+                                "SA",
+                                "SB",
+                                "SC",
+                                "SD",
+                                "SE",
+                                "SG",
+                                "SH",
+                                "SI",
+                                "SJ",
+                                "SK",
+                                "SL",
+                                "SM",
+                                "SN",
+                                "SO",
+                                "SR",
+                                "SS",
+                                "ST",
+                                "SV",
+                                "SX",
+                                "SY",
+                                "SZ",
+                                "TC",
+                                "TD",
+                                "TF",
+                                "TG",
+                                "TH",
+                                "TJ",
+                                "TK",
+                                "TL",
+                                "TM",
+                                "TN",
+                                "TO",
+                                "TR",
+                                "TT",
+                                "TV",
+                                "TW",
+                                "TZ",
+                                "UA",
+                                "UG",
+                                "UM",
+                                "US",
+                                "UY",
+                                "UZ",
+                                "VA",
+                                "VC",
+                                "VE",
+                                "VG",
+                                "VI",
+                                "VN",
+                                "VU",
+                                "WF",
+                                "WS",
+                                "YE",
+                                "YT",
+                                "ZA",
+                                "ZM",
+                                "ZW",
+                                "SP"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "messageID",
+                        "in": "path",
+                        "description": "The Message ID (File ID) assigned to the attachment by the Bank.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "maxLength": 50,
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK. The request has succeeded and the processing of the request is complete.",
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The server cannot or will not process the request due to an apparent client error (e.g., malformed request syntax, size too large, invalid request message framing etc).",
+                        "content": {
+                            "text/plain": {
+                                "example": "The server cannot process the request as the file size is too large."
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "The response status code indicates that you have sent too many requests.",
+                        "content": {
+                            "text/plain": {
+                                "example": "You have sent too many requests."
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error.",
+                        "content": {
+                            "text/plain": {
+                                "example": "The server encountered an unexpected condition."
+                            }
+                        }
+                    }
+                },
+                "x-markets": "HK,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,JO,NG,ZA,KE,UG,TZ,CM,GH,ZM,CI,ZW,GB,US,CN,SL"
+            }
+        },
+        "/trade/v2/issuance/application": {
+            "post": {
+                "tags": [
+                    "Bank Guarantee / Standby Letter of Credit Application"
+                ],
+                "summary": "Bank Guarantee / Standby Letter of Credit Application - Submit",
+                "description": "The Bank Guarantee / Standby Letter of Credit Application - Submit API exposes the ability to initiate either a Bank Guarantee or a Standby Letter of Credit. Among other information,  the terms and conditions of the Bank Guarantee / Standby Letter of Credit can be specified, the type of Guarantee (i.e. whether it is Advance Payment Bond, Performance Bond, etc), transmission medium for sending the Bank Guarantee / Standby Letter of Credit, specify the parties such as the Beneficiary, Advising Bank, Confirming Bank (if any). This API also allows you to specify the File ID generated by the Bank's File Management System in the attachment section of the message. Upon successful validation, the request will be submitted to the Bank for further processing.",
+                "operationId": "gteeApply",
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "header",
+                        "description": "Your Group ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "isAuthorised",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GteeIssueApplication"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The request has succeeded and the processing of the request is complete.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StandardResponse"
+                                    }
+                                },
+                                "example": {
+                                    "messageID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "PROCESSING"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The server cannot or will not process the request due to an apparent client error (e.g., malformed request syntax, size too large, invalid request message framing etc).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StandardResponse"
+                                    }
+                                },
+                                "example": {
+                                    "messageID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "REJECTED",
+                                    "errors": [
+                                        {
+                                            "details": "references.messageRef: null -> must not be blank"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error due to Database related exception, Transformation related exception, Solace related exception or Common exception",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StandardResponse"
+                                    }
+                                },
+                                "example": {
+                                    "messageID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "FAILED",
+                                    "errors": [
+                                        {
+                                            "details": "Internal Server Error"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-markets": "HK,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,JO,NG,ZA,KE,UG,TZ,CM,GH,ZM,CI,ZW,GB,US"
+            }
+        },
+        "/trade/v2/amendment/application": {
+            "post": {
+                "tags": [
+                    "Bank Guarantee / Standby Letter of Credit Application"
+                ],
+                "summary": "Bank Guarantee / Standby Letter of Credit Application - Amend",
+                "description": "The Bank Guarantee / Standby Letter of Credit Application - Amend API exposes the ability to initiate a Bank Guarantee / Standby Letter of Credit Amendment request for a previously issued Bank Guarantee or a Standby Letter of Credit. You would be able to amend the Expiry Details of the Bank Guarantee / Standby Letter of Credit, the Applicable Rules, the Bank Guarantee / Standby Letter of Credit Amount. This API also allows you to specify the File ID generated by the Bank's File Management System in the attachment section of the message. Upon successful validation, the request will be submitted to the Bank for further processing.",
+                "operationId": "gteeAmendApply",
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "header",
+                        "description": "Your Group ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "isAuthorised",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GteeAmendApplication"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The request has been accepted for processing.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StandardResponse"
+                                    }
+                                },
+                                "example": {
+                                    "messageID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "PROCESSING"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The server cannot or will not process the request due to an apparent client error (e.g., malformed request syntax, size too large, invalid request message framing etc).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StandardResponse"
+                                    }
+                                },
+                                "example": {
+                                    "messageID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "REJECTED",
+                                    "errors": [
+                                        {
+                                            "details": "references.messageRef: null -> must not be blank"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error due to Database related exception, Transformation related exception, Solace related exception or Common exception",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StandardResponse"
+                                    }
+                                },
+                                "example": {
+                                    "messageID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "FAILED",
+                                    "errors": [
+                                        {
+                                            "details": "Internal Server Error"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-markets": "HK,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,JO,NG,ZA,KE,UG,TZ,CM,GH,ZM,CI,ZW,GB,US"
+            }
+        },
+        "/trade/v2/message": {
+            "post": {
+                "tags": [
+                    "Bank Guarantee - Free Format"
+                ],
+                "summary": "Free Format Message",
+                "description": "The Free Format Message is sent by the corporate to bank. Allows client users and the bank to communicate freely regarding their Trade processing.",
+                "operationId": "freeFormatMessage",
+                "parameters": [
+                    {
+                        "name": "GroupId",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    },
+                    {
+                        "name": "isAuthorised",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FreeFormatMessage"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The request has been accepted for processing.",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StandardResponse"
+                                    }
+                                },
+                                "example": {
+                                    "messageID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "PROCESSING"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The server cannot or will not process the request due to an apparent client error (e.g., malformed request syntax, size too large, invalid request message framing etc).",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StandardResponse"
+                                    }
+                                },
+                                "example": {
+                                    "messageID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "REJECTED",
+                                    "errors": [
+                                        {
+                                            "details": "references.messageRef: null -> must not be blank"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error due to Database related exception, Transformation related exception, Solace related exception or Common exception",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StandardResponse"
+                                    }
+                                },
+                                "example": {
+                                    "messageID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    "receivedAt": "2021-07-26T08:41:15.079Z",
+                                    "status": "FAILED",
+                                    "errors": [
+                                        {
+                                            "details": "Internal Server Error"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "NotificationDetail": {
+                "required": [
+                    "detail",
+                    "notification"
+                ],
+                "type": "object",
+                "properties": {
+                    "notification": {
+                        "$ref": "#/components/schemas/TradeNotification"
+                    },
+                    "detail": {
+                        "$ref": "#/components/schemas/GteeNotificationDetail"
+                    }
+                },
+                "description": "Details of a notification"
+            },
+            "TradeNotification": {
+                "required": [
+                    "id",
+                    "initiatedFrom",
+                    "product",
+                    "transaction"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "notification id assigned by api banking",
+                        "format": "uuid"
+                    },
+                    "initiatedFrom": {
+                        "type": "string",
+                        "description": "Initiated From",
+                        "enum": [
+                            "GLOBAL_TRADE_CORP",
+                            "GT_NEXUS",
+                            "HK_TFP",
+                            "NTP",
+                            "OTC",
+                            "MOBILE_APP",
+                            "EMAIL",
+                            "FAX",
+                            "HOST_TO_HOST",
+                            "S2B_CLASSIC",
+                            "TRADEIX",
+                            "S2B_NEXTGEN",
+                            "SWIFT_FOR_CORP",
+                            "API",
+                            "SMART_FORMS",
+                            "DTC",
+                            "OTHER"
+                        ]
+                    },
+                    "product": {
+                        "type": "string",
+                        "description": "Product code",
+                        "enum": [
+                            "IMPORT_LC",
+                            "BANK_GTEE",
+                            "STANDBY_LC",
+                            "EXPORT_LC",
+                            "IMPORT_DOC_COLLECTION",
+                            "IMPORT_OTHER_BILLS",
+                            "EXPORT_DOC_COLLECTION",
+                            "EXPORT_OTHER_BILLS",
+                            "EXPORT_CREDIT_BILLS",
+                            "SHIP_GTEE",
+                            "PO_MGMT",
+                            "BUYER_IMPORT_FIN",
+                            "EXPORT_PRE-SHIP_FIN",
+                            "SELLER_IMPORT_FIN",
+                            "PORTFOLIO_RCVBL_SVC_FIN",
+                            "RCVBL_SVC_FIN",
+                            "TRADE_DISC_SVC_FIN",
+                            "QUERY_WORKFLOW",
+                            "VENDOR_PREPAY",
+                            "BANKER_ACCEPT_TRADE_BUYER",
+                            "BILL_DISCOUNT_BUYER_RISK",
+                            "DISCOUNT_AVALISED_DRAFT",
+                            "DISCOUNT_BANK_ACCEPT_DRAFT",
+                            "FIN_AGAINST_INVENTORY_RCPT",
+                            "FIN_AGAINST_WAREHOUSE_RCPT",
+                            "FLEXI_LOAN",
+                            "LOCAL_BILLS_DISCOUNT_SUPPLIER",
+                            "LMTD_RECOURSE_RCVBL_PURCHASE",
+                            "POST_ACCEPT_DISCOUNTING",
+                            "IMP_LC_REFINANCE",
+                            "REFINANCE_UNDER_REIMB",
+                            "RCVBL_SVC_BUYER_COLL",
+                            "RCVBL_GUARANTEE",
+                            "SILENT_PYMT_GUARANTEE",
+                            "TRADE_PAYABLE_MGMT",
+                            "TRADE_ADVANCES",
+                            "TRADE_REIMBURSEMENT",
+                            "OTHER"
+                        ]
+                    },
+                    "action": {
+                        "$ref": "#/components/schemas/Action"
+                    },
+                    "transaction": {
+                        "$ref": "#/components/schemas/TradeNotificationTransaction"
+                    }
+                },
+                "description": "Body of a trade notification"
+            },
+            "Action": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "Type of action",
+                        "enum": [
+                            "ISSUANCE",
+                            "AMENDMENT",
+                            "BOOK_OFF",
+                            "MISC",
+                            "OTHER",
+                            "ACCEPTANCE",
+                            "ACTUAL_ACCEPTANCE",
+                            "SETTLEMENT",
+                            "ADJUSTMENT",
+                            "PAYMENT",
+                            "PAYMENT_OF_ACCEPTANCE",
+                            "REQUEST_FOR_FINANCE",
+                            "BILL_REJECTION",
+                            "CANCELLATION",
+                            "REVERSAL",
+                            "NEW_PRE_VETTING_REQUEST",
+                            "UPDATE_PRE_VETTING_REQUEST",
+                            "LC_PO_DRAWDOWN",
+                            "QUERY_RESPONSE_FROM_CLIENT",
+                            "QUERY_REQUEST_TO_CLIENT"
+                        ]
+                    },
+                    "otherAction": {
+                        "type": "string",
+                        "description": "if type=OTHER, this will have the type"
+                    },
+                    "seqNo": {
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "Action sequence number",
+                        "format": "int32"
+                    },
+                    "timeStamp": {
+                        "type": "string",
+                        "description": "Time of action by the bank"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Status of this action",
+                        "enum": [
+                            "REGISTERED",
+                            "PROCESSED",
+                            "REJECTED",
+                            "NGREAUTHREJECT",
+                            "CANCELLED",
+                            "PROCESSING",
+                            "OTHER"
+                        ]
+                    },
+                    "otherStatus": {
+                        "type": "string",
+                        "description": "If status is not one of the listed, this will contain the status type."
+                    },
+                    "remarks": {
+                        "type": "string"
+                    }
+                },
+                "description": "Action on the transaction"
+            },
+            "TradeNotificationTransaction": {
+                "required": [
+                    "references"
+                ],
+                "type": "object",
+                "properties": {
+                    "references": {
+                        "$ref": "#/components/schemas/TradeNotificationTransactionReferences"
+                    },
+                    "amount": {
+                        "$ref": "#/components/schemas/Amount"
+                    }
+                }
+            },
+            "TradeNotificationTransactionReferences": {
+                "type": "object",
+                "properties": {
+                    "messageRef": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "bankRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "customerRef": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "bankBusinessRef": {
+                        "type": "string"
+                    },
+                    "customerBusinessRef": {
+                        "type": "string"
+                    }
+                },
+                "description": "References for this application * messageRef: Reference assigned by the customer to unambiguously identify the api message. Useful for troubleshooting technical issues. * bankRef: Transaction number assigned by the bank "
+            },
+            "Amount": {
+                "type": "object",
+                "properties": {
+                    "ccy": {
+                        "$ref": "#/components/schemas/CurrencyCodeISO4217"
+                    },
+                    "value": {
+                        "minimum": 0,
+                        "exclusiveMinimum": false,
+                        "type": "number",
+                        "format": "double",
+                        "example": 15000
+                    }
+                }
+            },
+            "GteeNotificationDetail": {
+                "required": [
+                    "customerID",
+                    "references"
+                ],
+                "type": "object",
+                "properties": {
+                    "customerID": {
+                        "$ref": "#/components/schemas/CustomerID"
+                    },
+                    "references": {
+                        "$ref": "#/components/schemas/GteeNotificationDetailReferences"
+                    },
+                    "undertaking": {
+                        "$ref": "#/components/schemas/GteeNotificationDetailUndertaking"
+                    }
+                },
+                "description": "Details of a bank guarantee notification"
+            },
+            "GteeNotificationDetailReferences": {
+                "type": "object",
+                "properties": {
+                    "customerRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "bankRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "messageRef": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "bankBusinessRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "linkedDealRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "repeatDealRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "customerBusinessRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    }
+                },
+                "description": "References for this application * customerRef: Application number assigned by the customer * bankRef: Transaction number assigned by the bank * messageRef: Reference assigned by the customer to unambiguously identify the message * businessRef: Business reference assigned by the customer * bankBusinessRef: Business reference assigned by the bank "
+            },
+            "GteeNotificationDetailUndertaking": {
+                "required": [
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "form": {
+                        "type": "string",
+                        "enum": [
+                            "DEMAND_GUARANTEE",
+                            "STANDBY_LC"
+                        ]
+                    },
+                    "expiry": {
+                        "$ref": "#/components/schemas/GteeNotificationDetailUndertakingExpiry"
+                    },
+                    "issueDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "applicant": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "issuer": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "beneficiary": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "advisingBank": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "confirmingParty": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "amount": {
+                        "$ref": "#/components/schemas/GteeNotificationDetailUndertakingAmount"
+                    },
+                    "charges": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GteeNotificationDetailUndertakingCharges"
+                        }
+                    },
+                    "attachments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GteeNotificationDetailUndertakingAttachments"
+                        }
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "ADV_PMT_BOND",
+                            "BNK_FACILITIES",
+                            "GOODS_SERVICES",
+                            "OTHERS_CGT_TXN",
+                            "OTHERS_CGT_FIN",
+                            "PERFORMANCE_BOND",
+                            "SECURITY_BOND",
+                            "UTILITY",
+                            "STANDBY_LC",
+                            "BID_TENDER_BOND"
+                        ]
+                    },
+                    "applicableRules": {
+                        "$ref": "#/components/schemas/GteeNotificationApplicableRules"
+                    },
+                    "addConfirmation": {
+                        "type": "string",
+                        "enum": [
+                            "YES",
+                            "NO",
+                            "MAY_ADD"
+                        ]
+                    },
+                    "governingLaw": {
+                        "$ref": "#/components/schemas/GteeNotificationGoverningLaw"
+                    },
+                    "automaticExtension": {
+                        "$ref": "#/components/schemas/GteeNotificationAutomaticExtension"
+                    },
+                    "transfers": {
+                        "$ref": "#/components/schemas/GteeNotificationTransfers"
+                    },
+                    "allowPartialClaims": {
+                        "type": "boolean"
+                    },
+                    "obligorInstructingParty": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "demandIndicator": {
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeNotificationGoverningLaw": {
+                "required": [
+                    "country"
+                ],
+                "type": "object",
+                "properties": {
+                    "country": {
+                        "$ref": "#/components/schemas/CountryCodeISO3166"
+                    },
+                    "details": {
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeNotificationTransfers": {
+                "type": "object",
+                "properties": {
+                    "isAllowed": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "GteeNotificationDetailUndertakingExpiry": {
+                "required": [
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "claimBy": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "FIXED",
+                            "OPEN",
+                            "COND"
+                        ]
+                    },
+                    "conditionOrEvent": {
+                        "maxItems": 12,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    }
+                }
+            },
+            "CustomerID": {
+                "type": "object",
+                "required": [
+                    "backoffice"
+                ],
+                "properties": {
+                    "backoffice": {
+                        "$ref": "#/components/schemas/CustomerIDBackoffice"
+                    }
+                },
+                "description": "Information to identify the customer."
+            },
+            "CustomerIDBackoffice": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "countryCode"
+                ],
+                "properties": {
+                    "id": {
+                        "maxLength": 16,
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "countryCode": {
+                        "$ref": "#/components/schemas/CountryCodeISO3166"
+                    }
+                },
+                "description": "Backoffice ID assigned by the bank to the customer"
+            },
+            "Org": {
+                "type": "object",
+                "properties": {
+                    "erpID": {
+                        "type": "string",
+                        "maxLength": 16,
+                        "minLength": 0
+                    },
+                    "bankID": {
+                        "type": "string",
+                        "maxLength": 16,
+                        "minLength": 0
+                    },
+                    "BIC": {
+                        "type": "string",
+                        "maxLength": 11,
+                        "minLength": 8
+                    },
+                    "accountDetails": {
+                        "type": "string",
+                        "maxLength": 34,
+                        "minLength": 0
+                    },
+                    "partyIdentifier": {
+                        "type": "string",
+                        "maxLength": 34,
+                        "minLength": 0
+                    },
+                    "nameAddress": {
+                        "$ref": "#/components/schemas/NameAddress"
+                    },
+                    "isRelated": {
+                        "type": "boolean",
+                        "description": "whether this organisation is related to the customer"
+                    }
+                }
+            },
+            "NameAddress": {
+                "required": [
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "example": "ACME Industries"
+                    },
+                    "address": {
+                        "$ref": "#/components/schemas/Address"
+                    },
+                    "primaryContact": {
+                        "$ref": "#/components/schemas/Contact"
+                    }
+                }
+            },
+            "Address": {
+                "type": "object",
+                "properties": {
+                    "lines": {
+                        "type": "array",
+                        "maxItems": 3,
+                        "minItems": 0,
+                        "items": {
+                            "type": "string",
+                            "maxLength": 35
+                        }
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "India"
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "Maharashtra"
+                    },
+                    "postalCode": {
+                        "type": "string",
+                        "example": "123456"
+                    },
+                    "country": {
+                        "$ref": "#/components/schemas/CountryCodeISO3166"
+                    }
+                }
+            },
+            "Contact": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "phone": {
+                        "maxLength": 20,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "email": {
+                        "maxLength": 65,
+                        "minLength": 0,
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeNotificationDetailUndertakingAmount": {
+                "required": [
+                    "value"
+                ],
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "$ref": "#/components/schemas/Amount"
+                    }
+                }
+            },
+            "GteeNotificationDetailUndertakingCharges": {
+                "type": "object",
+                "properties": {
+                    "chargeRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "settlementStatus": {
+                        "type": "string"
+                    },
+                    "debitParty": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeNotificationDetailUndertakingAttachments": {
+                "type": "object",
+                "properties": {
+                    "fileName": {
+                        "type": "string"
+                    },
+                    "fileID": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "fileDesc": {
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeNotificationApplicableRules": {
+                "required": [
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "ISPR",
+                            "NONE",
+                            "UCPR",
+                            "URDG",
+                            "OTHER"
+                        ]
+                    },
+                    "details": {
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeNotificationAutomaticExtension": {
+                "type": "object",
+                "properties": {
+                    "period": {
+                        "$ref": "#/components/schemas/GteeNotificationAutomaticExtensionPeriod"
+                    }
+                }
+            },
+            "GteeNotificationAutomaticExtensionPeriod": {
+                "type": "object",
+                "properties": {
+                    "valueType": {
+                        "type": "string",
+                        "enum": [
+                            "DAYS_AFTER_EXPIRY",
+                            "OTHER_CLAUSE",
+                            "ONE_YEAR"
+                        ]
+                    },
+                    "daysAfterExpiry": {
+                        "type": "string"
+                    },
+                    "clause": {
+                        "type": "string"
+                    },
+                    "notificationPeriod": {
+                        "type": "string"
+                    },
+                    "finalExpiryDate": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                }
+            },
+            "StandardResponseLimit": {
+                "required": [
+                    "requestId",
+                    "receivedAt"
+                ],
+                "type": "object",
+                "properties": {
+                    "requestId": {
+                        "type": "string",
+                        "description": "Unique request id assigned by the bank",
+                        "format": "uuid"
+                    },
+                    "receivedAt": {
+                        "type": "string",
+                        "description": "Time at which the message was received",
+                        "format": "date-time",
+                        "example": "2021-01-30T08:30:00Z"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Current status of the message",
+                        "enum": [
+                            "RECEIVED",
+                            "PROCESSING",
+                            "REJECTED",
+                            "FAILED",
+                            "PROCESSED"
+                        ]
+                    },
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/StandardResponseErrors"
+                        }
+                    }
+                }
+            },
+            "StdResponse": {
+                "required": [
+                    "messageID",
+                    "receivedAt"
+                ],
+                "type": "object",
+                "properties": {
+                    "messageID": {
+                        "type": "string",
+                        "description": "Unique message id assigned by the bank",
+                        "format": "uuid"
+                    },
+                    "receivedAt": {
+                        "type": "string",
+                        "description": "Time at which the message was received",
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Current status of the message",
+                        "enum": [
+                            "RECEIVED",
+                            "PROCESSING",
+                            "REJECTED",
+                            "FAILED",
+                            "PROCESSED"
+                        ]
+                    },
+                    "dealID": {
+                        "type": "object",
+                        "description": "Deal reference assigned by the bank, once the message is processed."
+                    },
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/StdResponseErrors"
+                        }
+                    }
+                }
+            },
+            "StdResponseErrors": {
+                "type": "object",
+                "properties": {
+                    "details": {
+                        "type": "string",
+                        "description": "error details"
+                    }
+                }
+            },
+            "GteeIssueApplication": {
+                "required": [
+                    "applicationDetails",
+                    "customerID",
+                    "references"
+                ],
+                "type": "object",
+                "properties": {
+                    "customerID": {
+                        "$ref": "#/components/schemas/CustomerID"
+                    },
+                    "references": {
+                        "$ref": "#/components/schemas/GteeIssueApplicationReferences"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "ADV_PMT_BOND",
+                            "BNK_FACILITIES",
+                            "GOODS_SERVICES",
+                            "OTHERS_CGT_TXN",
+                            "OTHERS_CGT_FIN",
+                            "PERFORMANCE_BOND",
+                            "SECURITY_BOND",
+                            "UTILITY",
+                            "STANDBY_LC",
+                            "BID_TENDER_BOND"
+                        ]
+                    },
+                    "issueBy": {
+                        "$ref": "#/components/schemas/TransmitMedium"
+                    },
+                    "wording": {
+                        "$ref": "#/components/schemas/GteeIssueApplicationWording"
+                    },
+                    "chargesAcct": {
+                        "$ref": "#/components/schemas/Account"
+                    },
+                    "corporateToBankInfo": {
+                        "maxItems": 100,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "attachments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Attachment"
+                        }
+                    },
+                    "applicationDetails": {
+                        "$ref": "#/components/schemas/GteeIssueApplicationApplicationDetails"
+                    },
+                    "customFields": {
+                        "maxItems": 99,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CustomField"
+                        }
+                    }
+                }
+            },
+            "GteeIssueApplicationReferences": {
+                "required": [
+                    "messageRef",
+                    "sourceSystem"
+                ],
+                "type": "object",
+                "properties": {
+                    "customerRef": {
+                        "maxLength": 16,
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "bankRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "messageRef": {
+                        "maxLength": 19,
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "bankBusinessRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "customerBusinessRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "sourceSystem": {
+                        "type": "string",
+                        "enum": [
+                            "S4C",
+                            "API",
+                            "H2H",
+                            "TNG"
+                        ]
+                    },
+                    "repeatReferenceNo": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    }
+                }
+            },
+            "TransmitMedium": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "SWIFT",
+                            "COURIER",
+                            "FAX",
+                            "HAND_DELIVERY",
+                            "MAIL",
+                            "COLLECTION",
+                            "REG_MAIL",
+                            "OTHER"
+                        ]
+                    },
+                    "details": {
+                        "maxLength": 65,
+                        "minLength": 0,
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeIssueApplicationWording": {
+                "required": [
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "STANDARD",
+                            "BY_APPLICANT",
+                            "BY_BENEFICIARY",
+                            "OTHER"
+                        ]
+                    },
+                    "details": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    }
+                }
+            },
+            "Account": {
+                "type": "object",
+                "properties": {
+                    "accNo": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "ccy": {
+                        "$ref": "#/components/schemas/CurrencyCodeISO4217"
+                    }
+                }
+            },
+            "Attachment": {
+                "required": [
+                    "sentBy"
+                ],
+                "type": "object",
+                "properties": {
+                    "sentBy": {
+                        "type": "string",
+                        "enum": [
+                            "FILENET",
+                            "API",
+                            "EMAIL",
+                            "FACT",
+                            "FAXT",
+                            "MAIL",
+                            "COUR",
+                            "HOST",
+                            "OTHR"
+                        ]
+                    },
+                    "fileID": {
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "fileName": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "content": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeIssueApplicationApplicationDetails": {
+                "type": "object",
+                "properties": {
+                    "issueOf": {
+                        "type": "string",
+                        "enum": [
+                            "UNDERTAKING",
+                            "ISCO",
+                            "ICCO"
+                        ]
+                    },
+                    "undertaking": {
+                        "$ref": "#/components/schemas/GteeUndertaking"
+                    },
+                    "undertakingAdditionalDetails": {
+                        "$ref": "#/components/schemas/GteeUndertakingAdditionalDetails"
+                    }
+                }
+            },
+            "GteeUndertaking": {
+                "type": "object",
+                "properties": {
+                    "form": {
+                        "type": "string",
+                        "enum": [
+                            "DEMAND_GUARANTEE",
+                            "STANDBY_LC",
+                            "DEPU"
+                        ],
+                        "description": "The value for \"form\" is mandatory for corporate customers (Where the source system is either API or TNG)"
+                    },
+                    "applicableRules": {
+                        "$ref": "#/components/schemas/GteeUndertakingApplicableRules"
+                    },
+                    "effectiveFrom": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "expiry": {
+                        "$ref": "#/components/schemas/GteeUndertakingExpiry"
+                    },
+                    "applicant": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "issuer": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "beneficiary": {
+                        "$ref": "#/components/schemas/GteeBeneficiaryOrg",
+                        "description": "The value for \"beneficiary\" is mandatory for corporate customers (Where the source system is either API or TNG)"
+                    },
+                    "advisingBank": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "amount": {
+                        "$ref": "#/components/schemas/GteeUndertakingAmount"
+                    },
+                    "charges": {
+                        "maxItems": 6,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 35
+                        }
+                    },
+                    "presentationInstructions": {
+                        "maxItems": 100,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "termsAndConditions": {
+                        "maxItems": 1200,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "addConfirmation": {
+                        "type": "string",
+                        "enum": [
+                            "YES",
+                            "NO",
+                            "MAY_ADD"
+                        ]
+                    },
+                    "confirmingParty": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "governingLaw": {
+                        "$ref": "#/components/schemas/GteeUndertakingAmdGoverningLaw"
+                    },
+                    "automaticExtension": {
+                        "$ref": "#/components/schemas/GteeUndertakingAutomaticExtension"
+                    },
+                    "allowPartialClaims": {
+                        "type": "boolean"
+                    },
+                    "transfers": {
+                        "$ref": "#/components/schemas/GteeUndertakingTransfers"
+                    },
+                    "deliveryOrCollection": {
+                        "$ref": "#/components/schemas/GteeUndertakingDeliveryOrCollection"
+                    },
+                    "textPurpose": {
+                        "type": "string",
+                        "enum": [
+                            "DRAFT",
+                            "FINAL"
+                        ]
+                    },
+                    "demandIndicator": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "dateOfIssue": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "issuerAdditionDetails": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "underlyingTransactionDetails": {
+                        "maxItems": 50,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "advisingBankReference": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "isSustainable": {
+                        "type": "boolean",
+                        "description": "Is Sustainable"
+                    }
+                }
+            },
+            "GteeUndertakingApplicableRules": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "ISPR",
+                            "NONE",
+                            "UCPR",
+                            "URDG",
+                            "OTHER"
+                        ]
+                    },
+                    "details": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeUndertakingExpiry": {
+                "description": "The value for \"expiry.type\" is mandatory for corporate customers (Where the source system is either API or TNG)",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "FIXED",
+                            "OPEN",
+                            "COND",
+                            "NONE"
+                        ]
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "claimPeriod": {
+                        "minimum": 0,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "claimBy": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "conditionOrEvent": {
+                        "maxItems": 12,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    }
+                }
+            },
+            "GteeBeneficiaryOrg": {
+                "type": "object",
+                "properties": {
+                    "erpID": {
+                        "type": "string",
+                        "maxLength": 16
+                    },
+                    "bankID": {
+                        "type": "string",
+                        "maxLength": 16
+                    },
+                    "BIC": {
+                        "type": "string",
+                        "maxLength": 11,
+                        "minLength": 8
+                    },
+                    "accountDetails": {
+                        "type": "string",
+                        "maxLength": 34,
+                        "minLength": 0
+                    },
+                    "partyIdentifier": {
+                        "type": "string",
+                        "maxLength": 34
+                    },
+                    "nameAddress": {
+                        "$ref": "#/components/schemas/NameAddress"
+                    },
+                    "isRelated": {
+                        "type": "boolean",
+                        "description": "whether this organisation is related to the customer"
+                    }
+                }
+            },
+            "GteeUndertakingAmount": {
+                "description": "The value for \"amount\" is mandatory for corporate customers (Where the source system is either API or TNG)",
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "$ref": "#/components/schemas/Amount"
+                    },
+                    "details": {
+                        "maxItems": 12,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    }
+                }
+            },
+            "GteeUndertakingAmdGoverningLaw": {
+                "type": "object",
+                "properties": {
+                    "country": {
+                        "$ref": "#/components/schemas/CountryCodeISO3166"
+                    },
+                    "details": {
+                        "maxLength": 65,
+                        "minLength": 0,
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeUndertakingAutomaticExtension": {
+                "type": "object",
+                "properties": {
+                    "period": {
+                        "$ref": "#/components/schemas/GteeUndertakingAutomaticExtensionPeriod"
+                    },
+                    "notificationPeriod": {
+                        "maximum": 999,
+                        "minimum": 0,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "nonExtensionNotification": {
+                        "maxItems": 12,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "finalExpiryDate": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                }
+            },
+            "GteeUndertakingAutomaticExtensionPeriod": {
+                "type": "object",
+                "properties": {
+                    "valueType": {
+                        "type": "string",
+                        "enum": [
+                            "DAYS_AFTER_EXPIRY",
+                            "OTHER_CLAUSE",
+                            "ONE_YEAR"
+                        ]
+                    },
+                    "daysAfterExpiry": {
+                        "minimum": 0,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "clause": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeUndertakingTransfers": {
+                "type": "object",
+                "properties": {
+                    "isAllowed": {
+                        "type": "boolean"
+                    },
+                    "conditions": {
+                        "maxItems": 12,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    }
+                }
+            },
+            "GteeUndertakingDeliveryOrCollection": {
+                "type": "object",
+                "properties": {
+                    "method": {
+                        "$ref": "#/components/schemas/TransmitMedium"
+                    },
+                    "by": {
+                        "type": "string",
+                        "enum": [
+                            "BENEFICIARY",
+                            "OTHER"
+                        ]
+                    },
+                    "address": {
+                        "$ref": "#/components/schemas/DeliveryOrCollectionNameAddress"
+                    }
+                }
+            },
+            "DeliveryOrCollectionNameAddress": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "example": "ACME Industries"
+                    },
+                    "address": {
+                        "$ref": "#/components/schemas/DeliveryOrCollectionAddress"
+                    },
+                    "primaryContact": {
+                        "$ref": "#/components/schemas/Contact"
+                    }
+                }
+            },
+            "DeliveryOrCollectionAddress": {
+                "type": "object",
+                "properties": {
+                    "lines": {
+                        "type": "array",
+                        "maxItems": 5,
+                        "items": {
+                            "type": "string",
+                            "maxLength": 35
+                        }
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "India"
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "Maharashtra"
+                    },
+                    "postalCode": {
+                        "type": "string",
+                        "example": "123456"
+                    },
+                    "country": {
+                        "$ref": "#/components/schemas/CountryCodeISO3166"
+                    }
+                }
+            },
+            "GteeUndertakingAdditionalDetails": {
+                "type": "object",
+                "properties": {
+                    "messageCreationDateTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "methodOfTransmission": {
+                        "type": "string",
+                        "enum": [
+                            "TELE",
+                            "COUR"
+                        ]
+                    },
+                    "methodOfTransmissionInfo": {
+                        "maxLength": 30,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "typeOfUndertaking": {
+                        "type": "string",
+                        "enum": [
+                            "APAY",
+                            "BILL",
+                            "CUST",
+                            "DPAY",
+                            "INSU",
+                            "JUDI",
+                            "LEAS",
+                            "OTHR",
+                            "PAYM",
+                            "PERF",
+                            "RETN",
+                            "SHIP",
+                            "TEND",
+                            "WARR"
+                        ]
+                    },
+                    "typeOfUndertakingDetails": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "typeOfUndertakingAdditional": {
+                        "type": "string",
+                        "enum": [
+                            "APAY",
+                            "BILL",
+                            "CUST",
+                            "DPAY",
+                            "INSU",
+                            "JUDI",
+                            "LEAS",
+                            "OTHR",
+                            "PAYM",
+                            "PERF",
+                            "RETN",
+                            "SHIP",
+                            "TEND",
+                            "WARR"
+                        ]
+                    },
+                    "typeOfUndertakingAdditionalDetails": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "specialTerms": {
+                        "type": "string",
+                        "enum": [
+                            "EFCT",
+                            "REDC",
+                            "EFRE"
+                        ]
+                    },
+                    "languageOfStandardWording": {
+                        "maxLength": 2,
+                        "minLength": 2,
+                        "type": "string"
+                    },
+                    "approximateExpiryDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "liabilityAccount": {
+                        "maxLength": 34,
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "referenceCode": {
+                        "type": "string",
+                        "enum": [
+                            "TEND",
+                            "ORDR",
+                            "CONT",
+                            "OFFR",
+                            "DELV",
+                            "PINV",
+                            "PROJ"
+                        ]
+                    },
+                    "referenceCodeDetails": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "referenceDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "referenceDate2": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "totalOrderOrContractAmountCur": {
+                        "maxLength": 3,
+                        "minLength": 3,
+                        "type": "string"
+                    },
+                    "totalOrderOrContractAmount": {
+                        "maxLength": 15,
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "undertakingValueInPercent": {
+                        "type": "string"
+                    },
+                    "specialAgreements": {
+                        "maxItems": 50,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "customerContact": {
+                        "maxItems": 4,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 35
+                        }
+                    },
+                    "beneficiaryContact": {
+                        "maxItems": 4,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 35
+                        }
+                    },
+                    "localUndertakingBeneficiaryContact": {
+                        "maxItems": 4,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 35
+                        }
+                    },
+                    "processingBankIdentifier": {
+                        "maxLength": 11,
+                        "minLength": 8,
+                        "type": "string"
+                    },
+                    "leadBankIdentifier": {
+                        "maxLength": 11,
+                        "minLength": 8,
+                        "type": "string"
+                    },
+                    "availableWith": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "availableWithAdditionalDetails": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "obligorInstructingParty": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "obligorInstructingPartyAdditionalDetails": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "adviseThroughBank": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "requestedDateOfIssue": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "demandIndicator": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "underlyingTransactionDetails": {
+                        "maxItems": 50,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "form": {
+                        "type": "string",
+                        "enum": [
+                            "DEMAND_GUARANTEE",
+                            "STANDBY_LC",
+                            "DEPU"
+                        ]
+                    },
+                    "applicableRules": {
+                        "$ref": "#/components/schemas/GteeUndertakingApplicableRules"
+                    },
+                    "expiry": {
+                        "$ref": "#/components/schemas/GteeUndertakingExpiry"
+                    },
+                    "applicantAdditionDetails": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "issuerAdditionDetails": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "beneficiaryAdditionalDetails": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "amount": {
+                        "$ref": "#/components/schemas/GteeUndertakingAmount"
+                    },
+                    "charges": {
+                        "maxItems": 6,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 35
+                        }
+                    },
+                    "presentationInstructions": {
+                        "maxItems": 100,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "termsAndConditions": {
+                        "maxItems": 1200,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "governingLaw": {
+                        "$ref": "#/components/schemas/GteeUndertakingAmdGoverningLaw"
+                    },
+                    "deliveryOrCollectionAdditionalDetails": {
+                        "$ref": "#/components/schemas/GteeUndertakingDeliveryOrCollection"
+                    },
+                    "automaticExtensionAdditionalDetails": {
+                        "$ref": "#/components/schemas/GteeUndertakingAutomaticExtension"
+                    },
+                    "transfers": {
+                        "$ref": "#/components/schemas/GteeUndertakingTransfers"
+                    },
+                    "requestedLocalUndertakingTermsAndConditions": {
+                        "maxItems": 1200,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "standardWordingRequired": {
+                        "maxLength": 4,
+                        "minLength": 4,
+                        "type": "string"
+                    },
+                    "standardWordingRequestedLanguage": {
+                        "maxLength": 2,
+                        "minLength": 2,
+                        "type": "string"
+                    }
+                }
+            },
+            "CustomField": {
+                "required": [
+                    "name",
+                    "value"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "value": {
+                        "maxLength": 65,
+                        "minLength": 0,
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeAmendApplication": {
+                "required": [
+                    "amendmentNo",
+                    "customerID",
+                    "form",
+                    "purpose",
+                    "references"
+                ],
+                "type": "object",
+                "properties": {
+                    "customerID": {
+                        "$ref": "#/components/schemas/CustomerID"
+                    },
+                    "references": {
+                        "$ref": "#/components/schemas/GteeAmendApplicationReferences"
+                    },
+                    "sendBy": {
+                        "$ref": "#/components/schemas/TransmitMedium"
+                    },
+                    "form": {
+                        "type": "string",
+                        "enum": [
+                            "DEMAND_GUARANTEE",
+                            "STANDBY_LC"
+                        ]
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "ADV_PMT_BOND",
+                            "BNK_FACILITIES",
+                            "GOODS_SERVICES",
+                            "OTHERS_CGT_TXN",
+                            "OTHERS_CGT_FIN",
+                            "PERFORMANCE_BOND",
+                            "SECURITY_BOND",
+                            "UTILITY",
+                            "STANDBY_LC",
+                            "BID_TENDER_BOND"
+                        ]
+                    },
+                    "corporateToBankInfo": {
+                        "maxItems": 100,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "amendmentNo": {
+                        "minimum": 1,
+                        "type": "string",
+                        "format": "int32"
+                    },
+                    "attachments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Attachment"
+                        }
+                    },
+                    "purpose": {
+                        "type": "string",
+                        "enum": [
+                            "AMENDMENT",
+                            "ACNA",
+                            "ADVA",
+                            "ISCA",
+                            "ICCA",
+                            "ISUA"
+                        ]
+                    },
+                    "amendmentDetails": {
+                        "$ref": "#/components/schemas/GteeAmendApplicationAmendmentDetails"
+                    },
+                    "customFields": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CustomField"
+                        }
+                    },
+                    "deliveryOrCollection": {
+                        "$ref": "#/components/schemas/GteeAmendApplicationDeliveryOrCollection"
+                    }
+                }
+            },
+            "GteeAmendApplicationReferences": {
+                "required": [
+                    "messageRef",
+                    "sourceSystem"
+                ],
+                "type": "object",
+                "properties": {
+                    "customerRef": {
+                        "maxLength": 16,
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "bankRef": {
+                        "maxLength": 16,
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "messageRef": {
+                        "maxLength": 19,
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "bankBusinessRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "customerBusinessRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "sourceSystem": {
+                        "type": "string",
+                        "enum": [
+                            "S4C",
+                            "API",
+                            "H2H",
+                            "TNG"
+                        ]
+                    }
+                }
+            },
+            "GteeAmendApplicationAmendmentDetails": {
+                "type": "object",
+                "properties": {
+                    "localUndertaking": {
+                        "$ref": "#/components/schemas/GteeUndertakingAmd"
+                    },
+                    "localUndertakingAdditionalDetails": {
+                        "$ref": "#/components/schemas/GteeLocalUndertakingAdditionalDetailsAmd"
+                    }
+                }
+            },
+            "GteeUndertakingAmd": {
+                "type": "object",
+                "properties": {
+                    "expiry": {
+                        "$ref": "#/components/schemas/GteeUndertakingAmdExpiry"
+                    },
+                    "applicableRules": {
+                        "$ref": "#/components/schemas/GteeUndertakingAmdApplicableRules"
+                    },
+                    "effectiveFrom": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "governingLaw": {
+                        "$ref": "#/components/schemas/GteeUndertakingAmdGoverningLaw"
+                    },
+                    "beneficiary": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "addConfirmation": {
+                        "type": "string",
+                        "enum": [
+                            "YES",
+                            "NO",
+                            "MAY_ADD"
+                        ]
+                    },
+                    "confirmingParty": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "amount": {
+                        "$ref": "#/components/schemas/GteeUndertakingAmdAmount"
+                    },
+                    "otherAmendments": {
+                        "maxItems": 1200,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "specialAgreements": {
+                        "maxItems": 50,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "cancellationRequest": {
+                        "maxLength": 6,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "dateOfAmendment": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "issuer": {
+                        "$ref": "#/components/schemas/Org"
+                    }
+                }
+            },
+            "GteeUndertakingAmdExpiry": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "FIXED",
+                            "OPEN",
+                            "COND"
+                        ]
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "claimPeriod": {
+                        "minimum": 0,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "claimBy": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "conditionOrEvent": {
+                        "maxItems": 12,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    }
+                }
+            },
+            "GteeUndertakingAmdApplicableRules": {
+                "required": [
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "ISPR",
+                            "NONE",
+                            "UCPR",
+                            "URDG",
+                            "OTHER"
+                        ]
+                    },
+                    "details": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    }
+                }
+            },
+            "GteeUndertakingAmdAmount": {
+                "type": "object",
+                "properties": {
+                    "action": {
+                        "type": "string",
+                        "enum": [
+                            "INCREASE_BY",
+                            "DECREASE_BY"
+                        ]
+                    },
+                    "value": {
+                        "$ref": "#/components/schemas/Amount"
+                    }
+                }
+            },
+            "GteeLocalUndertakingAdditionalDetailsAmd": {
+                "type": "object",
+                "properties": {
+                    "messageCreationDateTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "methodOfTransmission": {
+                        "type": "string",
+                        "enum": [
+                            "TELE",
+                            "COUR"
+                        ]
+                    },
+                    "customerContact": {
+                        "maxItems": 4,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 35
+                        }
+                    },
+                    "corporateToBankInformation": {
+                        "maxItems": 6,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 35
+                        }
+                    },
+                    "processingBankIdentifier": {
+                        "maxLength": 11,
+                        "minLength": 8,
+                        "type": "string"
+                    },
+                    "leadBankIdentifier": {
+                        "maxLength": 11,
+                        "minLength": 8,
+                        "type": "string"
+                    },
+                    "relatedReference": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "amount": {
+                        "$ref": "#/components/schemas/GteeUndertakingAmdAmount"
+                    },
+                    "expiry": {
+                        "$ref": "#/components/schemas/GteeUndertakingAmdExpiry"
+                    },
+                    "beneficiary": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "otherAmendmentsOfLocalUndertaking": {
+                        "maxItems": 1200,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "issuerAdditionalDetails": {
+                        "$ref": "#/components/schemas/Org"
+                    },
+                    "relatedReferenceAdditionalDetails": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "deliveryOrCollection": {
+                        "$ref": "#/components/schemas/GteeAmendApplicationDeliveryOrCollection"
+                    }
+                }
+            },
+            "GteeAmendApplicationDeliveryOrCollection": {
+                "type": "object",
+                "properties": {
+                    "method": {
+                        "$ref": "#/components/schemas/TransmitMedium"
+                    },
+                    "by": {
+                        "type": "string",
+                        "enum": [
+                            "BENEFICIARY",
+                            "OTHER"
+                        ]
+                    },
+                    "address": {
+                        "$ref": "#/components/schemas/DeliveryOrCollectionNameAddress"
+                    }
+                }
+            },
+            "FreeFormatMessage": {
+                "required": [
+                    "customerID",
+                    "messageCreationDateTime",
+                    "references"
+                ],
+                "type": "object",
+                "properties": {
+                    "customerID": {
+                        "$ref": "#/components/schemas/CustomerID"
+                    },
+                    "references": {
+                        "$ref": "#/components/schemas/FreeFormatMessageReferences"
+                    },
+                    "messageCreationDateTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "requestType": {
+                        "type": "string",
+                        "enum": [
+                            "OTHR",
+                            "EXTND",
+                            "PRVTNG"
+                        ]
+                    },
+                    "function": {
+                        "type": "string",
+                        "enum": [
+                            "CLSVOPEN",
+                            "CLSVCLOS",
+                            "FRAUDMSG",
+                            "GENINFAD",
+                            "ISSAMEND",
+                            "ISSUANCE",
+                            "OTHERFNC",
+                            "PREDENOT",
+                            "REIMBURS",
+                            "REQAMEND",
+                            "REQFINAN",
+                            "REQISSUE",
+                            "TRANSFER",
+                            "DTC"
+                        ]
+                    },
+                    "swift": {
+                        "$ref": "#/components/schemas/FreeFormatMessageSwift"
+                    },
+                    "instructions": {
+                        "maxItems": 1200,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    },
+                    "attachments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Attachment"
+                        }
+                    },
+                    "additionalDetails": {
+                        "$ref": "#/components/schemas/FreeFormatAdditionalDetails"
+                    },
+                    "customFields": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FreeFormatCustomField"
+                        }
+                    }
+                }
+            },
+            "FreeFormatMessageReferences": {
+                "required": [
+                    "messageRef",
+                    "sourceSystem"
+                ],
+                "type": "object",
+                "properties": {
+                    "customerRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "bankRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "messageRef": {
+                        "maxLength": 30,
+                        "minLength": 1,
+                        "type": "string"
+                    },
+                    "bankBusinessRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "customerBusinessRef": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "sourceSystem": {
+                        "type": "string",
+                        "enum": [
+                            "S4C",
+                            "H2H",
+                            "API",
+                            "TNG"
+                        ]
+                    }
+                },
+                "description": "References for this application * messageRef: Reference assigned by the sending system to unambiguously identify the api message. Useful for troubleshooting technical issues. * customerRef: Reference assigned by the customer * bankRef: Reference assigned by the bank to the related transaction * bankBusinessRef: Business reference assigned by the bank "
+            },
+            "FreeFormatMessageSwift": {
+                "type": "object",
+                "properties": {
+                    "messageType": {
+                        "type": "string",
+                        "enum": [
+                            "RFI",
+                            "FFI",
+                            "RSP",
+                            "FFIS4C759",
+                            "FFIS4C799",
+                            "FFIRQ797",
+                            "FFIS4C778",
+                            "FFIS4C719",
+                            "FFIS4C783",
+                            "FFIDTC"
+                        ]
+                    },
+                    "formOfUndertaking": {
+                        "type": "string",
+                        "enum": [
+                            "DEPU",
+                            "DGAR",
+                            "STBY",
+                            "DOCR",
+                            "UNDK"
+                        ]
+                    }
+                }
+            },
+            "FreeFormatAdditionalDetails": {
+                "type": "object",
+                "properties": {
+                    "customerContact": {
+                        "maxItems": 4,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 35
+                        }
+                    },
+                    "corporateToBankInformation": {
+                        "maxItems": 6,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 35
+                        }
+                    },
+                    "fileIdentification": {
+                        "type": "string",
+                        "enum": [
+                            "FACT",
+                            "FAXT",
+                            "EMAL",
+                            "MAIL",
+                            "COUR",
+                            "HOST",
+                            "OTHR"
+                        ]
+                    },
+                    "fileIdentificationText": {
+                        "maxLength": 65,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "customerIdentifierCode": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "customerIdentifier": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "processingBankIdentifier": {
+                        "maxLength": 11,
+                        "minLength": 8,
+                        "type": "string"
+                    },
+                    "leadBankIdentifier": {
+                        "maxLength": 11,
+                        "minLength": 8,
+                        "type": "string"
+                    },
+                    "issuer": {
+                        "$ref": "#/components/schemas/Org"
+                    }
+                }
+            },
+            "FreeFormatCustomField": {
+                "required": [
+                    "name"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "value": {
+                        "maxLength": 65,
+                        "minLength": 0,
+                        "type": "string"
+                    },
+                    "longFieldValue": {
+                        "maxItems": 100,
+                        "minItems": 0,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 65
+                        }
+                    }
+                },
+                "description": "Additional user defined field"
+            },
+            "StandardResponse": {
+                "required": [
+                    "requestId",
+                    "receivedAt"
+                ],
+                "type": "object",
+                "properties": {
+                    "requestId": {
+                        "type": "string",
+                        "description": "Unique request id assigned by the bank"
+                    },
+                    "receivedAt": {
+                        "type": "string",
+                        "description": "Time at which the message was received",
+                        "format": "date-time",
+                        "example": "2021-01-30T08:30:00Z"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Current status of the message",
+                        "enum": [
+                            "RECEIVED",
+                            "PROCESSING",
+                            "REJECTED",
+                            "FAILED",
+                            "PROCESSED"
+                        ]
+                    },
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/StandardResponseErrors"
+                        }
+                    }
+                }
+            },
+            "StandardResponseErrors": {
+                "type": "object",
+                "properties": {
+                    "details": {
+                        "type": "string",
+                        "description": "error details"
+                    }
+                }
+            },
+            "TradeLimitDetails": {
+                "required": [
+                    "countryCode",
+                    "customerId"
+                ],
+                "type": "object",
+                "properties": {
+                    "countryCode": {
+                        "type": "string",
+                        "$ref": "#/components/schemas/CountryCodeISO3166",
+                        "description": "Customer Country Code (ISO Country Code)",
+                        "maxLength": 5
+                    },
+                    "customerId": {
+                        "type": "string",
+                        "description": "Customer Unique ID"
+                    },
+                    "anchorLimits": {
+                        "$ref": "#/components/schemas/AnchorLimits",
+                        "description": "Anchor Facility Summary (Program View) - It contains information on the limits & utilization for supply chain finance program clients."
+                    },
+                    "tradeLimits": {
+                        "$ref": "#/components/schemas/TradeLimits",
+                        "description": "Trade Facility Summary (External) – It contains information on client's (main borrower/ co-borrower) trade limits approved by the bank"
+                    }
+                }
+            },
+            "AnchorLimits": {
+                "type": "object",
+                "properties": {
+                    "countryCode": {
+                        "type": "string",
+                        "$ref": "#/components/schemas/CountryCodeISO3166",
+                        "description": "Customer Country Code (ISO Country Code)",
+                        "minLength": 1,
+                        "maxLength": 5,
+                        "example": "SG"
+                    },
+                    "anchorName": {
+                        "type": "string",
+                        "description": "Name of customer",
+                        "minLength": 1,
+                        "maxLength": 128,
+                        "example": "ABC Pvt Ltd"
+                    },
+                    "statusAsofTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last Updated Timestamp.This Should be a date in ISO 8601 format of YYYY-MM-DDThh:mm:ssZ.This is the recommended form of date/timestamp(Complete date plus hours, minutes, seconds and a decimal fraction of a second in ISO-8601 format)",
+                        "example": "2018-07-25T19:51:40Z"
+                    },
+                    "outerLimits": {
+                        "type": "array",
+                        "description": "Outer Limit [or the Parent Limit] is the maximum limit approved to a client in specific to a product category.",
+                        "items": {
+                            "$ref": "#/components/schemas/AnchorOuterLimits"
+                        }
+                    }
+                }
+            },
+            "AnchorOuterLimits": {
+                "type": "object",
+                "properties": {
+                    "spokeCountryCode": {
+                        "type": "string",
+                        "$ref": "#/components/schemas/CountryCodeISO3166",
+                        "description": "Supplier Country Code (ISO Country Code)",
+                        "maxLength": 5,
+                        "example": "SG"
+                    },
+                    "spokeName": {
+                        "type": "string",
+                        "description": "Spoke/Supplier Name",
+                        "maxLength": 128,
+                        "example": "STAR Pvt Ltd"
+                    },
+                    "program": {
+                        "type": "object",
+                        "description": "Program Description",
+                        "$ref": "#/components/schemas/AnchorLimitsProgram"
+                    },
+                    "limitGroup": {
+                        "type": "object",
+                        "description": "Limit Group's Description",
+                        "$ref": "#/components/schemas/AnchorLimitsGroup"
+                    },
+                    "product": {
+                        "type": "object",
+                        "description": "Product Code & Description",
+                        "$ref": "#/components/schemas/AnchorLimitsProduct"
+                    },
+                    "activationDate": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Date of limit activation (YYYY-MM-DD)",
+                        "example": "2018-05-01"
+                    },
+                    "expiryDate": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Expiry Date for limits  (YYYY-MM-DD)",
+                        "example": "2049-12-31"
+                    },
+                    "committed": {
+                        "type": "string",
+                        "description": "Is the client committed to use the facility",
+                        "maxLength": 1,
+                        "example": "N"
+                    },
+                    "limitCurrency": {
+                        "type": "string",
+                        "description": "Limit Currency Code (ISO Currency Code)",
+                        "maxLength": 3,
+                        "example": "SGD",
+                        "$ref": "#/components/schemas/CurrencyCodeISO4217"
+                    },
+                    "limitAmount": {
+                        "type": "number",
+                        "description": "Limit amount in limit currency",
+                        "example": 3000
+                    },
+                    "limitAmountInUSD": {
+                        "type": "number",
+                        "description": "Limit amount in USD",
+                        "example": 2250
+                    },
+                    "utilizedAmount": {
+                        "type": "number",
+                        "description": "Limit utilization in limit currency",
+                        "example": 0
+                    },
+                    "utilizedAmountInUSD": {
+                        "type": "number",
+                        "description": "Limit utilization in USD",
+                        "example": 0
+                    },
+                    "availableAmount": {
+                        "type": "number",
+                        "description": "Available Limit Amount in limit currency",
+                        "example": 3000
+                    },
+                    "availableAmountInUSD": {
+                        "type": "number",
+                        "description": "Available Limit Amount in USD",
+                        "example": 2250
+                    },
+                    "innerLimits": {
+                        "type": "array",
+                        "description": "Inner Limit [Baby Limit] operates within the Outer Limit to create flexibility for the client to utilize the approved loan facility.",
+                        "items": {
+                            "$ref": "#/components/schemas/AnchorInnerLimits"
+                        }
+                    }
+                }
+            },
+            "AnchorInnerLimits": {
+                "type": "object",
+                "properties": {
+                    "spokeCountryCode": {
+                        "type": "string",
+                        "$ref": "#/components/schemas/CountryCodeISO3166",
+                        "description": "Supplier Country Code (ISO Country Code)",
+                        "maxLength": 5,
+                        "example": "SG"
+                    },
+                    "spokeName": {
+                        "type": "string",
+                        "description": "Name of the spoke",
+                        "maxLength": 128,
+                        "example": "STAR Pvt Ltd"
+                    },
+                    "program": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/AnchorLimitsProgram",
+                        "description": "Program Code & Description"
+                    },
+                    "limitGroup": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/AnchorLimitsGroup",
+                        "description": "Limit Group Id & Description"
+                    },
+                    "product": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/AnchorLimitsProduct",
+                        "description": "Product Code & Description"
+                    },
+                    "activationDate": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Date of limit  activation (YYYY-MM-DD)",
+                        "example": "2018-05-01"
+                    },
+                    "expiryDate": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Expiry Date for limits  (YYYY-MM-DD)",
+                        "example": "2049-12-31"
+                    },
+                    "committed": {
+                        "type": "string",
+                        "description": "Is the client committed to use the facility",
+                        "maxLength": 1,
+                        "example": "N"
+                    },
+                    "limitCurrency": {
+                        "type": "string",
+                        "description": "Limit Currency Code (ISO Currency Code)",
+                        "maxLength": 3,
+                        "example": "SGD",
+                        "$ref": "#/components/schemas/CurrencyCodeISO4217"
+                    },
+                    "limitAmount": {
+                        "type": "number",
+                        "description": "Limit amount in limit currency",
+                        "example": 3000
+                    },
+                    "limitAmountInUSD": {
+                        "type": "number",
+                        "description": "Limit amount in USD",
+                        "example": 2250
+                    },
+                    "utilizedAmount": {
+                        "type": "number",
+                        "description": "Utilized Amount in limit currency",
+                        "example": 0
+                    },
+                    "utilizedAmountInUSD": {
+                        "type": "number",
+                        "description": "Utilized Amount in USD",
+                        "example": 0
+                    },
+                    "availableAmount": {
+                        "type": "number",
+                        "description": "Available Limit Amount in limit currency",
+                        "example": 3000
+                    },
+                    "availableAmountInUSD": {
+                        "type": "number",
+                        "description": "Available Limit Amount in USD",
+                        "example": 2250
+                    }
+                }
+            },
+            "AnchorLimitsGroup": {
+                "type": "object",
+                "properties": {
+                    "desc": {
+                        "type": "string",
+                        "description": "Limit Group description",
+                        "maxLength": 80,
+                        "example": "GTF-Buyer Fin Prog"
+                    }
+                }
+            },
+            "AnchorLimitsProduct": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "description": "Product Code",
+                        "maxLength": 15,
+                        "example": "IFNB"
+                    },
+                    "desc": {
+                        "type": "string",
+                        "description": "Product Description",
+                        "maxLength": 80,
+                        "example": "Invoice Financing Buyer"
+                    }
+                }
+            },
+            "AnchorLimitsProgram": {
+                "type": "object",
+                "properties": {
+                    "desc": {
+                        "type": "string",
+                        "description": "Program Description",
+                        "maxLength": 80,
+                        "example": "Buyer Finance Programme"
+                    }
+                }
+            },
+            "TradeLimits": {
+                "type": "object",
+                "properties": {
+                    "countryCode": {
+                        "type": "string",
+                        "$ref": "#/components/schemas/CountryCodeISO3166",
+                        "description": "Customer Country Code (ISO Country Code)",
+                        "maxLength": 5,
+                        "example": "HK"
+                    },
+                    "customerName": {
+                        "type": "string",
+                        "description": "Customer Name",
+                        "maxLength": 128,
+                        "example": "ABC Pvt Ltd"
+                    },
+                    "statusAsofTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Last Updated Timestamp.This Should be a date in ISO 8601 format of YYYY-MM-DDThh:mm:ssZ.This is the recommended form of date/timestamp(Complete date plus hours, minutes, seconds and a decimal fraction of a second in ISO-8601 format)",
+                        "example": "2018-07-25T19:51:40Z"
+                    },
+                    "customerLimitDetails": {
+                        "type": "object",
+                        "description": "Section contains the customer limit details",
+                        "$ref": "#/components/schemas/CustomerLimitDetails"
+                    },
+                    "coBorrowerLimitDetails": {
+                        "type": "array",
+                        "description": "Section contains the CoBorrower Limit Details",
+                        "items": {
+                            "$ref": "#/components/schemas/CoBorrowerLimitDetails"
+                        }
+                    }
+                }
+            },
+            "CoBorrowerLimitDetails": {
+                "type": "object",
+                "properties": {
+                    "coBorrowerCountryCode": {
+                        "type": "string",
+                        "$ref": "#/components/schemas/CountryCodeISO3166",
+                        "maxLength": 5,
+                        "description": "Co-Borrower Country Code (ISO Country Code)",
+                        "example": "HK"
+                    },
+                    "coBorrowerName": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "description": "Co-Borrower Name",
+                        "example": "ABC Pvt LTD"
+                    },
+                    "outerLimits": {
+                        "type": "array",
+                        "items": {
+                            "description": "Outer Limit [or the Parent Limit] is the maximum limit approved to a client in specific to a product category.",
+                            "$ref": "#/components/schemas/OuterLimits"
+                        }
+                    }
+                }
+            },
+            "InnerLimits": {
+                "type": "object",
+                "properties": {
+                    "activationDate": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Date of limit activation (YYYY-MM-DD)",
+                        "example": "2023-01-01"
+                    },
+                    "expiryDate": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Expiry Date for limits (YYYY-MM-DD)",
+                        "example": "2049-12-31"
+                    },
+                    "limitGroup": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/AnchorLimitsGroup",
+                        "description": "Limit Group Id & Description"
+                    },
+                    "counterPartyCountryCode": {
+                        "type": "string",
+                        "$ref": "#/components/schemas/CountryCodeISO3166",
+                        "maxLength": 5,
+                        "description": "Counterparty Country Code (ISO Country Code)",
+                        "example": "SG"
+                    },
+                    "counterPartyName": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "description": "Counter party Name",
+                        "example": "STAR Pvt Ltd"
+                    },
+                    "mainBorrowerCountryCode": {
+                        "type": "string",
+                        "$ref": "#/components/schemas/CountryCodeISO3166",
+                        "maxLength": 5,
+                        "description": "Main Borrower Country Code (ISO Country Code)",
+                        "example": "SG"
+                    },
+                    "mainBorrowerName": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "description": "Main Borrower Name",
+                        "example": "Allianz Pvt Ltd"
+                    },
+                    "committed": {
+                        "type": "string",
+                        "maxLength": 1,
+                        "description": "Is the client committed to use the facility",
+                        "example": "N"
+                    },
+                    "program": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/AnchorLimitsProgram",
+                        "description": "Program Code & Description"
+                    },
+                    "product": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/AnchorLimitsProduct",
+                        "description": "Product Code & Description"
+                    },
+                    "limitCurrency": {
+                        "type": "string",
+                        "description": "Limit Currency Code (ISO Currency Code)",
+                        "maxLength": 3,
+                        "$ref": "#/components/schemas/CurrencyCodeISO4217",
+                        "example": "HKD"
+                    },
+                    "limitAmount": {
+                        "type": "number",
+                        "description": "Limit amount in Limit currency",
+                        "example": 7500000
+                    },
+                    "limitAmountInUSD": {
+                        "type": "number",
+                        "description": "Limit amount in USD",
+                        "example": 975000
+                    },
+                    "utilizedAmount": {
+                        "type": "number",
+                        "description": "Limit utilization in Limit currency",
+                        "example": 0
+                    },
+                    "utilizedAmountInUSD": {
+                        "type": "number",
+                        "description": "Limit utilization in USD",
+                        "example": 0
+                    },
+                    "availableAmount": {
+                        "type": "number",
+                        "description": "Available Limit in Limit currency",
+                        "example": 7500000
+                    },
+                    "availableAmountInUSD": {
+                        "type": "number",
+                        "description": "Available Limit  in USD",
+                        "example": 975000
+                    }
+                }
+            },
+            "CustomerLimitDetails": {
+                "type": "object",
+                "properties": {
+                    "outerLimits": {
+                        "type": "array",
+                        "description": "Outer Limit [or the Parent Limit] is the maximum limit approved to a client in specific to a product category.",
+                        "items": {
+                            "$ref": "#/components/schemas/OuterLimits"
+                        }
+                    }
+                }
+            },
+            "OuterLimits": {
+                "type": "object",
+                "properties": {
+                    "product": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/AnchorLimitsProduct",
+                        "description": "Product Code & Description"
+                    },
+                    "limitGroup": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/AnchorLimitsGroup",
+                        "description": "Limit Group Description"
+                    },
+                    "activationDate": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Date of limit  activation (YYYY-MM-DD)",
+                        "example": "2018-05-01"
+                    },
+                    "expiryDate": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Expiry Date for limits  (YYYY-MM-DD)",
+                        "example": "2049-12-31"
+                    },
+                    "counterPartyCountryCode": {
+                        "type": "string",
+                        "$ref": "#/components/schemas/CountryCodeISO3166",
+                        "description": "Counterparty Country Code (ISO Country Code)",
+                        "maxLength": 5,
+                        "example": "SG"
+                    },
+                    "counterPartyName": {
+                        "type": "string",
+                        "description": "Counter party Name",
+                        "maxLength": 128,
+                        "example": "STAR Pvt Ltd"
+                    },
+                    "mainBorrowerCountryCode": {
+                        "type": "string",
+                        "$ref": "#/components/schemas/CountryCodeISO3166",
+                        "description": "Main Borrower Country Code (ISO Country Code)",
+                        "maxLength": 5,
+                        "example": "SG"
+                    },
+                    "mainBorrowerName": {
+                        "type": "string",
+                        "description": "Main Borrower Name",
+                        "maxLength": 128,
+                        "example": "Allianz Pvt Ltd"
+                    },
+                    "committed": {
+                        "type": "string",
+                        "description": "Is the client committed to use the facility",
+                        "maxLength": 1,
+                        "example": "N"
+                    },
+                    "limitCurrency": {
+                        "type": "string",
+                        "description": "Limit Currency Code (ISO Currency Code)",
+                        "maxLength": 5,
+                        "$ref": "#/components/schemas/CurrencyCodeISO4217",
+                        "example": "HKD"
+                    },
+                    "limitAmount": {
+                        "type": "number",
+                        "description": "Limit amount in Limit currency",
+                        "example": 7500000
+                    },
+                    "limitAmountInUSD": {
+                        "type": "number",
+                        "description": "Limit amount in USD",
+                        "example": 975000
+                    },
+                    "utilizedAmount": {
+                        "type": "number",
+                        "description": "Limit utilization in Limit currency",
+                        "example": 0
+                    },
+                    "utilizedAmountInUSD": {
+                        "type": "number",
+                        "description": "Limit utilization in USD",
+                        "example": 0
+                    },
+                    "availableAmount": {
+                        "type": "number",
+                        "description": "Available Limit in Limit currency",
+                        "example": 7500000
+                    },
+                    "availableAmountInUSD": {
+                        "type": "number",
+                        "description": "Available Limit in USD",
+                        "example": 975000
+                    },
+                    "innerLimits": {
+                        "type": "array",
+                        "description": "Inner Limit [Baby Limit] operates within the Outer Limit to create flexibility for the client to utilize the approved loan facility.",
+                        "items": {
+                            "$ref": "#/components/schemas/InnerLimits"
+                        }
+                    }
+                }
+            },
+            "TradeLimitResponse": {
+                "required": [
+                    "requestId",
+                    "receivedAt",
+                    "status",
+                    "errors"
+                ],
+                "type": "object",
+                "properties": {
+                    "requestId": {
+                        "type": "string",
+                        "description": "Unique request id assigned by the bank"
+                    },
+                    "receivedAt": {
+                        "type": "string",
+                        "description": "Time at which the message request was received by the API from the customer",
+                        "format": "date-time",
+                        "example": "2021-01-30T08:30:00Z"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Current status of the message",
+                        "enum": [
+                            "RECEIVED",
+                            "PROCESSING",
+                            "REJECTED",
+                            "FAILED",
+                            "PROCESSED"
+                        ]
+                    },
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/StandardResponseErrors"
+                        }
+                    }
+                }
+            },
+            "CurrencyCodeISO4217": {
+                "type": "string",
+                "example": "SGD",
+                "enum": [
+                    "AED",
+                    "AFN",
+                    "ALL",
+                    "AMD",
+                    "ANG",
+                    "AOA",
+                    "ARS",
+                    "AUD",
+                    "AWG",
+                    "AZN",
+                    "BAM",
+                    "BBD",
+                    "BDT",
+                    "BGN",
+                    "BHD",
+                    "BIF",
+                    "BMD",
+                    "BND",
+                    "BOB",
+                    "BOV",
+                    "BRL",
+                    "BSD",
+                    "BTN",
+                    "BWP",
+                    "BYN",
+                    "BZD",
+                    "CAD",
+                    "CDF",
+                    "CHE",
+                    "CHF",
+                    "CHW",
+                    "CLF",
+                    "CLP",
+                    "CNH",
+                    "CNY",
+                    "COP",
+                    "COU",
+                    "CRC",
+                    "CUC",
+                    "CUP",
+                    "CVE",
+                    "CZK",
+                    "DJF",
+                    "DKK",
+                    "DOP",
+                    "DZD",
+                    "EGP",
+                    "ERN",
+                    "ETB",
+                    "EUR",
+                    "FJD",
+                    "FKP",
+                    "GBP",
+                    "GEL",
+                    "GHS",
+                    "GIP",
+                    "GMD",
+                    "GNF",
+                    "GTQ",
+                    "GYD",
+                    "HKD",
+                    "HNL",
+                    "HRK",
+                    "HTG",
+                    "HUF",
+                    "IDR",
+                    "ILS",
+                    "INR",
+                    "IQD",
+                    "IRR",
+                    "ISK",
+                    "JMD",
+                    "JOD",
+                    "JPY",
+                    "KES",
+                    "KGS",
+                    "KHR",
+                    "KMF",
+                    "KPW",
+                    "KRW",
+                    "KWD",
+                    "KYD",
+                    "KZT",
+                    "LAK",
+                    "LBP",
+                    "LKR",
+                    "LRD",
+                    "LSL",
+                    "LYD",
+                    "MAD",
+                    "MDL",
+                    "MGA",
+                    "MKD",
+                    "MMK",
+                    "MNT",
+                    "MOP",
+                    "MRU",
+                    "MUR",
+                    "MVR",
+                    "MWK",
+                    "MXN",
+                    "MXV",
+                    "MYR",
+                    "MZN",
+                    "NAD",
+                    "NGN",
+                    "NIO",
+                    "NOK",
+                    "NPR",
+                    "NZD",
+                    "OMR",
+                    "PAB",
+                    "PEN",
+                    "PGK",
+                    "PHP",
+                    "PKR",
+                    "PLN",
+                    "PYG",
+                    "QAR",
+                    "RON",
+                    "RSD",
+                    "RUB",
+                    "RWF",
+                    "SAR",
+                    "SBD",
+                    "SCR",
+                    "SDG",
+                    "SEK",
+                    "SGD",
+                    "SHP",
+                    "SLL",
+                    "SLE",
+                    "SOS",
+                    "SRD",
+                    "SSP",
+                    "STN",
+                    "SVC",
+                    "SYP",
+                    "SZL",
+                    "THB",
+                    "TJS",
+                    "TMT",
+                    "TND",
+                    "TOP",
+                    "TRY",
+                    "TTD",
+                    "TWD",
+                    "TZS",
+                    "UAH",
+                    "UGX",
+                    "USD",
+                    "USN",
+                    "UYI",
+                    "UYU",
+                    "UYW",
+                    "UZS",
+                    "VES",
+                    "VND",
+                    "VUV",
+                    "WST",
+                    "XAF",
+                    "XAG",
+                    "XAU",
+                    "XBA",
+                    "XBB",
+                    "XBC",
+                    "XBD",
+                    "XCD",
+                    "XDR",
+                    "XOF",
+                    "XPD",
+                    "XPF",
+                    "XPT",
+                    "XSU",
+                    "XTS",
+                    "XUA",
+                    "XXX",
+                    "YER",
+                    "ZAR",
+                    "ZMW",
+                    "ZWL"
+                ]
+            },
+            "CountryCodeISO3166": {
+                "type": "string",
+                "example": "SP",
+                "enum": [
+                    "AD",
+                    "AE",
+                    "AF",
+                    "AG",
+                    "AI",
+                    "AL",
+                    "AM",
+                    "AN",
+                    "AO",
+                    "AQ",
+                    "AR",
+                    "AS",
+                    "AT",
+                    "AU",
+                    "AW",
+                    "AX",
+                    "AZ",
+                    "BA",
+                    "BB",
+                    "BD",
+                    "BE",
+                    "BF",
+                    "BG",
+                    "BH",
+                    "BI",
+                    "BJ",
+                    "BL",
+                    "BM",
+                    "BN",
+                    "BO",
+                    "BQ",
+                    "BR",
+                    "BS",
+                    "BT",
+                    "BV",
+                    "BW",
+                    "BY",
+                    "BZ",
+                    "CA",
+                    "CC",
+                    "CD",
+                    "CF",
+                    "CG",
+                    "CH",
+                    "CI",
+                    "CK",
+                    "CL",
+                    "CM",
+                    "CN",
+                    "CO",
+                    "CR",
+                    "CS",
+                    "CU",
+                    "CV",
+                    "CW",
+                    "CX",
+                    "CY",
+                    "CZ",
+                    "DE",
+                    "DF",
+                    "DJ",
+                    "DK",
+                    "DM",
+                    "DO",
+                    "DZ",
+                    "EC",
+                    "EE",
+                    "EG",
+                    "EH",
+                    "ER",
+                    "ES",
+                    "ET",
+                    "FI",
+                    "FJ",
+                    "FK",
+                    "FM",
+                    "FO",
+                    "FR",
+                    "GA",
+                    "GB",
+                    "GD",
+                    "GE",
+                    "GF",
+                    "GG",
+                    "GH",
+                    "GI",
+                    "GL",
+                    "GM",
+                    "GN",
+                    "GP",
+                    "GQ",
+                    "GR",
+                    "GS",
+                    "GT",
+                    "GU",
+                    "GW",
+                    "GY",
+                    "HK",
+                    "HM",
+                    "HN",
+                    "HR",
+                    "HT",
+                    "HU",
+                    "ID",
+                    "IE",
+                    "IL",
+                    "IM",
+                    "IN",
+                    "IO",
+                    "IQ",
+                    "IR",
+                    "IS",
+                    "IT",
+                    "JE",
+                    "JM",
+                    "JO",
+                    "JP",
+                    "KE",
+                    "KG",
+                    "KH",
+                    "KI",
+                    "KM",
+                    "KN",
+                    "KP",
+                    "KR",
+                    "KW",
+                    "KY",
+                    "KZ",
+                    "LA",
+                    "LB",
+                    "LC",
+                    "LI",
+                    "LK",
+                    "LR",
+                    "LS",
+                    "LT",
+                    "LU",
+                    "LV",
+                    "LY",
+                    "MA",
+                    "MC",
+                    "MD",
+                    "ME",
+                    "MF",
+                    "MG",
+                    "MH",
+                    "MK",
+                    "ML",
+                    "MM",
+                    "MN",
+                    "MO",
+                    "MP",
+                    "MQ",
+                    "MR",
+                    "MS",
+                    "MT",
+                    "MU",
+                    "MV",
+                    "MW",
+                    "MX",
+                    "MY",
+                    "MZ",
+                    "NA",
+                    "NC",
+                    "NE",
+                    "NF",
+                    "NG",
+                    "NI",
+                    "NL",
+                    "false",
+                    "NO",
+                    "NP",
+                    "NR",
+                    "NU",
+                    "NZ",
+                    "OM",
+                    "PA",
+                    "PE",
+                    "PF",
+                    "PG",
+                    "PH",
+                    "PK",
+                    "PL",
+                    "PM",
+                    "PN",
+                    "PR",
+                    "PS",
+                    "PT",
+                    "PW",
+                    "PY",
+                    "QA",
+                    "RE",
+                    "RO",
+                    "RS",
+                    "RU",
+                    "RW",
+                    "SA",
+                    "SB",
+                    "SC",
+                    "SD",
+                    "SE",
+                    "SG",
+                    "SH",
+                    "SI",
+                    "SJ",
+                    "SK",
+                    "SL",
+                    "SM",
+                    "SN",
+                    "SO",
+                    "SP",
+                    "SR",
+                    "SS",
+                    "ST",
+                    "SV",
+                    "SX",
+                    "SY",
+                    "SZ",
+                    "TC",
+                    "TD",
+                    "TF",
+                    "TG",
+                    "TH",
+                    "TJ",
+                    "TK",
+                    "TL",
+                    "TM",
+                    "TN",
+                    "TO",
+                    "TR",
+                    "TT",
+                    "TV",
+                    "TW",
+                    "TZ",
+                    "UA",
+                    "UG",
+                    "UM",
+                    "US",
+                    "UY",
+                    "UZ",
+                    "VA",
+                    "VB",
+                    "VC",
+                    "VE",
+                    "VG",
+                    "VI",
+                    "VN",
+                    "VU",
+                    "WF",
+                    "WS",
+                    "XK",
+                    "XT",
+                    "XX",
+                    "YE",
+                    "YT",
+                    "ZA",
+                    "ZM",
+                    "ZW",
+                    "All"
+                ]
+            }
+        }
+    }
+}

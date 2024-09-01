@@ -1,0 +1,3539 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Consumer Loan APIs Specifications",
+    "version": "1.0.0",
+    "description": "## Introduction\nThere are 7 API services in this group for Loan APIs. <br/> 1. Loan Listing to retrieve loan relationship master details <br/> 2. Loan Details to retrieve loan enquiry balance details <br/> 3. Loan Statements to retrieve single Loan Statement deails<br/> 4. Loan Delinquencies to retrieve all delinquency details<br/> 5. Loan Repayment Schedule to retrieve repayment schedule according to request<br/> 6. Interest certificate<br/> 7. Transaction posting[repayment]<br/>\n## Encryption and Signing\nEncryption and Signing uses JSON Web Tokens (JWT), an open industry standard <a href=\"https://tools.ietf.org/html/rfc7519\">RFC7519</a> method to represent claims securely across two parties.\n### Algorithms\nSCB provides support for the beLow-mentioned algorithms, which are specified in the JOSE Header, as per <a href=\"https://tools.ietf.org/html/rfc7515\">JSON Web Signature</a> (JWS) and <a href=\"https://tools.ietf.org/html/rfc7516#section-4.1.12\">JSON Web Encryption</a> (JWE) Standards.\n <table>\n  <thead>\n    <tr>\n      <th width='25%'>Standard</th>\n      <th width='25%'>Algorithm</th>\n      <th width='70%'>JOSE Header</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>JSON Web Signature (JWS)</td>\n      <td>ES256</td>\n      <td>\n        kid: (key id)\n        cty: JWS\n        alg: ES256\n      </td>\n    </tr>\n    <tr>\n      <td>JSON Web Encryption (JWE)</td>\n      <td>RSA-OAEP-256 (Asymmetric)</td>\n      <td>\n          kid: (key id)\n          cty: JWT\n          alg: RSA-OAEP-256\n      </td>\n    </tr>\n    </tbody>\n</table>\n\n<hr/>\n\n## Guide for JWE and JWS\nAs per SCB API Security standards, SCB uses Compact Serialization for its <a href=\"https://tools.ietf.org/html/rfc7515#section-7.1\">JWS</a>/<a href=\"https://tools.ietf.org/html/rfc7516#section-3.1\">JWE</a> representation. The content to be sent to the client <b>is first signed folLowing JWS specifications</b> and <b>then encrypted and sent as a JWE to the client</b>. Specifics for creating each component are as shown beLow:\n### JSON Web Signature\nThe folLowing describes the structure of our JWS.\n\n**Message** : Content to be sent to client\n\n**JWS Payload** : BASE64URL-ENCODE(Message)\n\n**Signature** : ASCII(BASE64URL-ENCODE(UTF8(JOSE Header))‘.’BASE64URL-ENCODE(JWS Payload))\n\n**Structure** : BASE64URL(UTF8(JOSE Header))‘.’BASE64URL(JWS Payload)‘.’BASE64URL(JWS Signature)\n<hr/>\n\n### JSON Web Encryption\nThe folLowing describes the structure of our JWE. The payload in our JWE is the JWS we have created in the steps above. The JOSE header of JWE contains both symmetric and asymmetric encryptions. Symmetric encryption to encrypt the payload, and assymetric encryption to encrypt the symmetric key. The assymetric keypair belongs to the client who will be receiving the JWE.\n\n**JWE Payload** : JWS Signature (from above)\n\n**JWE Ciphertext** : *ENCRYPT-SYMMETRIC*(JWE Payload)\n\n**JWE Encrypted Key** : *ENCRYPT-ASYMMETRIC*(Symmetric Key) - using client's public key\n\n**Structure** : BASE64URL-ENCODE(UTF8(JWE Header))‘.’BASE64URL-ENCODE(JWE Encrypted Key)‘.’BASE64URL-ENCODE(JWE Initialization Vector)‘.’BASE64URL-ENCODE(JWE Ciphertext)‘.’BASE64URL-ENCODE(JWE Authentication Tag)\n\n## API Response Codes\n\n\n  <table style='border: 0.5px solid; '>\n    <thead>\n      <tr>\n        <th width='5%'>Response Code</th>\n        <th width='40%'>Response Message</th>\n        <th width='10%'>HTTP status</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>E001</td>\n        <td>Field is mandatory</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E002</td>\n        <td>Field value not in valid range</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E003</td>\n        <td>Invalid Format</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E004</td>\n        <td>Contains invalid characters</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E005</td>\n        <td>Resource not found</td>\n        <td>404</td>\n      </tr>\n      <tr>\n        <td>E006</td>\n        <td>No unique resource found</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E100</td>\n        <td>Unable to decrypt</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E101</td>\n        <td>Unable to verify signature</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E102</td>\n        <td>Unable to decrypt or verify signature</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E103</td>\n        <td>Unable to encrypt</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E104</td>\n        <td>Unable to sign</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E105</td>\n        <td>Unable to encrypt or sign</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E110</td>\n        <td>Invalid MTLS Cert</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E111</td>\n        <td>Invalid Token Error</td>\n        <td>401</td>\n      </tr>\n      <tr>\n        <td>E112</td>\n        <td>Forbidden</td>\n        <td>403</td>\n      </tr>\n      <tr>\n        <td>E200</td>\n        <td>Downstream System Error</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E201</td>\n        <td>Internal API Gateway Error</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E202</td>\n        <td>Timeout Error</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E300</td>\n        <td>Modify request as message is too large</td>\n        <td>413</td>\n      </tr>\n      <tr>\n        <td>E999</td>\n        <td>Unexpected error occurred</td>\n        <td>500</td>\n      </tr>\n    <tbody>\n  </table>\n"
+  },
+  "servers": [
+    {
+      "url": "https://test-api.sc.com",
+      "description": "Test Environment"
+    },
+    {
+      "url": "https://api.sc.com",
+      "description": "Production Environment"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Loans Enquiry APIs",
+      "description": "There are 7 APIs in this group for Loans Enquiry APIs",
+      "x-subcategory": "Consumer Loans APIs"
+    },
+    {
+      "name": "Loans Update APIs",
+      "description": "There is 1 API in this group for Loans Update APIs",
+      "x-subcategory": "Consumer Loans APIs"
+    }
+  ],
+  "paths": {
+    "/consumer/{version}/loans/loan-listing": {
+      "get": {
+        "tags": [
+          "Loans Enquiry APIs"
+        ],
+        "description": "Retrieve loan listing based on details provided",
+        "summary": "Retrieve Loan Listing",
+        "parameters": [
+          {
+            "name": "Transaction-Id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request, for tracking purposes",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "example": "6bc1371d-f47d-46c5-d769-e1592589c78d"
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "description": "IP address which the request originated from, segregated by commas. \\<user ip>, \\<server ip> etc",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "example": "10.123.123.123, 10.123.45.67"
+          },
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "IN"
+              ]
+            },
+            "example": "IN"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version of the API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "v1",
+              "enum": [
+                "v1"
+              ]
+            }
+          },
+          {
+            "name": "profile-id",
+            "in": "query",
+            "description": "Tokenised profile ID of the customer <br/> One of the below query parameters is required: <br/> 1. profile-id <br/> 2. loan-ids",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "loan-ids",
+            "in": "query",
+            "description": "List of tokenised loan ID's <br/> One of the below query parameters is required: <br/> 1. profile-id <br/> 2. loan-ids",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieves loan relationship master.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/loan-listing-response"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message parameters etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-bad-request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "IN"
+      }
+    },
+    "/consumer/{version}/loans/loans-details": {
+      "get": {
+        "tags": [
+          "Loans Enquiry APIs"
+        ],
+        "description": "Retrieve loan details",
+        "summary": "Retrieve Loan Details",
+        "parameters": [
+          {
+            "name": "Transaction-Id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request, for tracking purposes",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "example": "6bc1371d-f47d-46c5-d769-e1592589c78d"
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "description": "IP address which the request originated from, segregated by commas. \\<user ip>, \\<server ip> etc",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "example": "10.123.123.123, 10.123.45.67"
+          },
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "IN"
+              ]
+            },
+            "example": "IN"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version of the API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "v1",
+              "enum": [
+                "v1"
+              ]
+            }
+          },
+          {
+            "name": "profile-id",
+            "in": "query",
+            "description": "Tokenised profile ID of the customer <br/> One of the below query parameters is required: <br/> 1. profile-id <br/> 2. loan-ids",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "loan-ids",
+            "in": "query",
+            "description": "List of tokenised loan ID's <br/> One of the below query parameters is required: <br/> 1. profile-id <br/> 2. loan-ids",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "request-type",
+            "in": "query",
+            "description": "Request type. <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr><td>  B  </td><td>  Loan Balance Enquiry  </td></tr>\n    <tr><td>  D  </td><td>  Loan Details  </td></tr>\n  </tbody>\n</table>",
+            "explode": false,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "B",
+                  "D"
+                ],
+                "maxLength": 1,
+                "minLength": 1
+              },
+              "example": "B"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "loan Details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/loan-details-response"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message parameters etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-bad-request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "IN"
+      }
+    },
+    "/consumer/{version}/loans/statements": {
+      "get": {
+        "tags": [
+          "Loans Enquiry APIs"
+        ],
+        "description": "Retrieves the Loan Statements",
+        "summary": "Retrieve Loan Statements",
+        "parameters": [
+          {
+            "name": "Transaction-Id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request, for tracking purposes",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "example": "6bc1371d-f47d-46c5-d769-e1592589c78d"
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "description": "IP address which the request originated from, segregated by commas. \\<user ip>, \\<server ip> etc",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "example": "10.123.123.123, 10.123.45.67"
+          },
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "IN"
+              ]
+            },
+            "example": "IN"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version of the API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "v1",
+              "enum": [
+                "v1"
+              ]
+            }
+          },
+          {
+            "name": "profile-id",
+            "in": "query",
+            "description": "Tokenised profile ID of the customer",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "loan-id",
+            "in": "query",
+            "description": "Tokenised Unique loan id",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start-date",
+            "in": "query",
+            "description": "Start date of the loan statement in YYYY-MM-DD format",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2020-01-18"
+          },
+          {
+            "name": "end-date",
+            "in": "query",
+            "description": "End date of the loan statement in YYYY-MM-DD format",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2020-06-18"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieves loan statement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/statements-response"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message parameters etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-bad-request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-notfound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "IN"
+      }
+    },
+    "/consumer/{version}/loans/delinquencies": {
+      "get": {
+        "tags": [
+          "Loans Enquiry APIs"
+        ],
+        "description": "Retrieves all Delinquencies",
+        "summary": "Retrieves Loan Delinquencies",
+        "parameters": [
+          {
+            "name": "Transaction-Id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request, for tracking purposes",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "example": "6bc1371d-f47d-46c5-d769-e1592589c78d"
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "description": "IP address which the request originated from, segregated by commas. \\<user ip>, \\<server ip> etc",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "example": "10.123.123.123, 10.123.45.67"
+          },
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "IN"
+              ]
+            },
+            "example": "IN"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version of the API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "v1",
+              "enum": [
+                "v1"
+              ]
+            }
+          },
+          {
+            "name": "profile-id",
+            "in": "query",
+            "description": "Tokenised profile ID of the customer",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "loan-id",
+            "in": "query",
+            "description": "Tokenised Unique loan id",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieves loan delinquencies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/delinquencies-response"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message parameters etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-bad-request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-notfound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "IN"
+      }
+    },
+    "/consumer/{version}/loans/interest-certificate": {
+      "get": {
+        "tags": [
+          "Loans Enquiry APIs"
+        ],
+        "description": "Retrieve interest amount on details provided",
+        "summary": "Retrieve interest amount",
+        "parameters": [
+          {
+            "name": "Transaction-Id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request, for tracking purposes",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "example": "6bc1371d-f47d-46c5-d769-e1592589c78d"
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "description": "IP address which the request originated from, segregated by commas. \\<user ip>, \\<server ip> etc",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "example": "10.123.123.123, 10.123.45.67"
+          },
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "IN"
+              ]
+            },
+            "example": "IN"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version of the API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "v1",
+              "enum": [
+                "v1"
+              ]
+            }
+          },
+          {
+            "name": "loan-id",
+            "in": "query",
+            "description": "Tokenised Unique loan id",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start-date",
+            "in": "query",
+            "description": "Start date of interest amount calculation period in YYYY-MM-DD format",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2020-01-18"
+          },
+          {
+            "name": "end-date",
+            "in": "query",
+            "description": "End date of interest amount calculation period in YYYY-MM-DD format",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2020-06-18"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieves Interest Amount.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/interest-certificate-response"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message parameters etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-bad-request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "IN"
+      }
+    },
+    "/consumer/{version}/loans/repayment-schedule": {
+      "post": {
+        "tags": [
+          "Loans Enquiry APIs"
+        ],
+        "description": "Retrieve Repayment Schedule according to request",
+        "summary": "Retrieve Repayment Schedules",
+        "parameters": [
+          {
+            "name": "Transaction-Id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request, for tracking purposes",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "example": "6bc1371d-f47d-46c5-d769-e1592589c78d"
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "description": "IP address which the request originated from, segregated by commas. \\<user ip>, \\<server ip> etc",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "example": "10.123.123.123, 10.123.45.67"
+          },
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "IN"
+              ]
+            },
+            "example": "IN"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version of the API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "v1",
+              "enum": [
+                "v1"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/repayment-schedule-with-loan-request"
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "$ref": "#/components/schemas/encrypted"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Retrieves loan repayment schedule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/repayment-schedule-response"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message parameters etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-bad-request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-notfound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "IN"
+      }
+    },
+    "/consumer/{version}/loans/transaction-posting": {
+      "post": {
+        "tags": [
+          "Loans Update APIs"
+        ],
+        "description": "Transaction posting",
+        "summary": "Transaction posting",
+        "parameters": [
+          {
+            "name": "Transaction-Id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request, for tracking purposes",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "example": "6bc1371d-f47d-46c5-d769-e1592589c78d"
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "description": "IP address which the request originated from, segregated by commas. \\<user ip>, \\<server ip> etc",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "example": "10.123.123.123, 10.123.45.67"
+          },
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "IN"
+              ]
+            },
+            "example": "IN"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version of the API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "v1",
+              "enum": [
+                "v1"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/transaction-posting-request"
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "$ref": "#/components/schemas/encrypted"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transaction posting",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transaction-posting-response"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message parameters etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-bad-request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-notfound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "IN"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "encrypted": {
+        "type": "string",
+        "description": "Encrypted Message base on JWE standard",
+        "example": "eyJraWQiOiI0UTVZMDU1V1NHNFFLMTAxNDcxIiwiZW5jIjoiQTI1NkNCQy1IUzUxMiIsImFsZyI6IlJTQS1PQUVQLTI1NiJ9.kuq6D5pf_cSykPcukL2amWBIyvc6lm49wjuX440CWXvPSXzenwroxpNNfIs8NVuh15xQleXfv8tDwBaamepHQHF8K7xr8BkAoyFYRNLxUpkF4PCG1WbhcQrqVQHYpEXOmReqaiOtZcfHAfE67PxP_ajwnEWoSYyTlUuEM1eQZBRUVg5giOTZpYWjjpfF2nvFxJQY36q-8dHt2AWP2OpQuFcO_NnahC2k3n0X-WuuIUhRlXjvOYgv--KuLC49gvMvVEEqQ041eOTn6t3MLr5Nh48FmD4UxzSF3hePr-DUjK-bZltPW0RnMNCdXzbPGF7OjNm9EPQC6aYtCa-EvKDZmw.XxkayMQH5TT3t4W9zuJtDQ.5-hBIs6mKkSilQuLiofNPYVmdVRmFm0VdNt65qL40jtZG62RDvqUcxw5HeWRWUHt9TIg_GtrLAdVuvt2V0avgqRBeIOj84n5Nx_qphCN1846Dhv-73F5qculYBjdMSFdQoOwmcbIOJKtuF1klRJvIoDc2ebFtkb7YKmrcwDnlBueB-lIDn8G3UcowS9x9z1Cxq4UpkYJjRy-Ak4WuROrJvfHEUpvD7Q7jibIhstKS9oz4kxA5Vc5bzqlRmmjGRn0OiCUeDnUOEwZvCtSG-5WM5W71KI_bUHF9bGNd37-RlRnCsgt0i1ApiNwiI3kOVuHw0nt1bgY5XvXuf5VVjj1dc60yQLPl_VS7I17CgILzRLPS8uFQ8NPrJITGjmZEAvIR7dOxXa16PzRmJUKEE6ioxbKrdnsG1bZqugtx52GCk0gveXtwyH6zH-8h0t9QUdmwtZamZVkjEJlVuPU1SBrrwtHe1CTW9XNIVUMSuIBe_uvF0rcm4k5Jp98gy5ecsI3r81BJn30uLV3Hk4HGoHJ1Hrza9A6q0nEEqQ-XqfSXQEUBVuS8PmQRUIe409isnwdJIQHP3SehVt2nRufh9bDfQ.Yw3C1zME5UShNGZ7oa8eN-Cg3SeM0dKxRWObZwaHdWk"
+      },
+      "signed": {
+        "type": "string",
+        "description": "Signed Message base on JWS standard",
+        "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJhY2Nlc3MtdG9rZW4iOiIxYWFmN2Y0OC00NGRhLTQ5OWUtYmRmMi04OWQ2ZDlkYzM5NzcifQ.eZubyvKstz8lYmAVCfQnAUZ8k4IO6JU0tn8vvZNLWDdXKthA-K0UkQ6GnoURpruoFr4QD7Cy_8uRMBEigm1BSQ"
+      },
+      "loan-listing-response": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "profile-id": {
+              "type": "string",
+              "description": "Tokenised profile ID of the customer"
+            },
+            "type": {
+              "type": "string",
+              "description": "Customer type <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr><td>P</td><td>Primary borrower</td></tr>\n    <tr><td>S</td><td>Secondary borrower</td></tr>\n    <tr><td>M</td><td>Mortgagor</td></tr>\n    <tr><td>G</td><td>Guarantor</td></tr>\n  </tbody>\n</table>"
+            },
+            "loan-id": {
+              "type": "string",
+              "description": "Tokenised unique loan id"
+            },
+            "loan-number": {
+              "type": "string",
+              "description": "Masked loan number"
+            },
+            "full-name": {
+              "type": "string",
+              "description": "Full name of the borrower/mortgagor/guarantor"
+            }
+          }
+        },
+        "example": [
+          {
+            "profile-id": "45S11VB9642G",
+            "type": "P",
+            "loan-id": "qQ8iwlj6UO9",
+            "loan-number": "XXXX5678",
+            "full-name": "Karthik Kumar"
+          },
+          {
+            "profile-id": "452qpVB9642G",
+            "type": "S",
+            "loan-id": "qP9iwoj6UO9",
+            "loan-number": "XXXX4526",
+            "full-name": "Senthil Raj"
+          }
+        ]
+      },
+      "loan-details-response": {
+        "type": "object",
+        "properties": {
+          "loan-details-response": {
+            "type": "object",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/loan-enquiry-response"
+              },
+              {
+                "$ref": "#/components/schemas/loan-balance-response"
+              }
+            ]
+          }
+        }
+      },
+      "loan-enquiry-response": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "loan-id": {
+              "type": "string",
+              "description": "Tokenised unique loan id",
+              "example": "qQ8iwlj6UO9"
+            },
+            "country-code": {
+              "type": "string",
+              "description": "2 character ISO country code",
+              "example": "IN"
+            },
+            "loan-number": {
+              "type": "string",
+              "description": "Masked loan number",
+              "example": "XXXX8564"
+            },
+            "status-code": {
+              "type": "string",
+              "description": "Status code of the loan",
+              "example": "60"
+            },
+            "status": {
+              "type": "string",
+              "description": "Status of the loan",
+              "example": "ACTIVE"
+            },
+            "borrower-id": {
+              "type": "string",
+              "description": "Primary borrower of the loan",
+              "example": "1123456"
+            },
+            "co-borrowers-id": {
+              "type": "array",
+              "description": "Co-borrowers of the loan",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                "1123456"
+              ]
+            },
+            "account": {
+              "type": "object",
+              "description": "Account details",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Account type",
+                  "example": "1"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description of the account type",
+                  "example": "MORTGAGE"
+                }
+              }
+            },
+            "product-group": {
+              "type": "string",
+              "description": "Identify the loan <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr><td>M</td><td>Mortgage</td></tr>\n    <tr><td>I</td><td>Instalment</td></tr>\n    <tr><td>D</td><td>Discretionary</td></tr>\n  </tbody>\n</table>  \n  example: \"M\""
+            },
+            "currency-code": {
+              "type": "string",
+              "description": "Currency of the loan",
+              "example": "INR",
+              "enum": [
+                "INR"
+              ],
+              "minLength": 3,
+              "maxLength": 3
+            },
+            "security-indicator": {
+              "type": "string",
+              "description": "This field indicate security indicator  <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr><td>S</td><td>secured loan</td></tr>\n    <tr><td>C</td><td>clean loan</td></tr>\n    <tr><td>P</td><td>partially secured </td></tr>\n    <tr><td>O</td><td>others</td></tr>\n  </tbody>\n</table>  ",
+              "example": "S"
+            },
+            "category": {
+              "type": "string",
+              "description": "Loan category",
+              "example": "99"
+            },
+            "original-application": {
+              "description": "Original application details",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "The date the loan application was completed by the applicant,  as keyed at the time of account creation in YYYY-MM-DD format.",
+                  "example": "2018-08-12"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "The original loan application amount at the time the application is received.  Note that this amount may vary from the amount actually approved or advanced.  Also as Tax Pleaser First Phase Scheduled Drawdown Amount",
+                  "example": 753245.34
+                },
+                "tenor": {
+                  "type": "integer",
+                  "description": "The original tenor at the time the application is received. Note that this may vary from the tenor approved  ",
+                  "example": 36
+                }
+              }
+            },
+            "approved-application": {
+              "description": "Approved application details",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "The date the loan was approved in YYYY-MM-DD format.",
+                  "example": "2019-02-05"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Approved amount for the loan. Also as Tax Pleaser Approved First Phase Amount",
+                  "example": 653280.45
+                },
+                "tenor": {
+                  "type": "integer",
+                  "description": "The number of installment approved for this loan",
+                  "example": 36
+                }
+              }
+            },
+            "last-approved": {
+              "description": "last approved details",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "The date the loan was last approved in YYYY-MM-DD format.",
+                  "example": "2019-07-16"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Last approved amount for the loan.",
+                  "example": 653280.45
+                }
+              }
+            },
+            "last-topup": {
+              "type": "object",
+              "description": "last topup details",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "The date the loan was last topup in YYYY-MM-DD format.",
+                  "example": "2022-05-03"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Last topup amount for the loan.",
+                  "example": 298742.75
+                }
+              }
+            },
+            "discharge-date": {
+              "type": "string",
+              "description": "The date the loan was closed in YYYY-MM-DD format. ",
+              "example": "2023-10-22"
+            },
+            "accumulate-tenor": {
+              "type": "integer",
+              "description": "The field reflects the number of repayment dues from the first drawdown to the current period",
+              "example": 34999.62
+            },
+            "remain-tenor": {
+              "type": "integer",
+              "description": "Remaining tenor on the loan",
+              "example": 12
+            },
+            "due-cycle-day": {
+              "type": "integer",
+              "description": "Day of the due date. If this day is different from the day of the drawdown date upon loan creation,  it is used in determining the due date of the loan account. ",
+              "example": 1
+            },
+            "instalment": {
+              "type": "number",
+              "description": "The installment constant is the total amount to be raised as due on the loan due date for loan using straight line repayment method. ",
+              "example": 36
+            },
+            "last-advance-date": {
+              "type": "string",
+              "description": "The date the most recent advance was made on the loan account in YYYY-MM-DD format.  ",
+              "example": "2022-02-11"
+            },
+            "first-interest-due-date": {
+              "type": "string",
+              "description": "The date upon which the first interest amount will be raised as due in YYYY-MM-DD format. ",
+              "example": "2020-01-05"
+            },
+            "last-interest-due-date": {
+              "type": "string",
+              "description": "The date the last interest amount was raised as due in YYYY-MM-DD format.    ",
+              "example": "2023-03-05"
+            },
+            "next-interest-due-date": {
+              "type": "string",
+              "description": "The date the system will next raise the interest portion of the installment amount as due in YYYY-MM-DD format. ",
+              "example": "2023-04-05"
+            },
+            "final-interest-due-date": {
+              "type": "string",
+              "description": "The expected date, based upon the term of the loan, upon which the final interest amount will be raised as due.  It is also used as the maturity date of the loan account in YYYY-MM-DD format.",
+              "example": "2024-03-05"
+            },
+            "interest-due-frequency": {
+              "type": "string",
+              "description": "The frequency with which expected interest payments are raised as due.",
+              "example": "M"
+            },
+            "loan-balance": {
+              "description": "loan balance details",
+              "type": "object",
+              "properties": {
+                "current-amount": {
+                  "type": "number",
+                  "description": "The current loan balance amount.",
+                  "example": 653280.45
+                },
+                "local-currency-current-amount": {
+                  "type": "number",
+                  "description": "Local currency current loan balance/amount",
+                  "example": 653280.45
+                },
+                "advance-amount": {
+                  "type": "number",
+                  "description": "The total amount advanced to date for this loan",
+                  "example": 653280.45
+                },
+                "outstanding-amount": {
+                  "type": "number",
+                  "description": "Outstanding principal balance/amount",
+                  "example": 152805.45
+                },
+                "schedule-amount": {
+                  "type": "number",
+                  "description": "This contains the outstanding principal amount assuming that no arrears amount will be added to the loan.  Principal portion is deducted from this amount each time the principal due is raised  ",
+                  "example": 20546.33
+                }
+              }
+            },
+            "current-arrear": {
+              "type": "number",
+              "description": "Current Arrear amount that have not paid after due",
+              "example": 20709.86
+            },
+            "open-date": {
+              "type": "string",
+              "description": "The date the loan was opened in YYYY-MM-DD format.",
+              "example": "2019-12-01"
+            },
+            "type": {
+              "type": "string",
+              "description": "Loan type",
+              "example": "10"
+            },
+            "classification": {
+              "type": "string",
+              "description": "Categorization identifier, within which all loans are classified in accordance with system installation configuration parameters",
+              "example": "10"
+            },
+            "advance-account": {
+              "type": "string",
+              "description": "The CASA account to which loan will generate a direct credit request during loan drawdown",
+              "example": "12345"
+            },
+            "loan-limit": {
+              "type": "number",
+              "description": "The loan limit amount field is defaulted from the Product record at account creation time, if applicable. It is used to validate that the application amount does not exceed the specified limit amount for this group.",
+              "example": 753723.34
+            },
+            "max-tenor": {
+              "type": "number",
+              "description": "Maximum tenor the loan can have. It is used for checking during re-amortization.",
+              "example": 99
+            },
+            "principal-due-frequency": {
+              "type": "string",
+              "description": "The frequency with which expected principal repayments are raised as due. ie update the arrears/advance balance, and the appropriate appropriation balance, as designated by the UCF transaction type record for principal dues",
+              "example": "M"
+            },
+            "first-principal-due": {
+              "type": "string",
+              "description": "The date upon which the first principal amount will be raised as due in YYYY-MM-DD format. ",
+              "example": "2020-03-03"
+            },
+            "last-principal-due": {
+              "type": "string",
+              "description": "The date the last principal amount was raised as due in YYYY-MM-DD format.",
+              "example": "2024-10-03"
+            },
+            "final-principal-due": {
+              "type": "string",
+              "description": "The expected date, based upon the term of the loan, upon which the final principal amount will be raised as due in YYYY-MM-DD format.  ",
+              "example": "2020-09-22"
+            },
+            "next-principal-due": {
+              "type": "string",
+              "description": "The date the system will next raise the principal portion of the installment amount as due in YYYY-MM-DD format.  ",
+              "example": "2024-10-03"
+            },
+            "instalment-interest": {
+              "type": "number",
+              "description": "Installment interest holds the portion of the installment amount relating to interest as at the last due date.",
+              "example": 7
+            },
+            "instalment-principal": {
+              "type": "number",
+              "description": "Installment principal holds the portion of the installment amount relating to principal as at the last due date. For reducing balance, this is the fixed principal portion of monthly installment.",
+              "example": 59823.71
+            },
+            "next-instalment": {
+              "type": "number",
+              "description": "After reamortization, this field stores the next installment.",
+              "example": 20927.55
+            },
+            "effective-interest-rate": {
+              "type": "number",
+              "description": "Effective interest rate",
+              "example": 6
+            },
+            "available-amount": {
+              "type": "number",
+              "description": "Available Amount",
+              "example": 7
+            },
+            "interest-calculation-indicator": {
+              "type": "string",
+              "description": "Interest calculation indicator <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr><td>D</td><td>Daily Calculate</td></tr>\n    <tr><td>M</td><td>Monthly Calculate</td></tr>\n    <tr><td>O</td><td>Interest 360 Days Calculate</td></tr>\n    <tr><td>F</td><td>Interest 365 Days Calculate</td></tr>\n  </tbody>\n</table>",
+              "example": "D"
+            },
+            "uncollected-balance": {
+              "type": "number",
+              "description": "Uncollected balance",
+              "example": 50902.61
+            }
+          }
+        },
+        "example": [
+          {
+            "loan-id": "qQ8iwlj6UO9",
+            "country-code": "IN",
+            "loan-number": "XXXX8978",
+            "status-code": "60",
+            "status": "ACTIVE",
+            "borrower-id": "1123456",
+            "co-borrowers-id": [
+              "1123456"
+            ],
+            "account": {
+              "type": "1",
+              "description": "MORTGAGE"
+            },
+            "product-group": "M",
+            "currency-code": "INR",
+            "security-indicator": "S",
+            "category": "99",
+            "original-application": {
+              "date": "2018-08-12",
+              "amount": 753245.34,
+              "tenor": 36
+            },
+            "approved-application": {
+              "date": "2019-02-05",
+              "amount": 653280.45,
+              "tenor": 36
+            },
+            "last-approved": {
+              "date": "2019-07-16",
+              "amount": 653280.45
+            },
+            "last-topup": {
+              "date": "2022-05-03",
+              "amount": 298742.75
+            },
+            "discharge-date": "2023-10-22",
+            "accumulate-tenor": 34999.62,
+            "remain-tenor": 12,
+            "due-cycle-day": 1,
+            "instalment": 36,
+            "last-advance-date": "2022-02-11",
+            "first-interest-due-date": "2020-01-05",
+            "last-interest-due-date": "2023-03-05",
+            "next-interest-due-date": "2023-04-05",
+            "final-interest-due-date": "2024-03-05",
+            "interest-due-frequency": "M",
+            "loan-balance": {
+              "current-amount": 653280.45,
+              "local-currency-current-amount": 653280.45,
+              "advance-amount": 57321.99,
+              "outstanding-amount": 152805.45,
+              "schedule-amount": 20546.33
+            },
+            "current-arrear": 20709.86,
+            "open-date": "2019-12-01",
+            "type": "10",
+            "classification": "10",
+            "advance-account": "12345",
+            "loan-limit": 753723.34,
+            "max-tenor": 99,
+            "principal-due-frequency": "M",
+            "first-principal-due": "2020-03-03",
+            "last-principal-due": "2024-10-03",
+            "final-principal-due": "2020-09-22",
+            "next-principal-due": "2024-10-03",
+            "instalment-interest": 7,
+            "instalment-principal": 59823.71,
+            "next-instalment": 20927.55,
+            "effective-interest-rate": 6,
+            "available-amount": 7,
+            "interest-calculation-indicator": "D",
+            "uncollected-balance": 50902.61
+          },
+          {
+            "loan-id": "qp0Rwlj6UO9",
+            "country-code": "IN",
+            "loan-number": "XXXX8078",
+            "status-code": "60",
+            "status": "ACTIVE",
+            "borrower-id": "1634236",
+            "co-borrowers-id": [
+              "2534456"
+            ],
+            "account": {
+              "type": "1",
+              "description": "MORTGAGE"
+            },
+            "product-group": "M",
+            "currency-code": "INR",
+            "security-indicator": "S",
+            "category": "99",
+            "original-application": {
+              "date": "2020-08-12",
+              "amount": 755234.34,
+              "tenor": 36
+            },
+            "approved-application": {
+              "date": "2021-02-05",
+              "amount": 653280.45,
+              "tenor": 36
+            },
+            "last-approved": {
+              "date": "2019-07-16",
+              "amount": 653280.45
+            },
+            "last-topup": {
+              "date": "2022-05-03",
+              "amount": 298742.75
+            },
+            "discharge-date": "2023-10-22",
+            "accumulate-tenor": 34999.62,
+            "remain-tenor": 12,
+            "due-cycle-day": 1,
+            "instalment": 48,
+            "last-advance-date": "2023-02-11",
+            "first-interest-due-date": "2022-01-05",
+            "last-interest-due-date": "2024-03-05",
+            "next-interest-due-date": "2022-04-05",
+            "final-interest-due-date": "2025-03-05",
+            "interest-due-frequency": "M",
+            "loan-balance": {
+              "current-amount": 755234.45,
+              "local-currency-current-amount": 755234.45,
+              "advance-amount": 57321.99,
+              "outstanding-amount": 152805.45,
+              "schedule-amount": 20546.33
+            },
+            "current-arrear": 20709.86,
+            "open-date": "2019-12-01",
+            "type": "10",
+            "classification": "10",
+            "advance-account": "12345",
+            "loan-limit": 753723.34,
+            "max-tenor": 99,
+            "principal-due-frequency": "M",
+            "first-principal-due": "2020-03-03",
+            "last-principal-due": "2024-10-03",
+            "final-principal-due": "2020-09-22",
+            "next-principal-due": "2024-10-03",
+            "instalment-interest": 7,
+            "instalment-principal": 59823.71,
+            "next-instalment": 20927.55,
+            "effective-interest-rate": 6,
+            "available-amount": 7,
+            "interest-calculation-indicator": "D",
+            "uncollected-balance": 50902.61
+          }
+        ]
+      },
+      "loan-balance-response": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "loan-id": {
+              "type": "string",
+              "description": "Tokenised unique loan id",
+              "example": "qQ8iwlj6UO9"
+            },
+            "country-code": {
+              "type": "string",
+              "description": "2 character ISO country code",
+              "example": "IN"
+            },
+            "loan-number": {
+              "type": "string",
+              "description": "Masked loan number",
+              "example": "XXXX8564"
+            },
+            "status": {
+              "type": "string",
+              "description": "Status of the loan",
+              "example": "ACTIVE"
+            },
+            "borrower-id": {
+              "type": "string",
+              "description": "Primary borrower of the loan",
+              "example": "1123456"
+            },
+            "co-borrowers-id": {
+              "type": "array",
+              "description": "Co-borrowers of the loan",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                "1123456"
+              ]
+            },
+            "product-group": {
+              "type": "string",
+              "description": "Identify the loan <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr><td>M</td><td>Mortgage</td></tr>\n    <tr><td>I</td><td>Instalment</td></tr>\n    <tr><td>D</td><td>Discretionary</td></tr>\n  </tbody>\n</table>  ",
+              "example": "M"
+            },
+            "currency-code": {
+              "type": "string",
+              "description": "Currency of the loan",
+              "example": "INR",
+              "enum": [
+                "INR"
+              ],
+              "minLength": 3,
+              "maxLength": 3
+            },
+            "last-approved-amount": {
+              "type": "number",
+              "description": "Last approved amount for the loan.",
+              "example": 653280.45
+            },
+            "last-topup-amount": {
+              "type": "number",
+              "description": "Last topup amount for the loan.",
+              "example": 298742.75
+            },
+            "remain-tenor": {
+              "type": "integer",
+              "description": "Remaining tenor on the loan",
+              "example": 12
+            },
+            "loan-balance": {
+              "description": "loan balance details",
+              "type": "object",
+              "properties": {
+                "current-amount": {
+                  "type": "number",
+                  "description": "The current loan balance amount.",
+                  "example": 653280.45
+                },
+                "local-currency-current-amount": {
+                  "type": "number",
+                  "description": "Local currency current loan balance/amount",
+                  "example": 653280.45
+                },
+                "advance-amount": {
+                  "type": "number",
+                  "description": "The total amount advanced to date for this loan",
+                  "example": 653280.45
+                },
+                "outstanding-amount": {
+                  "type": "number",
+                  "description": "Outstanding principal balance/amount",
+                  "example": 152805.45
+                },
+                "schedule-amount": {
+                  "type": "number",
+                  "description": "This contains the outstanding principal amount assuming that no arrears amount will be added to the loan.  Principal portion is deducted from this amount each time the principal due is raised  ",
+                  "example": 20546.33
+                }
+              }
+            },
+            "current-arrear": {
+              "type": "number",
+              "description": "Current Arrear amount that have not paid after due",
+              "example": 20709.86
+            },
+            "instalment-interest": {
+              "type": "number",
+              "description": "Installment interest holds the portion of the installment amount relating to interest as at the last due date.",
+              "example": 7
+            },
+            "instalment-principal": {
+              "type": "number",
+              "description": "Installment principal holds the portion of the installment amount relating to principal as at the last due date. For reducing balance, this is the fixed principal portion of monthly installment.",
+              "example": 59823.71
+            },
+            "next-instalment": {
+              "type": "number",
+              "description": "After reamortization, this field stores the next installment.",
+              "example": 20927.55
+            },
+            "effective-interest-rate": {
+              "type": "number",
+              "description": "Effective interest rate",
+              "example": 6
+            },
+            "available-amount": {
+              "type": "number",
+              "description": "Available Amount",
+              "example": 7
+            },
+            "uncollected-balance": {
+              "type": "number",
+              "description": "Uncollected balance",
+              "example": 50902.61
+            }
+          }
+        },
+        "example": [
+          {
+            "loan-id": "qQ8iwlj6UO9",
+            "country-code": "IN",
+            "loan-number": "XXXX8978",
+            "status": "ACTIVE",
+            "borrower-id": "1123456",
+            "co-borrowers-id": [
+              "1123456"
+            ],
+            "product-group": "M",
+            "currency-code": "INR",
+            "last-approved-amount": 653280.45,
+            "last-topup-amount": 298742.75,
+            "remain-tenor": 12,
+            "loan-balance": {
+              "current-amount": 653280.45,
+              "local-currency-current-amount": 653280.45,
+              "advance-amount": 57321.99,
+              "outstanding-amount": 152805.45,
+              "schedule-amount": 20546.33
+            },
+            "current-arrear": 20709.86,
+            "instalment-interest": 7,
+            "instalment-principal": 59823.71,
+            "next-instalment": 20927.55,
+            "effective-interest-rate": 6,
+            "available-amount": 7,
+            "uncollected-balance": 50902.61
+          },
+          {
+            "loan-id": "qp0Rwlj6UO9",
+            "country-code": "IN",
+            "loan-number": "XXXX8078",
+            "status": "ACTIVE",
+            "borrower-id": "1634236",
+            "co-borrowers-id": [
+              "2534456"
+            ],
+            "product-group": "M",
+            "currency-code": "INR",
+            "last-approved-amount": 653280.45,
+            "last-topup-amount": 298742.75,
+            "remain-tenor": 12,
+            "loan-balance": {
+              "current-amount": 755234.45,
+              "local-currency-current-amount": 755234.45,
+              "advance-amount": 57321.99,
+              "outstanding-amount": 152805.45,
+              "schedule-amount": 20546.33
+            },
+            "current-arrear": 20709.86,
+            "instalment-interest": 7,
+            "instalment-principal": 59823.71,
+            "next-instalment": 20927.55,
+            "effective-interest-rate": 6,
+            "available-amount": 7,
+            "uncollected-balance": 50902.61
+          }
+        ]
+      },
+      "statements-response": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "profile-id": {
+              "type": "string",
+              "description": "Tokenised profile ID of the customer",
+              "minLength": 1,
+              "maxLength": 20,
+              "example": "452qpVB9642G"
+            },
+            "loan-id": {
+              "type": "string",
+              "description": "Tokenised Loan ID",
+              "example": "qp0Rwlj6UO9"
+            },
+            "loan-number": {
+              "type": "string",
+              "description": "Masked unique loan number",
+              "example": "XXXXXX5678"
+            },
+            "statement-date": {
+              "type": "string",
+              "description": "Document of the due date of balance in YYYY-MM-DD format",
+              "example": "2017-03-16"
+            },
+            "loan-balance": {
+              "type": "number",
+              "description": "Current Loan balance of the loan as of the closing of the statement date",
+              "example": 57986.79
+            },
+            "schedule-balance": {
+              "type": "number",
+              "description": "Schedule balance of the loan as of the closing of the statement date",
+              "example": 9873.33
+            },
+            "arrear-balance": {
+              "type": "number",
+              "description": "Arrear balance of the loan as of the closing of the statement date",
+              "example": 9483.53
+            },
+            "interest-in-arrears": {
+              "type": "number",
+              "description": "Interest in arrear of the loan as of the closing of the statement date",
+              "example": 4334.45
+            },
+            "principal-in-arrears": {
+              "type": "number",
+              "description": "Principal in arrear of the loan as of the closing of the statement date",
+              "example": 4336.08
+            },
+            "late-charge-in-arrears": {
+              "type": "number",
+              "description": "Late charge in arrear of the loan as of the closing of the statement date",
+              "example": 3503.93
+            },
+            "insurance-in-arrears": {
+              "type": "number",
+              "description": "Insurance in arrear of the loan as of the closing of the statement date",
+              "example": 3233.82
+            },
+            "fee-in-arrears": {
+              "type": "number",
+              "description": "Fee in arrear of the loan as of the closing of the statement date",
+              "example": 2433.33
+            },
+            "bounce-charge-in-arrears": {
+              "type": "number",
+              "description": "Bounce charge in arrear of the loan as of the closing of the statement date",
+              "example": 4335.43
+            },
+            "subsidy-interest-in-arrears": {
+              "type": "number",
+              "description": "Subsidy interest in arrear of the loan as of the closing of the statement date",
+              "example": 3455.44
+            },
+            "surplus-in-arrears": {
+              "type": "number",
+              "description": "Surplus in arrear of the loan as of the closing of the statement date",
+              "example": 857.93
+            },
+            "payment-received": {
+              "type": "number",
+              "description": "Payment received of the loan as of the closing of the statement date",
+              "example": 4564.55
+            },
+            "interest-in-received": {
+              "type": "number",
+              "description": "Interest in received of the loan as of the closing of the statement date",
+              "example": 5465.64
+            },
+            "principal-in-received": {
+              "type": "number",
+              "description": "Principal in received of the loan as of the closing of the statement date",
+              "example": 5256.55
+            },
+            "late-charge-in-received": {
+              "type": "number",
+              "description": "Late charge in received of the loan as of the closing of the statement date",
+              "example": 9346.64
+            },
+            "insurance-in-received": {
+              "type": "number",
+              "description": "Insurance in received of the loan as of the closing of the statement date",
+              "example": 4324.34
+            },
+            "fee-in-received": {
+              "type": "number",
+              "description": "Fee in received of the loan as of the closing of the statement date",
+              "example": 25454.54
+            },
+            "bounce-charge-in-received": {
+              "type": "number",
+              "description": "Bounce charge in received of the loan as of the closing of the statement date",
+              "example": 46546.45
+            },
+            "subsidy-interest-in-received": {
+              "type": "number",
+              "description": "Subsidy interest in received of the loan as of the closing of the statement date",
+              "example": 54564.55
+            },
+            "surplus-in-received": {
+              "type": "number",
+              "description": "Surplus in received of the loan as of the closing of the statement date",
+              "example": 52645.45
+            }
+          }
+        },
+        "example": [
+          {
+            "profile-id": "452qpVB9642G",
+            "loan-id": "qp0Rwlj6UO9",
+            "loan-number": "XXXXXX2358",
+            "statement-date": "2017-03-16",
+            "loan-balance": 57986.79,
+            "schedule-balance": 9873.33,
+            "arrear-balance": 9483.53,
+            "interest-in-arrears": 4334.45,
+            "principal-in-arrears": 4336.08,
+            "late-charge-in-arrears": 3503.93,
+            "insurance-in-arrears": 3233.82,
+            "fee-in-arrears": 2433.33,
+            "bounce-charge-in-arrears": 4335.43,
+            "subsidy-interest-in-arrears": 3455.44,
+            "surplus-in-arrears": 857.93,
+            "payment-received": 4564.55,
+            "interest-in-received": 5465.64,
+            "principal-in-received": 5256.55,
+            "late-charge-in-received": 9346.64,
+            "insurance-in-received": 4324.34,
+            "fee-in-received": 25454.54,
+            "bounce-charge-in-received": 46546.45,
+            "subsidy-interest-in-received": 54564.55,
+            "surplus-in-received": 52645.45
+          },
+          {
+            "profile-id": "453qpVNm642G",
+            "loan-id": "qp0P9lj6UO9",
+            "loan-number": "XXXXXX9879",
+            "statement-date": "2017-04-16",
+            "loan-balance": 7867.98,
+            "schedule-balance": 5767.26,
+            "arrear-balance": 8786.21,
+            "interest-in-arrears": 5367.76,
+            "principal-in-arrears": 2567.06,
+            "late-charge-in-arrears": 3646.89,
+            "insurance-in-arrears": 2463.29,
+            "fee-in-arrears": 2567.84,
+            "bounce-charge-in-arrears": 2652.76,
+            "subsidy-interest-in-arrears": 2254.44,
+            "surplus-in-arrears": 464.93,
+            "payment-received": 3567.46,
+            "interest-in-received": 4674.86,
+            "principal-in-received": 5189.04,
+            "late-charge-in-received": 6585.29,
+            "insurance-in-received": 5454.37,
+            "fee-in-received": 54743.34,
+            "bounce-charge-in-received": 34334.27,
+            "subsidy-interest-in-received": 32844.87,
+            "surplus-in-received": 67587.36
+          }
+        ]
+      },
+      "delinquencies-response": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "profile-id": {
+              "type": "string",
+              "description": "Tokenised profile ID of the customer",
+              "minLength": 1,
+              "maxLength": 20,
+              "example": "452qpVB9642G"
+            },
+            "country-code": {
+              "type": "string",
+              "description": "2 character ISO country code",
+              "example": "IN"
+            },
+            "loan-id": {
+              "type": "string",
+              "description": "Tokenised Loan ID of the customer",
+              "example": "qp0Rwlj6UO9"
+            },
+            "loan-number": {
+              "type": "string",
+              "description": "Unique loan number",
+              "example": "XXXX5678"
+            },
+            "interest-in-arrears": {
+              "type": "number",
+              "description": "Interest amount due by not yet paid",
+              "example": 63.82
+            },
+            "principal-in-arrears": {
+              "type": "number",
+              "description": "Principal amount due by not yet paid",
+              "example": 1895.77
+            },
+            "late-charge-in-arrears": {
+              "type": "number",
+              "description": "Late Charge amount due by not yet paid",
+              "example": 40.52
+            },
+            "insurance-in-arrears": {
+              "type": "number",
+              "description": "Insurance premium due by not yet paid",
+              "example": 40.52
+            },
+            "fee-in-arrears": {
+              "type": "number",
+              "description": "Miscellaneous fee due by not yet paid",
+              "example": 40.52
+            },
+            "bounce-charge-in-arrears": {
+              "type": "number",
+              "description": "Bounce charge due by not yet paid",
+              "example": 0
+            },
+            "subsidy-interest-in-arrears": {
+              "type": "number",
+              "description": "Subsidy interest due by not yet paid. This is the company interest subsidy. This will only be updated by the company subsidy payment",
+              "example": 666.8
+            },
+            "surplus-in-arrears": {
+              "type": "number",
+              "description": "The surplus of the credit amount after all the previous appropriation balances are settled",
+              "example": 666.8
+            },
+            "write-off-amount": {
+              "type": "number",
+              "description": "To indicate the charge-off amount for charge-off loan only",
+              "example": 19166.68
+            },
+            "write-off-date": {
+              "type": "string",
+              "description": "To indicate the charge-off date in YYYY-MM-DD format",
+              "example": "2019-06-14"
+            },
+            "charge-off-reason": {
+              "type": "string",
+              "description": "The reason to charge off the specific loan <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>C</td>\n      <td>CREDIT LOSS</td>\n    </tr>\n    <tr>\n      <td>B</td>\n      <td>BANKRUPTCY</td>\n    </tr>\n    <tr>\n      <td>F</td>\n      <td>FRAUD LOSS</td>\n    </tr>\n    <tr>\n      <td>T</td>\n      <td>COUNTERFEIT</td>\n    </tr>\n    <tr>\n      <td>D</td>\n      <td>DECEASED</td>\n    </tr>\n    <tr>\n      <td>S</td>\n      <td>DISPOSAL</td>\n    </tr>\n    <tr>\n      <td>A</td>\n      <td>DUAL CHRG OFF</td>\n    </tr>\n    <tr>\n      <td>I</td>\n      <td>IVA</td>\n    </tr>\n    <tr>\n      <td>R</td>\n      <td>RESTRUCTURE</td>\n    </tr>\n    <tr>\n      <td>Y</td>\n      <td>AUTO REPOSIT</td>\n    </tr>\n    <tr>\n      <td>X</td>\n      <td>SKIP</td>\n    </tr>\n    <tr>\n      <td>Z</td>\n      <td>OTHERS</td>\n    </tr>\n  </tbody>\n</table>",
+              "example": "C",
+              "enum": [
+                "C",
+                "B",
+                "F",
+                "T",
+                "D",
+                "S",
+                "A",
+                "I",
+                "R",
+                "Y",
+                "X",
+                "Z"
+              ]
+            },
+            "last-payment-date": {
+              "type": "string",
+              "description": "The date of last payment transaction applied to this loan in YYYY-MM-DD format",
+              "example": "2018-04-27"
+            },
+            "last-payment-amount": {
+              "type": "number",
+              "description": "The amount of last payment transaction",
+              "example": 5188.63
+            },
+            "current-aging-code": {
+              "type": "string",
+              "description": "A set of alphabetic codes to indicate number of current instalment in arrears. (i.e ‘A’ = not in arrears, ‘B’ = 1 instalment in arrears, ‘C’ = 2 instalment in arears...)",
+              "example": "A"
+            },
+            "aging-code": {
+              "type": "array",
+              "description": "Aging code for last instalment <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n    <th width='10%'>Code</th>\n    <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr><td>A</td><td>  not in arrears1</td></tr>\n    <tr><td>B</td><td>  1  installment in arrears</td></tr>\n    <tr><td>C</td><td>  2  installment in arrears</td></tr>\n    <tr><td>D</td><td>  3  installment in arrears</td></tr>\n    <tr><td>E</td><td>  4  installment in arrears</td></tr>\n    <tr><td>F</td><td>  5  installment in arrears</td></tr>\n    <tr><td>G</td><td>  6  installment in arrears</td></tr>\n    <tr><td>H</td><td>  7  installment in arrears</td></tr>\n    <tr><td>I</td><td>  8  installment in arrears</td></tr>\n    <tr><td>J</td><td>  9  installment in arrears</td></tr>\n    <tr><td>K</td><td>  10 installment in arrears</td></tr>\n    <tr><td>L</td><td>  11 installment in arrears</td></tr>\n    <tr><td>M</td><td>  12 installment in arrears</td></tr>\n    <tr><td>N</td><td>  13 installment in arrears</td></tr>\n    <tr><td>O</td><td>  14 installment in arrears</td></tr>\n    <tr><td>P</td><td>  15 installment in arrears</td></tr>\n    <tr><td>Q</td><td>  16 installment in arrears</td></tr>\n    <tr><td>R</td><td>  17 installment in arrears</td></tr>\n    <tr><td>S</td><td>  18 installment in arrears</td></tr>\n    <tr><td>T</td><td>  19 installment in arrears</td></tr>\n    <tr><td>U</td><td>  20 installment in arrears</td></tr>\n    <tr><td>V</td><td>  21 installment in arrears</td></tr>\n    <tr><td>W</td><td>  22 installment in arrears</td></tr>\n    <tr><td>X</td><td>  23 installment in arrears</td></tr>\n    <tr><td>Y</td><td>  24 installment in arrears</td></tr>\n    <tr><td>Z</td><td>  25 installment in arrears</td></tr>\n  </tbody>\n</table>",
+              "items": {
+                "type": "string"
+              },
+              "example": "Y",
+              "enum": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F",
+                "G",
+                "H",
+                "I",
+                "J",
+                "K",
+                "L",
+                "M",
+                "N",
+                "O",
+                "P",
+                "Q",
+                "R",
+                "S",
+                "T",
+                "U",
+                "V",
+                "W",
+                "X",
+                "Y",
+                "Z"
+              ],
+              "minLength": 0,
+              "maxLength": 24
+            },
+            "payment-due-date": {
+              "type": "array",
+              "description": "nth last payment due date in YYYY-MM-DD format",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                "2019-03-22",
+                "2019-04-22",
+                "2019-05-22",
+                "2019-06-22",
+                "2019-07-22",
+                "2019-08-22",
+                "2019-09-22",
+                "2019-10-22",
+                "2019-11-22",
+                "2019-12-22",
+                "2020-01-22",
+                "2020-02-22",
+                "2020-03-22",
+                "2020-04-22",
+                "2020-05-22",
+                "2020-06-22",
+                "2020-07-22",
+                "2020-08-22",
+                "2020-09-22",
+                "2020-10-22",
+                "2020-11-22",
+                "2020-12-22",
+                "2021-01-22",
+                "2021-02-22",
+                "2021-03-22"
+              ],
+              "minLength": 0,
+              "maxLength": 24
+            },
+            "payment-due-amount": {
+              "type": "array",
+              "description": "nth last payment due amount",
+              "items": {
+                "type": "number"
+              },
+              "example": [
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46,
+                34544.46
+              ],
+              "minLength": 0,
+              "maxLength": 24
+            },
+            "aging-arrears-amount": {
+              "type": "array",
+              "description": "nth last instalment aging arrears amount",
+              "items": {
+                "type": "number"
+              },
+              "example": [
+                23233.56,
+                24354.54,
+                24354.54,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                23233.56,
+                24354.54
+              ],
+              "minLength": 0,
+              "maxLength": 24
+            },
+            "day-past-due": {
+              "type": "integer",
+              "description": "Number of day past due date loan having arrears",
+              "example": 45
+            },
+            "times-to-credit-control": {
+              "type": "integer",
+              "description": "Times this loan report to credit control",
+              "example": 1
+            },
+            "accrued-late-charge": {
+              "type": "number",
+              "description": "Accrued Late Charge Amount",
+              "example": 24354.43
+            }
+          }
+        },
+        "example": [
+          {
+            "profile-id": "452qpVB9642G",
+            "country-code": "IN",
+            "loan-id": "qp0Rwlj6UO9",
+            "loan-number": "XXXXX5678",
+            "interest-in-arrears": 63.82,
+            "principal-in-arrears": 1895.77,
+            "late-charge-in-arrears": 40.52,
+            "insurance-in-arrears": 40.52,
+            "fee-in-arrears": 40.52,
+            "bounce-charge-in-arrears": 0,
+            "subsidy-interest-in-arrears": 666.8,
+            "surplus-in-arrears": 666.8,
+            "write-off-amount": 19166.68,
+            "write-off-date": "2019-06-14",
+            "charge-off-reason": "C",
+            "last-payment-date": "2018-04-27",
+            "last-payment-amount": 5188.63,
+            "current-aging-code": "A",
+            "aging-code": [
+              "Y",
+              "K",
+              "W",
+              "V",
+              "U",
+              "T",
+              "S",
+              "S",
+              "T",
+              "U",
+              "O",
+              "L",
+              "M",
+              "Z",
+              "Z",
+              "B",
+              "C",
+              "Z",
+              "D",
+              "H",
+              "J",
+              "K",
+              "L",
+              "M",
+              "K"
+            ],
+            "payment-due-date": [
+              "2019-03-22",
+              "2019-04-22",
+              "2019-05-22",
+              "2019-06-22",
+              "2019-07-22",
+              "2019-08-22",
+              "2019-09-22",
+              "2019-10-22",
+              "2019-11-22",
+              "2019-12-22",
+              "2020-01-22",
+              "2020-02-22",
+              "2020-03-22",
+              "2020-04-22",
+              "2020-05-22",
+              "2020-06-22",
+              "2020-07-22",
+              "2020-08-22",
+              "2020-09-22",
+              "2020-10-22",
+              "2020-11-22",
+              "2020-12-22",
+              "2021-01-22",
+              "2021-02-22",
+              "2021-03-22"
+            ],
+            "payment-due-amount": [
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46,
+              34544.46
+            ],
+            "aging-arrears-amount": [
+              23233.56,
+              24354.54,
+              24354.54,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              23233.56,
+              24354.54
+            ],
+            "day-past-due": 45,
+            "times-to-credit-control": 1,
+            "accrued-late-charge": 24354.43
+          },
+          {
+            "profile-id": "452qpVB9642G",
+            "country-code": "IN",
+            "loan-id": "qp0Rplj6UO9",
+            "loan-number": "XXXXX4882",
+            "interest-in-arrears": 37.92,
+            "principal-in-arrears": 2432.36,
+            "late-charge-in-arrears": 35.23,
+            "insurance-in-arrears": 86.36,
+            "fee-in-arrears": 78.25,
+            "bounce-charge-in-arrears": 0,
+            "subsidy-interest-in-arrears": 986.82,
+            "surplus-in-arrears": 658.18,
+            "write-off-amount": 6763.08,
+            "write-off-date": "2019-07-14",
+            "charge-off-reason": "C",
+            "last-payment-date": "2018-05-27",
+            "last-payment-amount": 5646.63,
+            "current-aging-code": "B",
+            "aging-code": [
+              "Y",
+              "K",
+              "W",
+              "V",
+              "U",
+              "T",
+              "S",
+              "S",
+              "T",
+              "U",
+              "O",
+              "L",
+              "M",
+              "Z",
+              "Z",
+              "B",
+              "C",
+              "Z",
+              "D",
+              "H",
+              "J",
+              "K",
+              "L",
+              "M",
+              "K"
+            ],
+            "payment-due-date": [
+              "2020-01-19",
+              "2020-02-19",
+              "2020-03-19",
+              "2020-04-19",
+              "2020-05-19",
+              "2020-06-19",
+              "2020-07-19",
+              "2020-08-19",
+              "2020-09-19",
+              "2020-10-19",
+              "2020-11-19",
+              "2020-12-19",
+              "2021-01-19",
+              "2021-02-19",
+              "2021-03-19",
+              "2021-04-19",
+              "2021-05-19",
+              "2021-06-19",
+              "2021-07-19",
+              "2021-08-19",
+              "2021-09-19",
+              "2021-10-19",
+              "2021-11-19",
+              "2021-12-19",
+              "2022-01-19"
+            ],
+            "payment-due-amount": [
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32,
+              42769.32
+            ],
+            "aging-arrears-amount": [
+              32529.78,
+              36273.48,
+              36273.48,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              32529.78,
+              36273.48
+            ],
+            "day-past-due": 48,
+            "times-to-credit-control": 1,
+            "accrued-late-charge": 45342.43
+          }
+        ]
+      },
+      "repayment-schedule-with-loan-request": {
+        "type": "object",
+        "properties": {
+          "profile-id": {
+            "type": "string",
+            "description": "Tokenised profile ID of the customer <br/> One of the below query parameters is required <br/> 1. profile-id <br/> 2. loan-id",
+            "example": "45987539854"
+          },
+          "loan-id": {
+            "type": "string",
+            "description": "List of tokenised loan ID <br/> One of the below query parameters is required <br/> 1. profile-id <br/> 2. loan-id",
+            "example": "qp0Rwlj6UO9"
+          },
+          "start-date": {
+            "type": "string",
+            "description": "start date of the loan repayment schedule in YYYY-MM-DD format",
+            "example": "2017-07-16"
+          },
+          "end-date": {
+            "type": "string",
+            "description": "end date of the loan repayment schedule in YYYY-MM-DD format",
+            "example": "2021-07-16"
+          },
+          "loan-balance": {
+            "type": "number",
+            "description": "The loan balance for repayment schedule projection",
+            "example": 10201.99
+          },
+          "interest-rate": {
+            "type": "number",
+            "description": "Interest rate to use for repayment schedule projection",
+            "example": "32.45"
+          },
+          "employee-rate": {
+            "type": "number",
+            "description": "Employee rate to use for repayment schedule projection",
+            "example": 4.67
+          },
+          "amortization-option": {
+            "type": "string",
+            "description": "Amortization option to project repayment schedule- A complete schedule of periodic blended loan payments showing the amount of principal and the amount of interest Amortization-option <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>1</td>\n      <td>Straight Line</td>\n    </tr>\n    <tr>\n      <td>2</td>\n      <td>Reducing Balance</td>\n    </tr>\n    <tr>\n      <td>3</td>\n      <td>Rule 78</td>\n    </tr>\n    <tr>\n      <td>4</td>\n      <td>True Flat</td>\n    </tr>\n  </tbody>\n</table>",
+            "example": "1",
+            "enum": [
+              "1",
+              "2",
+              "3",
+              "4"
+            ]
+          },
+          "interest-indicator": {
+            "type": "string",
+            "description": "Used to daily or monthly rest to calculate interest Interest-indicator <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>D</td>\n      <td>Daily</td>\n    </tr>\n    <tr>\n      <td>M</td>\n      <td>Monthly</td>\n    </tr>\n  </tbody>\n</table>",
+            "example": "D",
+            "enum": [
+              "D",
+              "M"
+            ]
+          },
+          "instalment-frequency": {
+            "type": "string",
+            "description": "frequency of instalment <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>W</td>\n      <td>Weekly</td>\n    </tr>\n    <tr>\n      <td>F</td>\n      <td>Fort Weekly</td>\n    </tr>\n    <tr>\n      <td>M</td>\n      <td>Monthly</td>\n    </tr>\n    <tr>\n      <td>Q</td>\n      <td>Quaterly</td>\n    </tr>\n    <tr>\n      <td>H</td>\n      <td>Half Yearly</td>\n    </tr>\n    <tr>\n      <td>Y</td>\n      <td>Yearly</td>\n    </tr>\n  </tbody>\n</table>",
+            "example": "W",
+            "enum": [
+              "W",
+              "F",
+              "M",
+              "Q",
+              "H",
+              "Y"
+            ]
+          },
+          "tenor": {
+            "type": "integer",
+            "description": "If present tenor should not pass use tenor for repayment schedule projection",
+            "example": 934.64
+          },
+          "instalment": {
+            "type": "integer",
+            "description": "If present instalment should not pass use instalment for repayment schedule projection",
+            "example": 9.999
+          },
+          "interest-only-start-date": {
+            "type": "string",
+            "description": "The start date of interest in YYYY-MM-DD format",
+            "example": "2017-03-16"
+          },
+          "interest-only-period": {
+            "type": "number",
+            "description": "The period of interest only, if present interest only end date should not be pass",
+            "example": 9
+          },
+          "interest-only-end-date": {
+            "type": "string",
+            "description": "The end date of interest only, if present interest only period should not be pass in YYYY-MM-DD format",
+            "example": "2021-03-16"
+          },
+          "top-up-amount": {
+            "type": "number",
+            "description": "project repayment schedule after top up is perform",
+            "example": 8699.99
+          },
+          "preset-safety-limit-indicator": {
+            "type": "string",
+            "description": "Use preset safety limit to project repayment schedule.This is specific to MortgageOne account(MOA) loan products <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Y</td>\n      <td>Yes</td>\n    </tr>\n    <tr>\n      <td>N</td>\n      <td>No</td>\n    </tr>\n  </tbody>\n</table>",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "round-off": {
+            "type": "string",
+            "description": "Round-off(total) the instalment amount <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Y</td>\n      <td>Yes</td>\n    </tr>\n    <tr>\n      <td>N</td>\n      <td>No</td>\n    </tr>\n  </tbody>\n</table>",
+            "example": "Y",
+            "enum": [
+              "Y",
+              "N"
+            ]
+          },
+          "first-phase-drawdown-date": {
+            "type": "string",
+            "description": "First phase drawdown date for flat rate interest in YYYY-MM-DD format",
+            "example": "2017-03-16"
+          },
+          "first-tier-percentage": {
+            "type": "number",
+            "description": "First tier percentage for flat rate interest",
+            "example": 11.48
+          },
+          "first-tier-months": {
+            "type": "integer",
+            "description": "first tier months for flat rate interest",
+            "example": 9
+          },
+          "second-phase-drawdown-date": {
+            "type": "string",
+            "description": "Second phase drawdown date for flat rate interest in YYYY-MM-DD format",
+            "example": "2018-04-16"
+          },
+          "second-phase-drawdown-amount": {
+            "type": "number",
+            "description": "Second phase drawdown amount for flat rate interest",
+            "example": 49493.76
+          },
+          "insurance-rate": {
+            "type": "number",
+            "description": "Insurance rate for the loan",
+            "example": 54004.54
+          },
+          "cycle-due-day": {
+            "type": "integer",
+            "description": "cycle due day of the loan",
+            "example": 7
+          }
+        }
+      },
+      "repayment-schedule-response": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "profile-id": {
+              "type": "string",
+              "description": "Tokenised profile ID of the customer",
+              "minLength": 1,
+              "maxLength": 20,
+              "example": "452qpVB9642G"
+            },
+            "loan-id": {
+              "type": "string",
+              "description": "Tokenised Loan ID of the customer",
+              "example": "qp0Rwlj6UO9"
+            },
+            "loan-number": {
+              "type": "string",
+              "description": "Masked Unique loan number",
+              "example": "XXXXXXX5678"
+            },
+            "product-description": {
+              "type": "string",
+              "description": "Refer to product name that link to product code",
+              "example": "MortgageOne Account (MOA)"
+            },
+            "full-name": {
+              "type": "string",
+              "description": "full name of the customer",
+              "example": "ABCEFG"
+            },
+            "status": {
+              "type": "string",
+              "description": "Reflects the status of the loans",
+              "example": "ACTIVE"
+            },
+            "loan-balance": {
+              "type": "number",
+              "description": "The loan balance of specific loan.",
+              "example": 88787.98
+            },
+            "repayment-method-name": {
+              "type": "string",
+              "description": "Mode of payment.",
+              "example": "STANDINGORDER"
+            },
+            "instalment": {
+              "type": "number",
+              "description": "Current instalment of that loan",
+              "example": 2677.87
+            },
+            "statement-date": {
+              "type": "string",
+              "description": "Date of the specific statement generated in YYYY-MM-DD format",
+              "example": "2019-04-27"
+            },
+            "branch-name": {
+              "type": "string",
+              "description": "Branch name of the processing branch",
+              "example": "MANAMABRANCH"
+            },
+            "open-date": {
+              "type": "string",
+              "description": "The date the loan was opened in YYYY-MM-DD format",
+              "example": "2017-03-16"
+            },
+            "interest-rate": {
+              "type": "number",
+              "description": "The interest rate for the specific loan",
+              "example": "34.64"
+            },
+            "tenor": {
+              "type": "integer",
+              "description": "Tenor for the loan",
+              "example": 4382.46
+            },
+            "repayment-schedules": {
+              "type": "array",
+              "description": "repayment schedule array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "repayment-number": {
+                    "type": "number",
+                    "description": "The number of repayment",
+                    "example": 2
+                  },
+                  "date": {
+                    "type": "string",
+                    "description": "The repayment date in YYYY-MM-DD format",
+                    "example": "2017-04-16"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "The repayment amount",
+                    "example": 23342.56
+                  },
+                  "principal": {
+                    "type": "number",
+                    "description": "The principal portion of repayment amount",
+                    "example": 3243.34
+                  },
+                  "interest": {
+                    "type": "number",
+                    "description": "The interest portion of repayment amount, this include defer interest and odd day interest",
+                    "example": 7323.67
+                  },
+                  "odd-day-interest": {
+                    "type": "number",
+                    "description": "The odd day interest portion of repayment amount",
+                    "example": 32433.78
+                  },
+                  "insurance": {
+                    "type": "number",
+                    "description": "The insurance portion of repayment amount",
+                    "example": 5464.96
+                  },
+                  "odd-day-insurance": {
+                    "type": "number",
+                    "description": "The odd day insurance portion of repayment amount",
+                    "example": 2462.87
+                  },
+                  "loan-balance": {
+                    "type": "number",
+                    "description": "The loan balance after repayment",
+                    "example": 2436.34
+                  },
+                  "subsidy-amount": {
+                    "type": "number",
+                    "description": "The subsidy amount for the repayment",
+                    "example": 3543.56
+                  },
+                  "post-dated-cheque-number": {
+                    "type": "string",
+                    "description": "The number of post dated cheque",
+                    "example": "1"
+                  },
+                  "post-dated-cheque-bank-name": {
+                    "type": "string",
+                    "description": "The bank name of post dated cheque",
+                    "example": "SCBXXX-BRANCH"
+                  },
+                  "post-dated-cheque-amount": {
+                    "type": "number",
+                    "description": "The amount of post dated cheque",
+                    "example": 355465.45
+                  }
+                }
+              }
+            },
+            "total-repayment-amount": {
+              "type": "number",
+              "description": "Total repayment amount of specific loan",
+              "example": 4365.87
+            },
+            "total-repayment-principle": {
+              "type": "number",
+              "description": "Total repayment principle amount of specific loan",
+              "example": 2534.53
+            },
+            "total-repayment-interest": {
+              "type": "number",
+              "description": "Total repayment interest amount of specific loan",
+              "example": 23685.76
+            }
+          }
+        },
+        "example": [
+          {
+            "profile-id": "452qpVB9642G",
+            "loan-id": "qp0Rwlj6UO9",
+            "loan-number": "XXXXXXX5678",
+            "product-description": "MortgageOne Account (MOA)",
+            "full-name": "ABCEFG",
+            "status": "ACTIVE",
+            "loan-balance": 88787.98,
+            "repayment-method-name": "STANDINGORDER",
+            "instalment": 2677.87,
+            "statement-date": "2019-04-27",
+            "branch-name": "MANAMABRANCH",
+            "open-date": "2017-03-16",
+            "interest-rate": 34.64,
+            "tenor": 4382.46,
+            "repayment-schedules": [
+              {
+                "repayment-number": 2,
+                "date": "2017-04-16",
+                "amount": 23342.56,
+                "principal": 3243.34,
+                "interest": 7323.67,
+                "odd-day-interest": 32433.78,
+                "insurance": 5464.96,
+                "odd-day-insurance": 2462.87,
+                "loan-balance": 2436.34,
+                "subsidy-amount": 3543.56,
+                "post-dated-cheque-number": "1",
+                "post-dated-cheque-bank-name": "SCBXXX-BRANCH",
+                "post-dated-cheque-amount": 355465.45
+              }
+            ],
+            "total-repayment-amount": 4365.87,
+            "total-repayment-principle": 2534.53,
+            "total-repayment-interest": 23685.76
+          },
+          {
+            "profile-id": "452qpVB9642G",
+            "loan-id": "qp0RwlO6UO9",
+            "loan-number": "XXXXXX9879",
+            "product-description": "MortgageOne Account (MOA)",
+            "full-name": "ZYXWVUTSR",
+            "status": "ACTIVE",
+            "loan-balance": 57986.79,
+            "repayment-method-name": "STANDINGORDER",
+            "instalment": 6383.87,
+            "statement-date": "2019-05-27",
+            "branch-name": "MANAMABRANCH",
+            "open-date": "2017-04-16",
+            "interest-rate": 78.64,
+            "tenor": 27828.36,
+            "repayment-schedules": [
+              {
+                "repayment-number": 3,
+                "date": "2017-05-16",
+                "amount": 45542.76,
+                "principal": 36436.45,
+                "interest": 4353.94,
+                "odd-day-interest": 5343.76,
+                "insurance": 4466.76,
+                "odd-day-insurance": 8758.97,
+                "loan-balance": 2455.87,
+                "subsidy-amount": 6453.75,
+                "post-dated-cheque-number": "2",
+                "post-dated-cheque-bank-name": "SCBXXX-BRANCH",
+                "post-dated-cheque-amount": 34676.45
+              }
+            ],
+            "total-repayment-amount": 4567.86,
+            "total-repayment-principle": 1556.69,
+            "total-repayment-interest": 34676.43
+          }
+        ]
+      },
+      "interest-certificate-response": {
+        "type": "object",
+        "properties": {
+          "loan-number": {
+            "type": "string",
+            "description": "Masked loan number",
+            "example": "XXXX8564"
+          },
+          "start-date": {
+            "type": "string",
+            "description": "start date of interest amount calculation period in YYYY-MM-DD format",
+            "example": "2017-07-16"
+          },
+          "end-date": {
+            "type": "string",
+            "description": "end date of interest amount calculation period in YYYY-MM-DD format",
+            "example": "2021-07-16"
+          },
+          "interest-amount": {
+            "type": "string",
+            "description": "Interest amount from Loan instructions/Loan repayment schedule service",
+            "example": "999.99"
+          }
+        }
+      },
+      "transaction-posting-request": {
+        "type": "object",
+        "properties": {
+          "transaction-type": {
+            "type": "string",
+            "description": "Transaction Type",
+            "example": "P",
+            "enum": [
+              "P",
+              "S"
+            ]
+          },
+          "transaction-posting-request": {
+            "type": "object",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/payment-request"
+              },
+              {
+                "$ref": "#/components/schemas/partial-settlement-request"
+              }
+            ]
+          }
+        }
+      },
+      "payment-request": {
+        "type": "object",
+        "required": [
+          "loan-id",
+          "posting-date",
+          "effective-date",
+          "transaction-type"
+        ],
+        "properties": {
+          "loan-id": {
+            "type": "string",
+            "description": "Tokenised Loan ID use for transaction posting",
+            "example": "qp0Rwlj6UO9"
+          },
+          "posting-date": {
+            "type": "string",
+            "description": "posting date of the transaction posting in YYYY-MM-DD format",
+            "example": "2017-07-16"
+          },
+          "effective-date": {
+            "type": "string",
+            "description": "effective date of the transaction posting in YYYY-MM-DD format",
+            "example": "2021-07-16"
+          },
+          "transaction-type": {
+            "type": "string",
+            "description": "The transaction type for transaction posting",
+            "example": "P"
+          },
+          "payment": {
+            "type": "object",
+            "required": [
+              "amount-received",
+              "user-id",
+              "branch",
+              "division-department"
+            ],
+            "description": "Payment Details",
+            "properties": {
+              "amount-received": {
+                "type": "number",
+                "description": "Amount Recieved",
+                "example": 200.95
+              },
+              "user-id": {
+                "type": "string",
+                "description": "User ID",
+                "example": "EOPSIN1"
+              },
+              "branch": {
+                "type": "string",
+                "description": "Branch",
+                "example": "0370"
+              },
+              "division-department": {
+                "type": "string",
+                "description": "Division Department",
+                "example": "4043"
+              }
+            }
+          }
+        }
+      },
+      "partial-settlement-request": {
+        "type": "object",
+        "required": [
+          "loan-id",
+          "posting-date",
+          "effective-date",
+          "transaction-type"
+        ],
+        "properties": {
+          "loan-id": {
+            "type": "string",
+            "description": "Tokenised Loan ID use for transaction posting",
+            "example": "qp0Rwlj6UO9"
+          },
+          "posting-date": {
+            "type": "string",
+            "description": "posting date of the transaction posting in YYYY-MM-DD format",
+            "example": "2017-07-16"
+          },
+          "effective-date": {
+            "type": "string",
+            "description": "effective date of the transaction posting in YYYY-MM-DD format",
+            "example": "2021-07-16"
+          },
+          "transaction-type": {
+            "type": "string",
+            "description": "The transaction type for transaction posting",
+            "example": "S"
+          },
+          "settlement": {
+            "type": "object",
+            "required": [
+              "amount-received",
+              "settlement-type",
+              "user-id",
+              "payment-mode",
+              "waive-unearn-interest-insurance",
+              "account-number",
+              "principal-reduction-amount",
+              "amortize-option",
+              "online-txn-posting",
+              "waive-settlement-penalty",
+              "waive-settlement-penalty-amount",
+              "waive-settlement-amount"
+            ],
+            "description": "Settlement Details",
+            "properties": {
+              "amount-received": {
+                "type": "number",
+                "description": "Amount Recieved",
+                "example": 3000
+              },
+              "settlement-type": {
+                "type": "string",
+                "description": "Settlement Type",
+                "example": "P"
+              },
+              "user-id": {
+                "type": "string",
+                "description": "User ID",
+                "example": "EOPSSG1"
+              },
+              "payment-mode": {
+                "type": "string",
+                "description": "Payment Mode",
+                "example": "1"
+              },
+              "waive-unearn-interest-insurance": {
+                "type": "string",
+                "description": "Waive unearn interest/insurance",
+                "example": "N"
+              },
+              "account-number": {
+                "type": "string",
+                "description": "Account Number",
+                "example": "002009996083"
+              },
+              "principal-reduction-amount": {
+                "type": "number",
+                "description": "Principal Reduction Amount",
+                "example": 3000
+              },
+              "amortize-option": {
+                "type": "string",
+                "description": "Amortize Option",
+                "example": "0"
+              },
+              "online-txn-posting": {
+                "type": "string",
+                "description": "Online Txn Posting",
+                "example": "Y"
+              },
+              "waive-settlement-penalty": {
+                "type": "string",
+                "description": "Waive Settlement Penalty",
+                "example": "N"
+              },
+              "waive-settlement-penalty-amount": {
+                "type": "number",
+                "description": "Waive Settlement Penalty Amount",
+                "example": 0
+              },
+              "waive-settlement-amount": {
+                "type": "string",
+                "description": "Waive Settlement Amount",
+                "example": "N"
+              }
+            }
+          }
+        }
+      },
+      "transaction-posting-response": {
+        "type": "object",
+        "properties": {
+          "transaction-posting-response": {
+            "type": "object",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/payment-response"
+              },
+              {
+                "$ref": "#/components/schemas/partial-settlement-response"
+              }
+            ]
+          }
+        }
+      },
+      "payment-response": {
+        "type": "object",
+        "properties": {
+          "loan-id": {
+            "type": "string",
+            "description": "Tokenised Loan ID use for transaction posting",
+            "example": "qp0Rwlj6UO9"
+          },
+          "posting-date": {
+            "type": "string",
+            "description": "posting date of the transaction posting in YYYY-MM-DD format",
+            "example": "2017-07-16"
+          },
+          "effective-date": {
+            "type": "string",
+            "description": "effective date of the transaction posting in YYYY-MM-DD format",
+            "example": "2021-07-16"
+          },
+          "transaction-type": {
+            "type": "string",
+            "description": "The transaction type for transaction posting",
+            "example": "P"
+          },
+          "payment": {
+            "type": "object",
+            "description": "Payment Details",
+            "properties": {
+              "amount-received": {
+                "type": "number",
+                "description": "Amount Recieved",
+                "example": 200.95
+              },
+              "user-id": {
+                "type": "string",
+                "description": "User ID",
+                "example": "EOPSIN1"
+              },
+              "branch": {
+                "type": "string",
+                "description": "Branch",
+                "example": "0370"
+              },
+              "division-department": {
+                "type": "string",
+                "description": "Division Department",
+                "example": "4043"
+              },
+              "batch-number": {
+                "type": "string",
+                "description": "Batch Number",
+                "example": "07033793"
+              }
+            }
+          }
+        }
+      },
+      "partial-settlement-response": {
+        "type": "object",
+        "properties": {
+          "loan-id": {
+            "type": "string",
+            "description": "Tokenised Loan ID use for transaction posting",
+            "example": "qp0Rwlj6UO9"
+          },
+          "posting-date": {
+            "type": "string",
+            "description": "posting date of the transaction posting in YYYY-MM-DD format",
+            "example": "2017-07-16"
+          },
+          "effective-date": {
+            "type": "string",
+            "description": "effective date of the transaction posting in YYYY-MM-DD format",
+            "example": "2021-07-16"
+          },
+          "transaction-type": {
+            "type": "string",
+            "description": "The transaction type for transaction posting",
+            "example": "S"
+          },
+          "settlement": {
+            "type": "object",
+            "description": "Settlement Details",
+            "properties": {
+              "amount-received": {
+                "type": "number",
+                "description": "Amount Recieved",
+                "example": 3000
+              },
+              "settlement-type": {
+                "type": "string",
+                "description": "Settlement Type",
+                "example": "P"
+              },
+              "user-id": {
+                "type": "string",
+                "description": "User ID",
+                "example": "EOPSSG1"
+              },
+              "payment-mode": {
+                "type": "string",
+                "description": "Payment Mode",
+                "example": "1"
+              },
+              "waive-unearn-interest-insurance": {
+                "type": "string",
+                "description": "Waive Interest Insurance",
+                "example": "N"
+              },
+              "account-number": {
+                "type": "string",
+                "description": "Account Number",
+                "example": "002009996083"
+              },
+              "principal-reduction-amount": {
+                "type": "number",
+                "description": "Principal Reduction Amount",
+                "example": 3000
+              },
+              "amortize-option": {
+                "type": "string",
+                "description": "Amortize Option",
+                "example": "0"
+              },
+              "online-txn-posting": {
+                "type": "string",
+                "description": "Online Txn Posting",
+                "example": "Y"
+              },
+              "waive-settlement-penalty": {
+                "type": "string",
+                "description": "Waive Settlement Penalty",
+                "example": "N"
+              },
+              "waive-settlement-penalty-amount": {
+                "type": "number",
+                "description": "Waive Settlement Penalty Amount",
+                "example": 0
+              },
+              "waive-settlement-amount": {
+                "type": "string",
+                "description": "Waive Settlement Amount",
+                "example": "N"
+              },
+              "cancellation-fee": {
+                "type": "number",
+                "description": "Cancellation Fee",
+                "example": 0
+              },
+              "in-lieu-penalty": {
+                "type": "number",
+                "description": "In Lieu Penalty",
+                "example": 12.13
+              },
+              "reimburse-penalty": {
+                "type": "number",
+                "description": "Reimburse Penalty",
+                "example": 500
+              },
+              "redemption-type": {
+                "type": "string",
+                "description": "Redemption Type",
+                "example": "XYZ"
+              },
+              "adjust-interest": {
+                "type": "string",
+                "description": "Adjust Interest",
+                "example": "N"
+              },
+              "redeem-on-shortfall": {
+                "type": "string",
+                "description": "Redeem on shortfall",
+                "example": "Y"
+              },
+              "waive-all": {
+                "type": "string",
+                "description": "Waive All",
+                "example": "N"
+              },
+              "waive-interest-to-redemption": {
+                "type": "string",
+                "description": "Waive Interest To Redemption",
+                "example": "N"
+              },
+              "waive-interest-to-redemption-amount": {
+                "type": "number",
+                "description": "Waive Interest To Redemption Amount",
+                "example": 0
+              },
+              "waive-interest-arrears": {
+                "type": "string",
+                "description": "Waive Interest Arrears",
+                "example": "N"
+              },
+              "waive-interest-arrears-amount": {
+                "type": "number",
+                "description": "Waive Interest Arrears Amount",
+                "example": 0
+              },
+              "waive-late-charge": {
+                "type": "string",
+                "description": "Waive Late Charge",
+                "example": "N"
+              },
+              "waive-late-charge-amount": {
+                "type": "number",
+                "description": "Waive Late Charge Amount",
+                "example": 0
+              },
+              "waive-insurance-premium": {
+                "type": "string",
+                "description": "Waive Insurance Premium",
+                "example": "N"
+              },
+              "waive-insurance-premium-amount": {
+                "type": "number",
+                "description": "Waive Insurance Premium Amount",
+                "example": 0
+              },
+              "waive-fee-in-arrear": {
+                "type": "string",
+                "description": "Waive Fee In Arrear",
+                "example": "N"
+              },
+              "waive-fee-in-arrear-amount": {
+                "type": "number",
+                "description": "Waive Fee In Arrear Amount",
+                "example": 0
+              },
+              "waive-bounce-charge": {
+                "type": "string",
+                "description": "Waive Bounce Charge",
+                "example": "N"
+              },
+              "waive-bounce-charge-amount": {
+                "type": "number",
+                "description": "Waive Bounce Charge Amount",
+                "example": 0
+              },
+              "waive-in-lieu-penalty": {
+                "type": "string",
+                "description": "Waive In Lieu Penalty",
+                "example": "N"
+              },
+              "waive-in-lieu-penalty-amount": {
+                "type": "number",
+                "description": "Waive In Lieu Penalty Amount",
+                "example": 0
+              },
+              "inclusive-charges": {
+                "type": "string",
+                "description": "Inclusive Charges",
+                "example": "N"
+              },
+              "redeem-on-surplus": {
+                "type": "string",
+                "description": "Redeem On Surplus",
+                "example": "N"
+              },
+              "contingency-fee": {
+                "type": "number",
+                "description": "Contingency Fee",
+                "example": 0
+              }
+            }
+          }
+        }
+      },
+      "error": {
+        "description": "Error object details",
+        "title": "error",
+        "required": [
+          "id",
+          "code",
+          "detail"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The transaction id from the request header, if the transaction id was not present in the request header, a generated random UUID will shown here for tracking purposes.",
+            "type": "string"
+          },
+          "code": {
+            "description": "An application-specific error code",
+            "type": "string"
+          },
+          "detail": {
+            "description": "A human-readable explanation specific to this occurrence of the problem",
+            "type": "string"
+          },
+          "source": {
+            "description": "Source of the error - denotes the name of parameter name causing the problem",
+            "type": "string"
+          }
+        },
+        "example": {
+          "id": "1234",
+          "code": "E001",
+          "detail": "Field is mandatory",
+          "source": "first-name"
+        }
+      },
+      "errors": {
+        "description": "List of error object",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/error"
+        }
+      },
+      "fail-bad-request": {
+        "$ref": "#/components/schemas/errors"
+      },
+      "fail-certificate-mismatch": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Certificate used in API call did not match",
+            "example": "Certificate mismatch"
+          }
+        }
+      },
+      "fail-unexpected": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the transaction-id from the request header"
+          },
+          "code": {
+            "type": "string",
+            "description": "Response Code. Refer to Response Code Table for list of responses."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Details of the error.",
+            "example": "Unexpected error occurred"
+          }
+        },
+        "example": {
+          "id": "86c1d522-efab-479c-9c4a-d51f1c3152d8",
+          "code": "E005",
+          "detail": "Unexpected error occurred"
+        }
+      },
+      "fail-notfound": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the transaction-id from the request header"
+          },
+          "code": {
+            "type": "string",
+            "description": "Response Code.Refer to Response Code Table for list of responses."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Details of the error"
+          }
+        },
+        "example": {
+          "id": "75c1d522-efab-473d-9c4a-d51f1c3152d8",
+          "code": "E005",
+          "detail": "Resource not found"
+        }
+      }
+    }
+  }
+}

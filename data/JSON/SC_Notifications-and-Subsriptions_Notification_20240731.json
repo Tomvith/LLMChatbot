@@ -1,0 +1,3168 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking - Notifications and Subscriptions",
+        "description": "**API Banking - Notifications and Subscriptions**\r\n\r\nProvides real-time push of events (callbacks) to client's API/WebHook. Notifications APIs provide real-time push notification of events through our guaranteed WebHook delivery mechanism. Through these APIs, client can receive credit/debit notifications, transactions and custody transactions statuses.",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company License",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.standardchartered.com/openapi"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Notification",
+            "description": "Provides real-time push of events (callbacks) to client's API/WebHook. Notifications APIs provide real-time push notification of events through our guaranteed WebHook delivery mechanism. Through these APIs, client can receive credit/debit notifications, transactions and custody transactions statuses.",
+            "x-subcategory": "Notifications and Subscriptions"
+        }
+    ],
+    "paths": {
+        "/<client-specified-path>/newsflash": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Market News Updates",
+                "description": "<p>The Market News Updates API provides the ability to receive real-time notification of market news events. <br>Note: To avoid any impact to your system, it is recommended not to perform any length validation nor strict schema validation for the notification messages as they are subject to changes.",
+                "operationId": "MarketNews",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NewsflashWebhook"
+                                },
+                                "example": "{\n  \"groupId\": \"GROUP9\",\n  \"id\": 9,\n  \"date\": {},\n  \"headline\": \"Partnership Between Bove spa and CME Group - Update\",\n  \"summary\": \"String\",\n  \"text\": \"In an update to our previous newsflash, Bove spa and CME Group (Chicago Mercantile Exchange Group) have obtained the regulatory approval from the Commodity Futures Trading Commission (CFTC) to allow...\",\n  \"urgent\": false,\n  \"attachments\": [\n    {\n     \"id\": 9,\n     \"title\": \"Snapshot\",\n     \"filename\": \"samplemarketsnapshot.pdf\",\n     \"size\": 70527,\n     \"mimeType\": \"application/pdf\",\n     \"documentId\": \"String\"}\n                 ],\n  \"linkedFlashes\": [\n    {\n     \"id\": 4581,\n     \"text\": \"Partnership Between Bovespa and CME Group - Update, 10/02/2009\"\n    }\n    ],\n  \"productImpacts\": [\n    {\n    \"id\": 12,\n    \"name\": \"Securities Market Information\",\n    \"topicImpacts\": [\n    {\n      \"id\": 4,\n      \"text\": \"General News\"\n    } \n    ],\n    \"marketImpacts\": [\n    {\n      \"id\": 19,\n      \"code\": \"BRA\",\n      \"name\": \"Brazil\",\n      \"text\": \"This information affects the data contained in the Other market where securities are traded and Market Entry Requirements sections of the Securities Market Information Service\"\n       }\n       ]\n      }\n     ]\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,PH,ID,VN,IN,BD,LK,NP,AE,PK,QA,BH,NG,ZA,KE,UG,TZ,GH,ZM,CI"
+            }
+        },
+        "/<client-specified-path>/credit-debit-advice": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "x_api_category_tags": [
+                    "Financial Institutions"
+                ],
+                "summary": "Credit/Debit Advice Updates",
+                "description": "<p>The Credit/Debit Advice Updates API provides the ability to receive real-time notification of credits or debits into accounts. </p><p>Note: To avoid any impact to your system, it is recommended not to perform any length validation nor strict schema validation for the notification messages as they are subject to changes.",
+                "operationId": "CreditDebitAdvice",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiCreditDebitAdvice"
+                                },
+                                "example": "{\n  \"groupId\": \"GHK01234\",\n  \"accountIdentifier\": {\n     \"accountId\": \"44700912345\",\n     \"currencyCode\": {\n       \"isoCode\": \"HKD\"\n      },\n     \"bankCode\": \"SCBLHKHHXXX\"\n      },\n  \"eventDate\": \"2020-12-14\",\n  \"transactionIdentifier\": {\n     \"type\": \"Other\",\n     \"identifier\": \"447009123450000016862\"\n    },\n  \"adviceType\": \"Credit\",\n  \"valueDate\": \"2020-12-13\",\n  \"virtualAccountId\": \"\",\n  \"accountName\": \"\",\n  \"transactionCode\": \"07007\",\n  \"baiCode\": \"399\",\n  \"transactionDescription\": \"\",\n  \"postExecutionBalance\": {\n    \"currencyCode\": \"HKD\",\n    \"amount\": 3022145.77\n  },\n  \"preExecutionBalance\": {\n    \"currencyCode\": \"HKD\",\n    \"amount\": 3020031.97\n  },\n  \"transactionFreeText\": [\n    \"3812831234-LCLFZCV9AHUH9R\",\n    \"MR Jane Doe\",\n    \"FRN2020121300182812345 004 CXMRCH\",\n    \"098591741234\",\n    \"\",\n    \"\" ],\n  \"transactionExtendedFreeText\": [\n    \"\",\n    \"\",\n    \"\",\n    \"\",\n    \"\",\n    \"\"],\n  \"transactionMultiLingualFreeText\": [\n    \"\",\n    \"\",\n    \"\",\n    \"\",\n    \"\",\n    \"\"],\n  \"transactionAmount\": {\n    \"currencyCode\": \"HKD\",\n    \"amount\": 2113.8\n  },\n  \"clientIdentifier\": {\n    \"type\": \"Other\",\n    \"identifier\": \"\"\n  },\n  \"externalIdentifier\": {\n    \"type\": \"Other\",\n    \"identifier\": \"3812831234-LCLFZCV9AHUH9R\"\n  },\n  \"contacts\": {\n    \"contactTypeCode\": [],\n    \"contact\": []\n   },\n  \"payerDetails\": {\n     \"name\": \"Jane Doe\",\n     \"account\": {\n       \"id\": \"098591746833\",\n       \"identityType\": \"BBAN\"\n      },\n     \"bank\": {\n        \"name\": \"\",\n        \"bankCode\": \"004\",\n        \"clearingSystemId\": \"004\"\n      }\n  },\n  \"referenceIds\": {\n     \"endToEndId\": \"3800835054-LCLFZCV9AHUH9R\",\n     \"txId\": \"447009123450000016862\",\n     \"clearingSystemReference\": \"FRN2020121300182811234\"\n   },\n  \"additionalTransactionDescription\": \"MR Jane Doe 121300182811234\",\n  \"supplementaryTransactionDescription\": \"\",\n  \"transactionTimestamp\": \"2020-12-14T11:29:09\",\n  \"bankBranchCode\": \"000\",\n  \"countryCode\": \"HK\",\n  \"timestamp\": \"2020-12-13T03:29:09.763Z\",\n  \"postingMode\": \"O\"\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,PH,ID,VN,IN,BD,LK,NP,AE,PK,QA,BH,NG,ZA,KE,UG,TZ,GH,ZM,CI,GB,US"
+            }
+        },
+        "/<client-specified-path>/transaction-advice": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Transaction Advice Updates",
+                "description": "<p>The Transaction Advice API provides the ability to receive near real-time notification of credits and debits into accounts with improved reporting of returned payment in SG market (coverage will be expanded). </p><p>Note: To avoid any impact to your system, it is recommended not to perform any length validation nor strict schema validation for the notification messages as they are subject to changes.",
+                "operationId": "TransactionAdvice",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiTransactionAdvice"
+                                },
+                                "example": "{\n  \"groupId\": \"APINTSX1\",\n  \"accountIdentifier\": {\n     \"accountId\": \"010621234\",\n     \"currencyCode\": {\n       \"isoCode\": \"SGD\"\n      },\n     \"bankCode\": \"SCBLSG22XXX\"\n      },\n  \"eventDate\": \"2023-11-24\",\n  \"transactionIdentifier\": {\n     \"type\": \"Other\",\n     \"identifier\": \"202311240265418\",\n     \"relatedRefNo\": \"6213326D0T130001\",\n    },\n  \"adviceType\": \"Credit\",\n  \"valueDate\": \"2023-11-24\",\n  \"accountName\": \"Company A\",\n  \"transactionCode\": \"755\",\n  \"baiCode\": \"208\",\n  \"transactionDescription\": \"ITT - CREDIT TO CUSTOMER/SUSPENSE\",\n  \"postExecutionBalance\": {\n    \"currencyCode\": \"SGD\",\n    \"amount\": 1416.37\n  },\n  \"preExecutionBalance\": {\n    \"currencyCode\": \"SGD\",\n    \"amount\": 1402.77\n  },\n  \"transactionFreeText\": [\n    \"ORG.REF: SE10502309150377 SBK.REF:6213326D0T130001     BNF:010621\",\n    \"6619 Company A   BBI:/ACC/SGP23110\",\n    \"7-000047 //SE10502309150377 //RTN RSN AS PER YR RQST      SBK:SCB\",\n    \"LSG22XXX\",\n    \"\",\n    \"\" ],\n  \"transactionExtendedFreeText\": [\n    \"\",\n    \"\",\n    \"\",\n    \"\",\n    \"\",\n    \"\" ],\n  \"remittanceInfo\": [\n    \"\",\n    \"\",\n    \"\",\n    \"\" ],\n  \"transactionMultiLingualFreeText\": [\n    \"\",\n    \"\",\n    \"\",\n    \"\",\n    \"\",\n    \"\"],\n  \"transactionAmount\": {\n    \"currencyCode\": \"SGD\",\n    \"amount\": 13.60\n  },\n  \"clientIdentifier\": {\n    \"type\": \"Other\",\n    \"identifier\": \"IT1050231124G818\"\n  },\n  \"externalIdentifier\": {\n    \"type\": \"Other\",\n    \"identifier\": \"ORG.REF: SE10502309150377 SBK.REF:6213326D0T130001     BNF:010621\"\n  },\n  \"payerDetails\": {\n     \"name\": \"Standard Chartered Bank (Singapore) Limited\",\n  },\n  \"referenceIds\": {\n     \"endToEndId\": \"NEDAW8YZNERE0MKQ\",\n     \"clearingSystemReference\": \"7-000047\"\n   },\n  \"additionalTransactionDescription\": \"IT1050231124G814 SE10502309150377\",\n  \"transactionTimestamp\": \"2023-11-24T13:41:55\",\n  \"timestamp\": \"2023-11-24T14:19:02.800Z\",\n  \"countryCode\": \"SG\",\n  \"bankBranchCode\": \"07001\",\n  \"payeeDetails\": {\n     \"name\": \"Company A\",\n     \"account\": {\n       \"id\": \"010621234\",\n  },\n     \"bank\": {\n       \"bankCode\": \"SCBLSG22XXX\"\n     }\n  } \n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "SG"
+            }
+        },
+        "/<client-specified-path>/payment/transaction-status": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Payment Transaction Status Updates",
+                "description": "<p>The Payment Transaction Status Updates API provides the ability to receive real-time notifications of payment transaction status events.</p><p>Note: The order of the messages might not be delivered in sequence due to the distributed nature of the application and the impact of internet communications. You need to be aware of such cases and consider implementing suitable measures, such as ignoring the intermediate status of a transaction if it is received after its final status. </p><p>To avoid any impact to your system, it is recommended not to perform any length validation nor strict schema validation for the notification messages as they are subject to changes.",
+                "operationId": "PaymentTransactionStatus",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TransactionStatus"
+                                },
+                                "example": "{\n  \"groupId\": \"APINTST1\",\n  \"endToEndId\": \"INTERNAL1234567890\",\n  \"clientIdentifier\": \"INTERNAL1234567890\",\n  \"paymentContainerId\": \"112255148\",\n  \"statusString\": \"Completed\",\n  \"statusCode\": \"69\",\n  \"lastAssignee\": \"SCPay\",\n  \"reasonCode\": \"69\",\n  \"reasonIsoCode\": \"\",\n  \"timestamp\": \"2024-01-24T09:37:24.626Z\",\n  \"originalTransactionId\": \"INTERNAL1234567890\",\n  \"clearingSystemReference\": \"402415078363\",\n  \"limitBreachIndicator\": \"\",\n  \"reasonInformation\": \"Credited to Beneficiary\",\n  \"instructionIdentifier\": \"62869bda-1aca-4316-b3b1-a996d507b436\",\n  \"creditorName\": \"John Doe\",\n  \"cheque\": {},\n  \"referenceId\": \"INTERNAL1234567890\",\n  \"paymentType\": \"IBFT\",\n  \"valueDate\": \"2024-01-24\",\n  \"debitDate\": \"2024-01-24\"\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,NP,AE,PK,BH,QA,NG,ZA,KE,UG,TZ,GH,ZM,CI,SA,MU,GB,US"
+            }
+        },
+        "/<client-specified-path>/custody/transaction-status": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Custody Transaction Status Updates",
+                "description": "<p>The Custody Transaction Status Updates provides the ability to receive real-time notification of custody transaction status events. </p><p>Note: To avoid any impact to your system, it is recommended not to perform any length validation nor strict schema validation for the notification messages as they are subject to changes.",
+                "operationId": "CustodyTransactionStatus",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CustodyTransactionStatus"
+                                },
+                                "example": "{\n  \"groupId\": \"String\",\n  \"id\": \"A12346432\",\n  \"securitiesAccount\": \"PH0000125271\",\n  \"tradeDate\": \"2020-10-01\",\n  \"transactionReference\": {\n    \"clientTransactionIdentifier\": \"A33322455\",\n    \"transactionIdentifier\": \"T664432567\"\n  },\n  \"securitiesMovementType\": \"Buy\",\n  \"status\": \"Settled\",\n  \"settlementDate\": \"2020-10-01\",\n  \"security\": {\n    \"name\": \"String\",\n    \"isin\": \"String\"\n  },\n  \"settlementQuantity\": 10000,\n  \"settlementAmount\": 150000.5,\n  \"currencyCode\": {\n    \"isoCode\": \"EUR\"\n  },\n  \"depository\": \"The Central Depository (Pte) Ltd. \",\n  \"counterpartyName\": \"International Inc\",\n  \"correspondenceMode\": \"String\",\n  \"businessPartnerId\": \"BP0002574\",\n  \"messageCode\": \"46282\",\n  \"narrative\": \"String\",\n  \"messageTimestamp\": 0\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorised request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,PH,ID,VN,IN,BD,LK,NP,AE,PK,QA,BH,NG,ZA,KE,UG,TZ,GH,ZM,CI"
+            }
+        },
+        "/<client-specified-path>/account-status": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "x_api_category_tags": [
+                    "Financial Institutions"
+                ],
+                "summary": "Account Status Updates",
+                "description": "<p>The Account Status Updates provides the ability to receive real-time notifications of account status. </p><p>Note: To avoid any impact to your system, it is recommended not to perform any length validation nor strict schema validation for the notification messages as they are subject to changes.",
+                "operationId": "AccountStatus",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AccountStatusNotification"
+                                },
+                                "example": "{\n   \"groupId\": \"GROUP1\",\n   \"timestamp\": 0,\n   \"accountOpeningType\": \"Primary\",\n   \"countryOfAccount\": \"SG\",\n   \"currencyOfAccount\": \"SGD\",\n   \"legalEntity\": {\n      \"name\": \"Corp Inc\",\n      \"identity\": {\n        \"id\": \"FPS123456\"\n      }\n    },\n   \"additionalProperties\": \"['label1: value1', 'label2: value2']\",\n   \"accountId\": \"123456\",\n   \"status\": \"Active\"\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,PH,ID,VN,IN,BD,LK,NP,AE,PK,QA,BH,NG,ZA,KE,UG,TZ,GH,ZM,CI"
+            }
+        },
+        "/<client-specified-path>/report-notification": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Report Notification Updates",
+                "description": "<p>The Report Notification Updates API provides the ability to receive real-time notification of report availability. </p><p>Note: To avoid any impact to your system, it is recommended not to perform any length validation nor strict schema validation for the notification messages as they are subject to changes.",
+                "operationId": "report-notification",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReportNotification"
+                                },
+                                "example": "{\n  \"groupId\": \"UAASTST1\",\n  \"reportName\": \"MT940\",\n  \"reportId\": \"d71334c15206\",\n  \"product\": \"account\",\n  \"type\": \"statement\",\n  \"createdDate\": \"2020-09-29\"\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,PH,ID,VN,IN,BD,LK,NP,AE,PK,QA,BH,NG,ZA,KE,UG,TZ,GH,ZM,CI"
+            }
+        },
+        "/<client-specified-path>/report": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Report Delivery via Webhook",
+                "description": "<p>The Report Delivery via Webhook API provides the ability to receive actual report via webhook. Capability is supported for MT942 report. </p><p>Note: To avoid any impact to your system, it is recommended not to perform any length validation nor strict schema validation for the notification messages as they are subject to changes.",
+                "operationId": "report",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Report"
+                                },
+                                "example": "{\n  \"groupId\": \"UAASTST1\",\n  \"reportId\": \"2020091616243353\",\n  \"timestamp\": \"2020-09-16T06:11:28.791\",\n  \"reportName\": \"MT942\",\n  \"mimeType\": \"application/octet-stream;base64\",\n  \"content\": \"mVuZHN0cmVhbQ1lbmRvYmoNc3RhcnR4cmVmDQoxMTYNCiUlTK9GDQo=\"\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,PH,ID,VN,IN,BD,LK,NP,AE,PK,QA,BH,NG,ZA,KE,UG,TZ,GH,ZM,CI"
+            }
+        },
+        "/<client-specified-path>/edda/status": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Direct Debit Authorisation Status Updates",
+                "description": "<p>The Direct Debit Authorisation Status Updates API provides the ability to receive real-time notifications on DDA Status. </p><p>Note: To avoid any impact to your system, it is recommended not to perform any length validation nor strict schema validation for the notification messages as they are subject to changes.",
+                "operationId": "eddaStatus",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DDAStatus"
+                                },
+                                "example": "{\n   \"groupId\": \"GHK012345\",\n   \"referenceId\": \"A202012135352692601562912345\",\n   \"mandateId\": \" A202012135352692601562912345\",\n   \"ddaContainerId\": \"4b018fab-9c96-4ff9-a04d-d1416d334023\",\n   \"id\": \"12c4e41d-f8ac-403b-9e02-c453a4ea479c\",\n   \"trackingId\": \"4b018fab-9c96-4ff9-a04d-d1416d334023\",\n   \"status\": \"Rejected\",\n   \"statusCode\": \"DTAC02\",\n   \"statusMessage\": \"Invalid debtor A/C no.\",\n   \"timestamp\": \"2020-12-12T22:00:13.924Z\",\n   \"comments\": [\"R\", \"\", \"S\", \"003/3942213\", \"EI003202012133942213\"\n    ]\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "HK"
+            }
+        },
+        "/<client-specified-path>/ddi/status": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Direct Debit Instruction Status Updates",
+                "description": "<p>The Direct Debit Instruction Status Updates API provides the ability to receive real-time notifcations on DDI Status. </p><p>Note: To avoid any impact to your system, it is recommended not to perform any length validation nor strict schema validation for the notification messages as they are subject to changes.",
+                "operationId": "ddiStatus",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DDIStatus"
+                                },
+                                "example": "{\n  \"paymentContainerId\": \"90117439-cd74-4d1e-bb22-4380f7eb57b3\",\n  \"statusString\": \"Completed\",\n  \"statusCode\": \" \",\n  \"timestamp\": \"2020-12-01T09:43:05.797Z\",\n  \"reasonInformation\": \"D13\",\n  \"referenceId\": \"A00000000111\"\n}"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "HK,SG"
+            }
+        },
+        "/<client-specified-path>/virtual-account/status": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Virtual Account Status Updates",
+                "description": "<p>The Virtual Account Status Updates API provides the ability to receive real-time notifications of a previously submitted Virtual Account Maintenance (VAM) request through VA APIs.</p><p>Note: The order of the messages might not be delivered in sequence due to the distributed nature of the application and the impact of internet communications. You need to be aware of such cases and consider implementing suitable measures, such as ignoring the intermediate status of a transaction if it is received after its final status. </p><p> To avoid any impact to your system, it is recommended not to perform any length validation nor strict schema validation for the notification messages as they are subject to changes.",
+                "operationId": "virtualAccountStatus",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiVirtualAccountStatus"
+                                },
+                                "example": "{\n \"virtualAccountNumber\": \"CLIENT998877B66\",\n \"status\": \"PENDING\",\n \"statusDescription\": \"\",\n \"iban\": \"KZ5590238934023248812\"\n }"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    }
+                },
+                "x-markets": "HK, SG, MY, IN, PH, BD, AE"
+            }
+        },
+        "/<client-specified-path>/npci/account/status": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Account Details Validation (NPCI) Status Updates",
+                "description": "<p>The Account Details Validation (NPCI) Status Updates API provides the ability to receive real-time notifcations on the status of the NPCI Account Details Validation (Account Holder, Account Status, Account Details). </p><p>Note: To avoid any impact to your system, it is recommended not to perform any length validation nor strict schema validation for the notification messages as they are subject to changes.",
+                "operationId": "npciAccountStatus",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PayeeAccountDetails"
+                                },
+                                "examples": {
+                                    "sample1": {
+                                        "value": {
+                                            "id": "2d7492ee-a848-4e51-8016-ed64b49b1c03",
+                                            "accountId": "24410235248",
+                                            "errorCode": "AER-101",
+                                            "errorDesc": "Your request can not be processed now"
+                                        }
+                                    },
+                                    "sample2": {
+                                        "value": {
+                                            "id": "2d7492ee-a848-4e51-8016-ed64b49b1c03",
+                                            "accountId": "24410235248",
+                                            "accountHolders": "T999"
+                                        }
+                                    },
+                                    "sample3": {
+                                        "value": {
+                                            "id": "2d7492ee-a848-4e51-8016-ed64b49b1c03",
+                                            "accountId": "24410235248",
+                                            "accountStatusCode": "S001",
+                                            "accountStatusDesc": "Account is in open and active state",
+                                            "accountTypeCode": "T999",
+                                            "accountTypeDesc": "Others"
+                                        }
+                                    },
+                                    "sample4": {
+                                        "value": {
+                                            "id": "2d7492ee-a848-4e51-8016-ed64b49b1c03",
+                                            "accountId": "24410235248",
+                                            "accountStatusCode": "S001",
+                                            "accountStatusDesc": "Account is in open and active state",
+                                            "accountTypeCode": "T999",
+                                            "accountTypeDesc": "Others",
+                                            "accountHolders": "T999"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "IN"
+            }
+        },
+        "/<client-specified-path>/finance-request-status": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Supplier Finance - Financing Status Updates",
+                "description": "The Supplier Finance - Financing Status Updates API provides the ability to receive real-time notifications of supplier financing status updates. The report will contain a list of transactions and if there are more than 100 transactions then it will be split into multiple reports (each report will have a maximum of 100 transactions per message).",
+                "operationId": "Trade Finance Status",
+                "responses": {
+                    "200": {
+                        "description": "Success with data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FinanceStatus"
+                                },
+                                "examples": {
+                                    "sample1": {
+                                        "value": [
+                                            {
+                                                "AccrualAmortizationFlag": "Y",
+                                                "AccrualAmortizationFrequency": "DALY",
+                                                "AccrualAmortizationamount": "0.00",
+                                                "BaseRate": "0",
+                                                "BaseRatetenor": "",
+                                                "BatchAmount": "5000000",
+                                                "BatchNo": "",
+                                                "BuyerDocumentNo": "",
+                                                "BuyerID": "100495842",
+                                                "BuyerName": "CHINA NATIONAL BUILDING MATERIAL",
+                                                "ComputedInterestAmount": "80,222.22",
+                                                "CurrencyCode": "CNY",
+                                                "DaystoMaturity": "70",
+                                                "DealID": "TF675V0021",
+                                                "DealRecID": "TF675V0021-01219",
+                                                "DocumentAmount": "5000000",
+                                                "DocumentCurrency": "CNY",
+                                                "DocumentDate": "24/11/2022",
+                                                "DocumentID": "2PRT253JJZ-42221",
+                                                "DocumentOutstandingAmount": "5000000",
+                                                "DueDate": "25/04/2023",
+                                                "FinalSettlementFlag": "",
+                                                "FinanceAmount": "5000000",
+                                                "FinanceOutstandingAmount": "5000000",
+                                                "FinanceOutstandingAmountCreditProtected": "0",
+                                                "FinanceOutstandingAmountNotCreditProtected": "5000000",
+                                                "FinancePercentage": "100.00",
+                                                "FinanceValueDate": "24/11/2022",
+                                                "FloatingRateFlag": "N",
+                                                "IncludeEndDateFlag": "N",
+                                                "InterestCategoryCode": "DINT-Interest Regular - Doc",
+                                                "InterestCollectionSubtypecode": "",
+                                                "InterestCollectionSubtypevalue": "",
+                                                "InterestCollectiontype": "UPFT-Upfront",
+                                                "InterestDebitAccount": "",
+                                                "InterestDebitAmount": "80,222.22",
+                                                "InterestDebitCurrency": "CNY",
+                                                "InterestEndDate": "25/04/2023",
+                                                "InterestID": "20583328000",
+                                                "InterestIncomeAccount": "",
+                                                "Interestindexcode": "FIXD-Fixed",
+                                                "InterestRate": "3.8",
+                                                "InterestRateBasis": "ACTD-Actual/360",
+                                                "InterestRateType": "N",
+                                                "InterestStartDate": "24/11/2022",
+                                                "MarginFactor": "1",
+                                                "MarginPercentage": "3.80",
+                                                "MarginRate": "3.8",
+                                                "MaturityDate": "25/04/2023",
+                                                "OwnerCustomerID": "100487222",
+                                                "ParentRFFIDifpartpendingamountfinanced": "TF675V0021-01219",
+                                                "PartytoChargeCode": "P01",
+                                                "PartyToChargeID": "100487222",
+                                                "PaymentAmount": "",
+                                                "PaymentCurrency": "",
+                                                "PaymentNo": "",
+                                                "PaymentStatusCode": "Outstanding",
+                                                "PaymentValueDate": "",
+                                                "Perdayamount": "0.00",
+                                                "ProductCode": "Vendor Prepay",
+                                                "ResetFrequencyCode": "DALY",
+                                                "RFFFinanceAmount": "5000000",
+                                                "RFFFinanceCurrency": "CNY",
+                                                "Straight2BankFinanceRequestID": "",
+                                                "SupplierBatchNo": "",
+                                                "SupplierDocumentNo": "16250bf131db4002",
+                                                "SupplierID": "100487222",
+                                                "SupplierName": "SHENZHEN QIANHAI HUANRONG",
+                                                "Tenor": "152",
+                                                "TenorStartDate": "24/11/2022",
+                                                "TransactionAmount": "5000000",
+                                                "Transactioncurrency": "CNY",
+                                                "TransactionDate": "24/11/2022",
+                                                "TransactionDueDate": "25/04/2023",
+                                                "WaiveFlag": "N"
+                                            },
+                                            {
+                                                "AccrualAmortizationFlag": "Y",
+                                                "AccrualAmortizationFrequency": "DALY",
+                                                "AccrualAmortizationamount": "0.00",
+                                                "BaseRate": "0",
+                                                "BaseRatetenor": "",
+                                                "BatchAmount": "20000000",
+                                                "BatchNo": "",
+                                                "BuyerDocumentNo": "",
+                                                "BuyerID": "100495842",
+                                                "BuyerName": "CHINA NATIONAL BUILDING MATERIAL",
+                                                "ComputedInterestAmount": "325,111.11",
+                                                "CurrencyCode": "CNY",
+                                                "DaystoMaturity": "70",
+                                                "DealID": "TF675V0021",
+                                                "DealRecID": "TF675V0021-01214",
+                                                "DocumentAmount": "20000000",
+                                                "DocumentCurrency": "CNY",
+                                                "DocumentDate": "22/11/2022",
+                                                "DocumentID": "ZZRT24Q9M3-15653",
+                                                "DocumentOutstandingAmount": "20000000",
+                                                "DueDate": "25/04/2023",
+                                                "FinalSettlementFlag": "",
+                                                "FinanceAmount": "20000000",
+                                                "FinanceOutstandingAmount": "20000000",
+                                                "FinanceOutstandingAmountCreditProtected": "0",
+                                                "FinanceOutstandingAmountNotCreditProtected": "20000000",
+                                                "FinancePercentage": "100.00",
+                                                "FinanceValueDate": "22/11/2022",
+                                                "FloatingRateFlag": "N",
+                                                "IncludeEndDateFlag": "N",
+                                                "InterestCategoryCode": "DINT-Interest Regular - Doc",
+                                                "InterestCollectionSubtypecode": "",
+                                                "InterestCollectionSubtypevalue": "",
+                                                "InterestCollectiontype": "UPFT-Upfront",
+                                                "InterestDebitAccount": "",
+                                                "InterestDebitAmount": "325,111.11",
+                                                "InterestDebitCurrency": "CNY",
+                                                "InterestEndDate": "25/04/2023",
+                                                "InterestID": "20559637892",
+                                                "InterestIncomeAccount": "",
+                                                "Interestindexcode": "FIXD-Fixed",
+                                                "InterestRate": "3.8",
+                                                "InterestRateBasis": "ACTD-Actual/360",
+                                                "InterestRateType": "N",
+                                                "InterestStartDate": "22/11/2022",
+                                                "MarginFactor": "1",
+                                                "MarginPercentage": "3.80",
+                                                "MarginRate": "3.8",
+                                                "MaturityDate": "25/04/2023",
+                                                "OwnerCustomerID": "100487222",
+                                                "ParentRFFIDifpartpendingamountfinanced": "TF675V0021-01214",
+                                                "PartytoChargeCode": "P01",
+                                                "PartyToChargeID": "100487222",
+                                                "PaymentAmount": "",
+                                                "PaymentCurrency": "",
+                                                "PaymentNo": "",
+                                                "PaymentStatusCode": "Outstanding",
+                                                "PaymentValueDate": "",
+                                                "Perdayamount": "0.00",
+                                                "ProductCode": "Vendor Prepay",
+                                                "ResetFrequencyCode": "DALY",
+                                                "RFFFinanceAmount": "20000000",
+                                                "RFFFinanceCurrency": "CNY",
+                                                "Straight2BankFinanceRequestID": "",
+                                                "SupplierBatchNo": "",
+                                                "SupplierDocumentNo": "16221db3255b4001",
+                                                "SupplierID": "100487222",
+                                                "SupplierName": "SHENZHEN QIANHAI HUANRONG",
+                                                "Tenor": "154",
+                                                "TenorStartDate": "22/11/2022",
+                                                "TransactionAmount": "20000000",
+                                                "Transactioncurrency": "CNY",
+                                                "TransactionDate": "22/11/2022",
+                                                "TransactionDueDate": "25/04/2023",
+                                                "WaiveFlag": "N"
+                                            },
+                                            {
+                                                "AccrualAmortizationFlag": "Y",
+                                                "AccrualAmortizationFrequency": "DALY",
+                                                "AccrualAmortizationamount": "950.00",
+                                                "BaseRate": "0",
+                                                "BaseRatetenor": "",
+                                                "BatchAmount": "3000000",
+                                                "BatchNo": "",
+                                                "BuyerDocumentNo": "",
+                                                "BuyerID": "100495842",
+                                                "BuyerName": "CHINA NATIONAL BUILDING MATERIAL",
+                                                "ComputedInterestAmount": "53,833.33",
+                                                "CurrencyCode": "CNY",
+                                                "DaystoMaturity": "65",
+                                                "DealID": "TF675V0021",
+                                                "DealRecID": "TF675V0021-01155",
+                                                "DocumentAmount": "3000000",
+                                                "DocumentCurrency": "CNY",
+                                                "DocumentDate": "01/11/2022",
+                                                "DocumentID": "C3RPZS13LT-68942",
+                                                "DocumentOutstandingAmount": "3000000",
+                                                "DueDate": "20/04/2023",
+                                                "FinalSettlementFlag": "",
+                                                "FinanceAmount": "3000000",
+                                                "FinanceOutstandingAmount": "3000000",
+                                                "FinanceOutstandingAmountCreditProtected": "0",
+                                                "FinanceOutstandingAmountNotCreditProtected": "3000000",
+                                                "FinancePercentage": "100.00",
+                                                "FinanceValueDate": "01/11/2022",
+                                                "FloatingRateFlag": "N",
+                                                "IncludeEndDateFlag": "N",
+                                                "InterestCategoryCode": "DINT-Interest Regular - Doc",
+                                                "InterestCollectionSubtypecode": "",
+                                                "InterestCollectionSubtypevalue": "",
+                                                "InterestCollectiontype": "UPFT-Upfront",
+                                                "InterestDebitAccount": "",
+                                                "InterestDebitAmount": "53,833.33",
+                                                "InterestDebitCurrency": "CNY",
+                                                "InterestEndDate": "20/04/2023",
+                                                "InterestID": "20373688666",
+                                                "InterestIncomeAccount": "",
+                                                "Interestindexcode": "FIXD-Fixed",
+                                                "InterestRate": "3.8",
+                                                "InterestRateBasis": "ACTD-Actual/360",
+                                                "InterestRateType": "N",
+                                                "InterestStartDate": "01/11/2022",
+                                                "MarginFactor": "1",
+                                                "MarginPercentage": "3.80",
+                                                "MarginRate": "3.8",
+                                                "MaturityDate": "20/04/2023",
+                                                "OwnerCustomerID": "100487222",
+                                                "ParentRFFIDifpartpendingamountfinanced": "TF675V0021-01155",
+                                                "PartytoChargeCode": "P01",
+                                                "PartyToChargeID": "100487222",
+                                                "PaymentAmount": "",
+                                                "PaymentCurrency": "",
+                                                "PaymentNo": "",
+                                                "PaymentStatusCode": "Outstanding",
+                                                "PaymentValueDate": "",
+                                                "Perdayamount": "0.00",
+                                                "ProductCode": "Vendor Prepay",
+                                                "ResetFrequencyCode": "DALY",
+                                                "RFFFinanceAmount": "3000000",
+                                                "RFFFinanceCurrency": "CNY",
+                                                "Straight2BankFinanceRequestID": "",
+                                                "SupplierBatchNo": "",
+                                                "SupplierDocumentNo": "1606261d7b1b5001",
+                                                "SupplierID": "100487222",
+                                                "SupplierName": "SHENZHEN QIANHAI HUANRONG",
+                                                "Tenor": "170",
+                                                "TenorStartDate": "01/11/2022",
+                                                "TransactionAmount": "3000000",
+                                                "Transactioncurrency": "CNY",
+                                                "TransactionDate": "01/11/2022",
+                                                "TransactionDueDate": "20/04/2023"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success. Data created",
+                        "content": {}
+                    },
+                    "202": {
+                        "description": "Success. Data accepted",
+                        "content": {}
+                    },
+                    "204": {
+                        "description": "Success. No data returned",
+                        "content": {}
+                    },
+                    "400": {
+                        "description": "Invalid request. Missing or invalid data",
+                        "content": {}
+                    },
+                    "401": {
+                        "description": "Unauthorized request",
+                        "content": {}
+                    },
+                    "404": {
+                        "description": "Resource not found",
+                        "content": {}
+                    },
+                    "429": {
+                        "description": "Default return code for health status, indicating a warning",
+                        "content": {}
+                    },
+                    "500": {
+                        "description": "Internal server error. This indicates an error in the API server",
+                        "content": {}
+                    },
+                    "503": {
+                        "description": "System dependency is down or undergoing maintenance. Try again later",
+                        "content": {}
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,PH,ID,VN,IN,BD,LK,NP,AE,PK,QA,BH,NG,ZA,KE,UG,TZ,GH,ZM,CI,GB,US"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "PayeeAccountDetails": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "NPCI Reference Number",
+                        "example": "2d7492ee-a848-4e51-8016-ed64b49b1c03"
+                    },
+                    "accountId": {
+                        "type": "string",
+                        "description": "Account Number for which details were requested",
+                        "example": 24410235248
+                    },
+                    "accountStatusCode": {
+                        "type": "string",
+                        "description": "Account Status Code",
+                        "example": "S001",
+                        "enum": [
+                            "S000",
+                            "S001",
+                            "S002",
+                            "S003",
+                            "S004",
+                            "S005",
+                            "S006",
+                            "S007",
+                            "S008",
+                            "S009",
+                            "S010",
+                            "S011",
+                            "S012",
+                            "S013",
+                            "S999"
+                        ]
+                    },
+                    "accountStatusDesc": {
+                        "type": "string",
+                        "description": "Possible values for Account Status. <br> <table><tr><th>Status Code</th><th>Status Description</th></tr> <tr> <td>S000</td><td>Account is in open state</td> </tr><tr> <td>S001</td><td>Account is in open and active state</td> </tr><tr> <td>S002</td><td>Account under litigation</td></tr><tr>  <td>S003</td><td> A/c inactive (No Transactions for last 3 Months)</td> </tr><tr><td>S004</td><td> Dormant A/c (No Transactions for last 6 Months)</td> </tr><tr><td>S005</td><td> Account holder expired </td> </tr><tr><td>S006</td><td> A/c blocked or frozen </td> </tr><tr><td>S007</td><td> Customer insolvent / insane </td> </tr><tr><td>S008</td><td> Account Closed </td> </tr><tr><td>S009</td><td> No such Account </td> </tr><tr><td>S010</td><td> KYC Documents Pending </td> </tr><tr><td>S011</td><td> Invalid IFSC code </td> </tr><tr><td>S012</td><td> Network failure (CBS)</td> </tr><tr><td>S013</td><td> A/c in Zero balance/No transactions have happened </td> </tr><tr><td>S999</td><td>Others</td> </tr><tr></table>",
+                        "example": "Account is in open and active state"
+                    },
+                    "accountTypeCode": {
+                        "type": "string",
+                        "description": "Account Type Codes",
+                        "example": "T999",
+                        "enum": [
+                            "T001",
+                            "T002",
+                            "T003",
+                            "T004",
+                            "T006",
+                            "T007",
+                            "T008",
+                            "T009",
+                            "T010",
+                            "T011",
+                            "T012",
+                            "T013",
+                            "T999"
+                        ]
+                    },
+                    "accountTypeDesc": {
+                        "type": "string",
+                        "description": "Possible values for Account Types. <br> <table><tr><th>Account Type Code</th><th>Account Type Description</th></tr> <tr>  <td>T001</td><td>Savings Account</td> </tr><tr> <td>T002</td><td>Current Account </td></tr><tr>  <td>T003</td><td> Cash credit Account </td> </tr><tr><td>T004</td><td> Overdraft Account</td> </tr><tr><td>T006</td><td> FD </td> </tr><tr><td>T007</td><td> RD </td> </tr><tr><td>T008</td><td> Loan Account </td> </tr><tr><td>T009</td><td> PMJDY Account </td> </tr><tr><td>T010</td><td> NRE/NRO account </td> </tr><tr><td>T011</td><td> HUF - Hindu Undivided family </td> </tr><tr><td>T012</td><td> PF & PPF </td> </tr><tr><td>T013</td><td> Basic Savings Bank Deposit (BSBD) </td> </tr><tr><td>T999</td><td>Others</td> </tr><tr></table>",
+                        "example": "Others"
+                    },
+                    "accountHolders": {
+                        "type": "array",
+                        "description": "Account Holder Names",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "errorCode": {
+                        "type": "string",
+                        "description": "Error Codes",
+                        "example": "AER-101",
+                        "enum": [
+                            "AER-101",
+                            "AER-105",
+                            "AER-102",
+                            "AER-103",
+                            "AER-104",
+                            "AER-159",
+                            "AER-160",
+                            "AER-170",
+                            "AER-215",
+                            "AER-216",
+                            "AER-217",
+                            "AER-220",
+                            "AER-221",
+                            "AER-225"
+                        ]
+                    },
+                    "errorDesc": {
+                        "type": "string",
+                        "description": "Error Codes Description. <br> <table><tr><th>Error Code</th><th>Error Description</th></tr> <tr> <td>AER-101</td><td>Your request can not be processed now</td> </tr><tr> <td>AER-105</td><td>Internal Service is down. Please try after some time</td> </tr><tr> <td>AER-102</td><td>No such Account</td></tr><td>AER-103</td><td> Invalid IFSC code </td> </tr><tr> <td>AER-104</td><td> Network failure happened in Destination bank side </td> </tr><tr> <td>AER-159</td><td> Destination bank sent invalid Account Type </td> </tr><tr> <td>AER-160</td><td> Destination bank sent invalid Account Status </td> </tr><tr> <td>AER-170</td><td> Destination bank sent invalid Account holder Name </td> </tr><tr> <td>AER-215</td><td> Destination bank is not reachable </td> </tr><tr> <td>AER-216</td><td> Destination bank send incomplete response </td> </tr><tr> <td>AER-217</td><td> Destination bank did not send response with in SLA </td> </tr><tr> <td>AER-220</td><td> Destination bank service is not available </td> </tr><tr> <td>AER-221</td><td> Destination bank is not active </td> </tr><tr> <td>AER-225</td><td> Earlier response given by Destination bank </td> </tr><tr> </table>",
+                        "example": "Your request can not be processed now"
+                    }
+                }
+            },
+            "NewsflashWebhook": {
+                "type": "object",
+                "properties": {
+                    "groupId": {
+                        "type": "string",
+                        "description": "Internal unique Identifier",
+                        "example": "GROUP9"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "description": "ID of the Newsflash",
+                        "format": "int64",
+                        "example": 9
+                    },
+                    "date": {
+                        "type": "string",
+                        "description": "Date of the newsflash  in yyyy-MM-dd[THH:MM] format, where [THH:MM] is an optional time of day",
+                        "format": "date",
+                        "example": "2009-11-01T00:00:00.000Z"
+                    },
+                    "headline": {
+                        "type": "string",
+                        "description": "Headline text for the newsflash",
+                        "example": "Partnership Between Bovespa and CME Group - Update"
+                    },
+                    "summary": {
+                        "type": "string",
+                        "description": "Summary of the newsflash"
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "Text of the flash body, should be an XHTML string",
+                        "example": "In an update to our previous newsflash, Bovespa and CME Group (Chicago Mercantile Exchange Group) have obtained the regulatory approval from the Commodity Futures Trading Commission (CFTC) to allow.."
+                    },
+                    "urgent": {
+                        "type": "boolean",
+                        "description": "Urgency of the newsflash. 0 for ordinary newsflash, for urgent ones will have the value of 1",
+                        "example": false
+                    },
+                    "attachments": {
+                        "type": "array",
+                        "description": "Newsflash Attachment Details",
+                        "items": {
+                            "$ref": "#/components/schemas/NewsflashAttachment"
+                        }
+                    },
+                    "linkedFlashes": {
+                        "type": "array",
+                        "description": "Linked Newsflash Details",
+                        "items": {
+                            "$ref": "#/components/schemas/LinkedNewsflash"
+                        }
+                    },
+                    "productImpacts": {
+                        "type": "array",
+                        "description": "Details of Product Impact",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductImpact"
+                        }
+                    }
+                }
+            },
+            "OpenApiCreditDebitAdvice": {
+                "required": [
+                    "groupId",
+                    "accountIdentifier",
+                    "eventDate",
+                    "transactionIdentifier",
+                    "adviceType",
+                    "valueDate",
+                    "accountName",
+                    "transactionCode",
+                    "baiCode",
+                    "postExecutionBalance",
+                    "preExecutionBalance",
+                    "clientIdentifier",
+                    "transactionAmont",
+                    "additionalTransactionDescription",
+                    "transactionTimestamp",
+                    "timestamp",
+                    "countryCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "groupId": {
+                        "type": "string",
+                        "description": "The registered group ID of the client.",
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "example": "INFXFFF"
+                    },
+                    "accountIdentifier": {
+                        "description": "The account details.",
+                        "$ref": "#/components/schemas/AccountId"
+                    },
+                    "eventDate": {
+                        "type": "string",
+                        "description": "The system date of the the credit/debit advice of the Bank's core banking system. <br>Format: YYYY-MM-DD\n",
+                        "format": "date",
+                        "example": "2018-04-26T00:00:00.000Z"
+                    },
+                    "transactionIdentifier": {
+                        "description": "The transaction identifier details.",
+                        "$ref": "#/components/schemas/TransactionIdentifier"
+                    },
+                    "adviceType": {
+                        "type": "string",
+                        "description": "The type of advice.",
+                        "example": "Credit",
+                        "maxLength": 6,
+                        "minLength": 0,
+                        "enum": [
+                            "Credit",
+                            "Debit"
+                        ]
+                    },
+                    "valueDate": {
+                        "type": "string",
+                        "description": "The value date of the credit/debit transaction. </p><p> Format: YYYY-MM-DD\n",
+                        "format": "date",
+                        "example": "2019-01-29T00:00:00.000Z"
+                    },
+                    "virtualAccountId": {
+                        "type": "string",
+                        "description": "The virtual account number used for this credit/debit transaction.",
+                        "maxLength": 34,
+                        "minLength": 0,
+                        "example": "111111111111"
+                    },
+                    "accountName": {
+                        "type": "string",
+                        "description": "The account name.",
+                        "example": "Corp Inc.",
+                        "maxLength": 70,
+                        "minLength": 0
+                    },
+                    "transactionCode": {
+                        "type": "string",
+                        "description": "The transaction code.",
+                        "example": "716",
+                        "maxLength": 5,
+                        "minLength": 0
+                    },
+                    "baiCode": {
+                        "type": "string",
+                        "description": "The BAI code.",
+                        "example": "169",
+                        "maxLength": 3,
+                        "minLength": 0
+                    },
+                    "transactionDescription": {
+                        "type": "string",
+                        "description": "The transaction description.",
+                        "example": "Fund Transfer NEFT Inward -credit",
+                        "maxLength": 140,
+                        "minLength": 0
+                    },
+                    "postExecutionBalance": {
+                        "description": "The post-transaction indicative balance",
+                        "$ref": "#/components/schemas/DenominatedAmount"
+                    },
+                    "preExecutionBalance": {
+                        "$ref": "#/components/schemas/DenominatedAmount",
+                        "description": "The pre-transaction indicative balance"
+                    },
+                    "transactionFreeText": {
+                        "type": "array",
+                        "description": "The narrations for the transaction.",
+                        "items": {
+                            "type": "string",
+                            "description": "Each item in the array with a current max length of 140. It is recommended not to perform any length validation as this is subject to changes.",
+                            "maxLength": 140,
+                            "minLength": 0
+                        }
+                    },
+                    "transactionExtendedFreeText": {
+                        "type": "array",
+                        "description": "The extended narration for the transaction.",
+                        "items": {
+                            "type": "string",
+                            "description": "Each item in the array with a current max length of 140. It is recommended not to perform any length validation as this is subject to changes.",
+                            "maxLength": 140,
+                            "minLength": 0
+                        }
+                    },
+                    "transactionMultiLingualFreeText": {
+                        "type": "array",
+                        "description": "The payment details along with the local language narration if applicable.",
+                        "items": {
+                            "type": "string",
+                            "description": "Each item in the array with a current max length of 140. It is recommended not to perform any length validation as this is subject to changes.",
+                            "maxLength": 140,
+                            "minLength": 0
+                        }
+                    },
+                    "transactionAmount": {
+                        "description": "The transaction amount details.",
+                        "$ref": "#/components/schemas/DenominatedAmount"
+                    },
+                    "clientIdentifier": {
+                        "description": "The client identifier details.",
+                        "$ref": "#/components/schemas/ClientIdentifier"
+                    },
+                    "externalIdentifier": {
+                        "description": "(Not in use) The external identifier details.",
+                        "$ref": "#/components/schemas/ExternalIdentifier"
+                    },
+                    "contacts": {
+                        "description": "(Not in use) The contact information.",
+                        "$ref": "#/components/schemas/Contacts"
+                    },
+                    "payerDetails": {
+                        "description": "The payer's details.",
+                        "$ref": "#/components/schemas/PayerDetails"
+                    },
+                    "referenceIds": {
+                        "description": "The reference ID details.",
+                        "$ref": "#/components/schemas/ReferenceIds"
+                    },
+                    "additionalTransactionDescription": {
+                        "type": "string",
+                        "description": "The addtional details of the transaction.",
+                        "maxLength": 44,
+                        "minLength": 0
+                    },
+                    "supplementaryTransactionDescription": {
+                        "type": "string",
+                        "description": "The supplementary details of the transaction.",
+                        "maxLength": 36,
+                        "minLength": 0
+                    },
+                    "bankBranchCode": {
+                        "type": "string",
+                        "description": "The account bank branch code.",
+                        "maxLength": 3,
+                        "minLength": 0
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "description": "The account country code.",
+                        "maxLength": 2,
+                        "minLength": 1
+                    },
+                    "postingMode": {
+                        "type": "string",
+                        "description": "The posting mode of the transaction. Only HK, TH and TW markets will return a value, if any. As memo transactions are night mode, the balances generated for the Credit/Debit Advice may deviate from the accurate balance. </p><p>O – Online Transaction, </p><p>M – Memo Transaction, </p><p>B – Batch Mode",
+                        "maxLength": 1,
+                        "minLength": 0,
+                        "example": "O",
+                        "enum": [
+                            "O",
+                            "M",
+                            "B"
+                        ]
+                    },
+                    "payeeDetails": {
+                        "description": "The payee's details.",
+                        "$ref": "#/components/schemas/PayeeDetails"
+                    },
+                    "senderCorrespondentBank": {
+                        "description": "The sender's correspondent bank details.",
+                        "$ref": "#/components/schemas/SenderCorrespondentBank"
+                    },
+                    "transactionTimestamp": {
+                        "type": "string",
+                        "description": "(Not in use) The timestamp of the transaction posted to the core banking system.",
+                        "format": "date-time"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "The The UTC timestamp of when the message was generated. </p><p> Format: YYYY-MM-DDTHH:mm:SS.SSSZ\n",
+                        "example": "2020-12-13T03:29:09.763Z",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "OpenApiTransactionAdvice": {
+                "required": [
+                    "groupId",
+                    "accountIdentifier",
+                    "eventDate",
+                    "transactionIdentifier",
+                    "adviceType",
+                    "valueDate",
+                    "accountName",
+                    "transactionCode",
+                    "baiCode",
+                    "postExecutionBalance",
+                    "preExecutionBalance",
+                    "clientIdentifier",
+                    "transactionAmont",
+                    "additionalTransactionDescription",
+                    "transactionTimestamp",
+                    "timestamp",
+                    "countryCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "groupId": {
+                        "type": "string",
+                        "description": "The registered group ID of the client.",
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "example": "INFXFFF"
+                    },
+                    "accountIdentifier": {
+                        "description": "The account details.",
+                        "$ref": "#/components/schemas/AccountId"
+                    },
+                    "eventDate": {
+                        "type": "string",
+                        "description": "The system date of the the credit/debit advice of the Bank's core banking system. </p><p> Format:  YYYY-MM-DD\n",
+                        "format": "date",
+                        "example": "2018-04-26T00:00:00.000Z"
+                    },
+                    "transactionIdentifier": {
+                        "description": "The transaction identifier details.",
+                        "$ref": "#/components/schemas/TransactionIdentifier"
+                    },
+                    "adviceType": {
+                        "type": "string",
+                        "description": "The type of advice.",
+                        "example": "Credit",
+                        "maxLength": 6,
+                        "minLength": 0,
+                        "enum": [
+                            "Credit",
+                            "Debit"
+                        ]
+                    },
+                    "valueDate": {
+                        "type": "string",
+                        "description": "The value date of the credit/debit transaction. </p><p> Format: YYYY-MM-DD\n",
+                        "format": "date",
+                        "example": "2019-01-29T00:00:00.000Z"
+                    },
+                    "virtualAccountId": {
+                        "type": "string",
+                        "description": "The virtual account number used for this credit/debit transaction.",
+                        "maxLength": 34,
+                        "minLength": 0,
+                        "example": "111111111111"
+                    },
+                    "accountName": {
+                        "type": "string",
+                        "description": "The account name.",
+                        "example": "Corp Inc.",
+                        "maxLength": 70,
+                        "minLength": 0
+                    },
+                    "transactionCode": {
+                        "type": "string",
+                        "description": "The transaction code.",
+                        "example": "716",
+                        "maxLength": 5,
+                        "minLength": 0
+                    },
+                    "baiCode": {
+                        "type": "string",
+                        "description": "The BAI code.",
+                        "example": "169",
+                        "maxLength": 3,
+                        "minLength": 0
+                    },
+                    "transactionDescription": {
+                        "type": "string",
+                        "description": "The transaction description.",
+                        "example": "Fund Transfer NEFT Inward -credit",
+                        "maxLength": 140,
+                        "minLength": 0
+                    },
+                    "postExecutionBalance": {
+                        "description": "The post-transaction indicative balance.",
+                        "$ref": "#/components/schemas/DenominatedAmount"
+                    },
+                    "preExecutionBalance": {
+                        "$ref": "#/components/schemas/DenominatedAmount",
+                        "description": "The pre-transaction indicative balance."
+                    },
+                    "transactionFreeText": {
+                        "type": "array",
+                        "description": "The narrations for the transaction.",
+                        "items": {
+                            "type": "string",
+                            "description": "Each item in the array with a current max length of 140. It is recommended not to perform any length validation as this is subject to changes.",
+                            "maxLength": 140,
+                            "minLength": 0
+                        }
+                    },
+                    "transactionExtendedFreeText": {
+                        "type": "array",
+                        "description": "The extended narration for the transaction.",
+                        "items": {
+                            "type": "string",
+                            "description": "Each item in the array with a current max length of 140. It is recommended not to perform any length validation as this is subject to changes.",
+                            "maxLength": 140,
+                            "minLength": 0
+                        }
+                    },
+                    "remittanceInfo": {
+                        "type": "array",
+                        "description": "The remittance info for the transaction.",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 140,
+                            "minLength": 0
+                        }
+                    },
+                    "transactionMultiLingualFreeText": {
+                        "type": "array",
+                        "description": "Payment details along with local language if applicable",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 140,
+                            "minLength": 0
+                        }
+                    },
+                    "transactionAmount": {
+                        "description": "The transaction amount details",
+                        "$ref": "#/components/schemas/DenominatedAmount"
+                    },
+                    "clientIdentifier": {
+                        "description": "The client identifier details.",
+                        "$ref": "#/components/schemas/ClientIdentifier"
+                    },
+                    "externalIdentifier": {
+                        "description": "The external identifier details.",
+                        "$ref": "#/components/schemas/ExternalIdentifier"
+                    },
+                    "payerDetails": {
+                        "description": "The payer's details.",
+                        "$ref": "#/components/schemas/PayerDetails"
+                    },
+                    "referenceIds": {
+                        "description": "The reference ID details.",
+                        "$ref": "#/components/schemas/ReferenceIds"
+                    },
+                    "additionalTransactionDescription": {
+                        "type": "string",
+                        "description": "The addtional details of the transaction.",
+                        "maxLength": 44,
+                        "minLength": 0
+                    },
+                    "supplementaryTransactionDescription": {
+                        "type": "string",
+                        "description": "The supplementary details of the transaction.",
+                        "maxLength": 36,
+                        "minLength": 0
+                    },
+                    "bankBranchCode": {
+                        "type": "string",
+                        "description": "The account bank branch code.",
+                        "maxLength": 3,
+                        "minLength": 0
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "description": "The account country code.",
+                        "maxLength": 2,
+                        "minLength": 1
+                    },
+                    "payeeDetails": {
+                        "description": "The payee's details",
+                        "$ref": "#/components/schemas/PayeeDetails"
+                    },
+                    "senderCorrespondentBank": {
+                        "description": "The sender's correspondent bank details.",
+                        "$ref": "#/components/schemas/SenderCorrespondentBank"
+                    },
+                    "transactionTimestamp": {
+                        "type": "string",
+                        "description": "(Not in use) The timestamp of the transaction posted to the core banking system.",
+                        "format": "date-time"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "The UTC timestamp of when the message was generated. </p><p> Format: YYYY-MM-DDTHH:mm:SS.SSSZ\n",
+                        "example": "2020-12-13T03:29:09.763Z",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "Contacts": {
+                "type": "object",
+                "properties": {
+                    "contactTypeCode": {
+                        "type": "array",
+                        "description": "(Not in use) The contact details type.",
+                        "items": {
+                            "type": "string",
+                            "description": "(Not in use) Each item in the array."
+                        }
+                    },
+                    "contact": {
+                        "type": "array",
+                        "description": "(Not in use) The contact details",
+                        "items": {
+                            "type": "string",
+                            "description": "(Not in use) Each item in the array."
+                        }
+                    }
+                }
+            },
+            "PayerDetails": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The payer's name.",
+                        "maxLength": 140,
+                        "minLength": 0
+                    },
+                    "account": {
+                        "description": "The payer's account details.",
+                        "$ref": "#/components/schemas/PayerIdentity"
+                    },
+                    "bank": {
+                        "description": "The payer's bank details.",
+                        "$ref": "#/components/schemas/PayerBankDetails"
+                    }
+                }
+            },
+            "PayeeDetails": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The beneficiary's name.",
+                        "maxLength": 140,
+                        "minLength": 0
+                    },
+                    "account": {
+                        "description": "The beneficiary's account details.",
+                        "$ref": "#/components/schemas/PayeeIdentity"
+                    },
+                    "bank": {
+                        "description": "The beneficiary's bank details.",
+                        "$ref": "#/components/schemas/PayeeBankDetails"
+                    }
+                }
+            },
+            "PayerIdentity": {
+                "type": "object",
+                "properties": {
+                    "identityType": {
+                        "type": "string",
+                        "description": "(Not in use) The payer's account ID scheme.",
+                        "maxLength": 4,
+                        "minLength": 0
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "The payer's account ID.",
+                        "maxLength": 34,
+                        "minLength": 0
+                    }
+                }
+            },
+            "PayeeIdentity": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The beneficiary's account ID.",
+                        "maxLength": 34,
+                        "minLength": 0
+                    }
+                }
+            },
+            "PayerBankDetails": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The payer's bank name.",
+                        "maxLength": 140,
+                        "minLength": 0
+                    },
+                    "bankCode": {
+                        "type": "string",
+                        "description": "The payer's bank BIC.",
+                        "maxLength": 11,
+                        "minLength": 0
+                    },
+                    "clearingSystemId": {
+                        "type": "string",
+                        "description": "(Not in use) The payer's bank clearing ID.",
+                        "maxLength": 3,
+                        "minLength": 0
+                    }
+                }
+            },
+            "PayeeBankDetails": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The beneficiary's bank name.",
+                        "maxLength": 140,
+                        "minLength": 0
+                    },
+                    "bankCode": {
+                        "type": "string",
+                        "description": "The beneficiary's bank BIC.",
+                        "maxLength": 11,
+                        "minLength": 0
+                    }
+                }
+            },
+            "SenderCorrespondentBank": {
+                "type": "object",
+                "properties": {
+                    "bankCode": {
+                        "type": "string",
+                        "description": "The sender's correspondent bank BIC.",
+                        "maxLength": 11,
+                        "minLength": 0
+                    }
+                }
+            },
+            "ReferenceIds": {
+                "type": "object",
+                "properties": {
+                    "endToEndId": {
+                        "type": "string",
+                        "description": "The unique system reference number generated by the Bank's core banking system for a debit or credit event to the account. <br>Note: This identifier is only unique within the same market so it is possible to get the same identifier for different markets.\n",
+                        "maxLength": 35,
+                        "minLength": 0
+                    },
+                    "txId": {
+                        "type": "string",
+                        "description": "(Not in use) The system transaction ID.",
+                        "maxLength": 35,
+                        "minLength": 0
+                    },
+                    "clearingSystemReference": {
+                        "type": "string",
+                        "description": "The Bank's internal generated reference number. For Reject/Return cases, it will be the Bank's internal generated reference number of the original payment. Currently, only HK market will return a value, if any.",
+                        "maxLength": 35,
+                        "minLength": 0
+                    }
+                }
+            },
+            "TransactionIdentifier": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "The identifier type",
+                        "example": "Other",
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "enum": [
+                            "BAI",
+                            "SWIFT",
+                            "Other"
+                        ]
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "description": "The unique system reference number generated by the Bank's core banking system for a debit or credit event to the account. </p><p> Note: This identifier is only unique within the same market so it is possible to get the same identifier for different markets.\n",
+                        "maxLength": 40,
+                        "minLength": 0,
+                        "example": "1111111111111111"
+                    },
+                    "relatedRefNo": {
+                        "type": "string",
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "description": "The related reference number from SWIFT for a credit event (only applicable for AE)."
+                    }
+                }
+            },
+            "ExternalIdentifier": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "The identifier type.",
+                        "example": "Other",
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "enum": [
+                            "BAI",
+                            "SWIFT",
+                            "Other"
+                        ]
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "description": "(Not in use) The transaction identifier."
+                    }
+                }
+            },
+            "ClientIdentifier": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "The identifier type.",
+                        "example": "Other",
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "enum": [
+                            "BAI",
+                            "SWIFT",
+                            "Other"
+                        ]
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "description": "The sender's reference number.",
+                        "maxLength": 50,
+                        "minLength": 0,
+                        "example": "1111111111111111"
+                    }
+                }
+            },
+            "ReportNotification": {
+                "type": "object",
+                "required": [
+                    "groupId",
+                    "reportName",
+                    "reportId",
+                    "product",
+                    "type",
+                    "createdDate"
+                ],
+                "properties": {
+                    "groupId": {
+                        "type": "string",
+                        "description": "Your Registered Group ID",
+                        "example": "UAASTST1"
+                    },
+                    "reportName": {
+                        "type": "string",
+                        "description": "Name of the Report - QLDS0010R, E140, E139, MT940A, MT942",
+                        "example": "MT940"
+                    },
+                    "reportId": {
+                        "type": "string",
+                        "description": "Report ID",
+                        "example": "d71334c15206"
+                    },
+                    "product": {
+                        "type": "string",
+                        "description": "Product Category such as Account, Collections, Payments",
+                        "example": "account"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Report Type - DDA, DDI, Payment Status, Statement",
+                        "example": "statement"
+                    },
+                    "createdDate": {
+                        "type": "string",
+                        "description": "Date of the Report Creation",
+                        "example": "2020-09-29",
+                        "format": "date"
+                    }
+                }
+            },
+            "Report": {
+                "type": "object",
+                "required": [
+                    "groupId",
+                    "reportName",
+                    "reportId",
+                    "timestamp",
+                    "content",
+                    "mimeType"
+                ],
+                "properties": {
+                    "groupId": {
+                        "type": "string",
+                        "description": "Your Registered Group ID",
+                        "example": "UAASTST1"
+                    },
+                    "reportName": {
+                        "type": "string",
+                        "description": "Name of the Report - QLDS0010R, E140, E139, MT940A, MT942",
+                        "example": "MT942"
+                    },
+                    "reportId": {
+                        "type": "string",
+                        "description": "Report ID",
+                        "example": "2020091616243353"
+                    },
+                    "timestamp": {
+                        "type": "integer",
+                        "description": "Timestamp of receiving notification",
+                        "example": "2020-09-16T06:11:28.791"
+                    },
+                    "content": {
+                        "type": "string",
+                        "description": "Base 64 string of report file",
+                        "example": "mVuZHN0cmVhbQ1lbmRvYmoNc3RhcnR4cmVmDQoxMTYNCiUlTK9GDQo="
+                    },
+                    "mimeType": {
+                        "type": "string",
+                        "description": "Type of the file",
+                        "example": "application/octet-stream;base64"
+                    }
+                }
+            },
+            "CustodyTransactionStatus": {
+                "required": [
+                    "businessPartnerId",
+                    "correspondenceMode",
+                    "counterpartyName",
+                    "currencyCode",
+                    "depository",
+                    "id",
+                    "messageCode",
+                    "messageTimestamp",
+                    "narrative",
+                    "securitiesAccount",
+                    "securitiesMovementType",
+                    "security",
+                    "settlementAmount",
+                    "settlementDate",
+                    "settlementQuantity",
+                    "status",
+                    "tradeDate",
+                    "transactionReference"
+                ],
+                "type": "object",
+                "properties": {
+                    "groupId": {
+                        "type": "string",
+                        "description": "Bank Identifier"
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Unique Transaction Identifier",
+                        "example": "A12346432"
+                    },
+                    "securitiesAccount": {
+                        "maxLength": 12,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Security Account Number",
+                        "example": "PH0000125271"
+                    },
+                    "tradeDate": {
+                        "type": "string",
+                        "description": "Trade Date",
+                        "format": "date"
+                    },
+                    "transactionReference": {
+                        "$ref": "#/components/schemas/TransactionReference"
+                    },
+                    "securitiesMovementType": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Securities Movement Type",
+                        "example": "Buy"
+                    },
+                    "status": {
+                        "maxLength": 25,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Current status of the transaction",
+                        "example": "Settled"
+                    },
+                    "settlementDate": {
+                        "type": "string",
+                        "description": "Settlement Date",
+                        "format": "date"
+                    },
+                    "security": {
+                        "$ref": "#/components/schemas/ListedSecurity"
+                    },
+                    "settlementQuantity": {
+                        "maximum": 10,
+                        "minimum": 0,
+                        "type": "number",
+                        "description": "Settlement quantity (units)",
+                        "example": 10000
+                    },
+                    "settlementAmount": {
+                        "maximum": 20,
+                        "minimum": 0,
+                        "type": "number",
+                        "description": "Settlement Amount",
+                        "example": 150000.5
+                    },
+                    "currencyCode": {
+                        "$ref": "#/components/schemas/CurrencyCode"
+                    },
+                    "depository": {
+                        "type": "string",
+                        "description": "Depository",
+                        "example": "The Central Depository (Pte) Ltd. "
+                    },
+                    "counterpartyName": {
+                        "maxLength": 150,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Name of Counter Party",
+                        "example": "International Inc"
+                    },
+                    "correspondenceMode": {
+                        "type": "string",
+                        "description": "Correspondence Mode"
+                    },
+                    "businessPartnerId": {
+                        "type": "string",
+                        "description": "Business Partner Identification",
+                        "example": "BP0002574"
+                    },
+                    "messageCode": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Status Code Reference",
+                        "example": "46282"
+                    },
+                    "narrative": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Narrative"
+                    },
+                    "messageTimestamp": {
+                        "maximum": 35,
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "Message Time Stamp",
+                        "format": "int64"
+                    }
+                }
+            },
+            "TransactionStatus": {
+                "required": [
+                    "groupId",
+                    "instructionIdentifier",
+                    "lastAssignee",
+                    "paymentContainerId",
+                    "referenceId",
+                    "statusString",
+                    "timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "groupId": {
+                        "maxLength": 8,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Your registered group ID with the Bank.",
+                        "example": "APINTST1"
+                    },
+                    "endToEndId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Your reference ID/end-to-end ID of the payment initiation request.",
+                        "example": "INTERNAL1234567890"
+                    },
+                    "clientIdentifier": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Your reference ID provided in the payment initiation request.",
+                        "example": "INTERNAL1234567890"
+                    },
+                    "paymentContainerId": {
+                        "type": "string",
+                        "description": "An internal reference ID assigned by the API banking channel.",
+                        "example": "112255148"
+                    },
+                    "statusString": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "<p>The description of the status code.<br>Possible values: Pending, Processed, Completed, Rejected, Returned, Stopped</p>",
+                        "example": "Completed"
+                    },
+                    "statusCode": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The payment status code assigned by the Bank.",
+                        "example": "69"
+                    },
+                    "lastAssignee": {
+                        "maxLength": 20,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "<p>The last assigned interface application of the payment.<br>Possible values: API, CCSAgent, SCPay</p>",
+                        "example": "SCPay"
+                    },
+                    "reasonCode": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The reason code assigned by the Bank.",
+                        "example": "69"
+                    },
+                    "reasonIsoCode": {
+                        "type": "string",
+                        "description": "(Not in use) The reason ISO code in case of rejection."
+                    },
+                    "additionalInformation": {
+                        "type": "string",
+                        "description": "The additional information of the payment updated by the product processing system if available."
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "The UTC timestamp of the status record creation time.",
+                        "format": "date-time",
+                        "example": "2024-01-24T09:37:24.626Z"
+                    },
+                    "originalTransactionId": {
+                        "type": "string",
+                        "description": "Your reference ID provided in the payment initiation request.",
+                        "example": "INTERNAL1234567890"
+                    },
+                    "clearingSystemReference": {
+                        "type": "string",
+                        "description": "The clearing reference number assigned by the product processing system if available.",
+                        "example": "402415078363"
+                    },
+                    "limitBreachIndicator": {
+                        "type": "string",
+                        "description": "(Not in use) The limit breach indicator."
+                    },
+                    "reasonInformation": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The payment status information assigned by the Bank.",
+                        "example": "Credited to Beneficiary"
+                    },
+                    "instructionIdentifier": {
+                        "maxLength": 36,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The unique end-to-end transaction reference (UETR) which is automatically assigned by the Bank during payment initiation.",
+                        "example": "62869bda-1aca-4316-b3b1-a996d507b436"
+                    },
+                    "creditorName": {
+                        "maxLength": 140,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The creditor's name."
+                    },
+                    "cheque": {
+                        "$ref": "#/components/schemas/OpenApiCheque"
+                    },
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Your reference ID provided in the payment initiation request.",
+                        "example": "INTERNAL1234567890"
+                    },
+                    "paymentType": {
+                        "maxLength": 4,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The payment type of the transaction."
+                    },
+                    "requiredExecutionDate": {
+                        "type": "string",
+                        "description": "The execution date of the payment.",
+                        "format": "date"
+                    },
+                    "amountCurrencyCode": {
+                        "type": "string",
+                        "description": "The ISO 3-character currency code."
+                    },
+                    "debtorAccountCurrency": {
+                        "type": "string",
+                        "description": "The ISO 3-character currency code of the debtor account currency."
+                    },
+                    "debitAmount": {
+                        "type": "string",
+                        "description": "The debit amount."
+                    },
+                    "debtorAccountId": {
+                        "type": "string",
+                        "description": "The debtor account number."
+                    },
+                    "creditorAccountId": {
+                        "type": "string",
+                        "description": "The creditor account number."
+                    },
+                    "contractFXRate": {
+                        "type": "string",
+                        "description": "The FX conversion rate."
+                    },
+                    "fxContractNo": {
+                        "type": "string",
+                        "description": "The FX contract number."
+                    },
+                    "customerFxRate": {
+                        "type": "string",
+                        "description": "(Not in use) The customer FX Rate."
+                    },
+                    "valueDate": {
+                        "type": "string",
+                        "description": "The value date (processing date) of the payment.",
+                        "format": "date"
+                    },
+                    "creditorAddress": {
+                        "$ref": "#/components/schemas/OpenApiPostalAddress"
+                    },
+                    "debitDate": {
+                        "type": "string",
+                        "description": "The debit date of the payment.",
+                        "format": "date"
+                    }
+                }
+            },
+            "DDIStatus": {
+                "required": [
+                    "paymentContainerId",
+                    "statusString",
+                    "timestamp",
+                    "referenceId"
+                ],
+                "type": "object",
+                "properties": {
+                    "paymentContainerId": {
+                        "maxLength": 36,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Unique reference assigned by the bank",
+                        "example": "111f111-111f-1111-9cf4-111ecd111dd1"
+                    },
+                    "statusString": {
+                        "type": "string",
+                        "description": "Status Description of the DDI. Expected values are Pending, Rejected, Completed",
+                        "example": "Completed",
+                        "maxLength": 10,
+                        "minLength": 1
+                    },
+                    "statusCode": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Status code assigned by the bank.",
+                        "example": "HDR1086"
+                    },
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Your company reference generated in reference field of DDI initation to be mapped here.",
+                        "example": "A999999999999"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "Timestamp of the response generation time. Time zone is in UTC.",
+                        "format": "date-time",
+                        "maxLength": 24,
+                        "minLength": 1,
+                        "example": "2018-12-21T06:57:10.170Z"
+                    },
+                    "reasonInformation": {
+                        "maximum": 255,
+                        "minimum": 0,
+                        "type": "string",
+                        "description": "Status Description if Status is Completed or Pending, Rejection Description if Status is Rejected. Reason description is updated by the interface application."
+                    }
+                }
+            },
+            "DDAStatus": {
+                "required": [
+                    "groupId",
+                    "mandateId",
+                    "referenceId",
+                    "ddaContainerId",
+                    "id",
+                    "trackingId",
+                    "status",
+                    "timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "groupId": {
+                        "type": "string",
+                        "description": "Your Registered Group ID to be mapped here",
+                        "example": "APINTST2",
+                        "maxLength": 8,
+                        "minLength": 1
+                    },
+                    "referenceId": {
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Unique Reference ID specified in DDA Request",
+                        "example": "87654321A999999999999"
+                    },
+                    "mandateId": {
+                        "type": "string",
+                        "maxLength": 35,
+                        "minLength": 1,
+                        "description": "Mandate ID",
+                        "example": "A999999999999"
+                    },
+                    "ddaContainerId": {
+                        "type": "string",
+                        "description": "Unique DDA Container ID",
+                        "maxLength": 36,
+                        "minLength": 1
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Unique transaction identifier",
+                        "maxLength": 36,
+                        "minLength": 1
+                    },
+                    "trackingId": {
+                        "type": "string",
+                        "description": "Unique Transaction Tracking ID",
+                        "maxLength": 36,
+                        "minLength": 1
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Status of Mandate",
+                        "maxLength": 10,
+                        "minLength": 1,
+                        "example": "Pending"
+                    },
+                    "statusCode": {
+                        "maxLength": 10,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Back office code to classify the nature of the transaction.",
+                        "example": "DTL1044"
+                    },
+                    "statusMessage": {
+                        "type": "string",
+                        "description": "Status Description. Usually for completed status code (M08), this field will be empty and for Rejected and Pending, it contains valid description.",
+                        "example": "HKID/PASSPORT NOT MATCHED",
+                        "maxLength": 255,
+                        "minLength": 0
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "description": "Indicate the date and time of the status change. Use for reconciliation. Time zone is in UTC.",
+                        "format": "date-time",
+                        "maxLength": 24,
+                        "minLength": 1,
+                        "example": "2018-12-21T06:57:10.170Z"
+                    },
+                    "comments": {
+                        "maxLength": 100,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Additional Information. First Place holder - Provides the status of the Mandate - R -> Rejected, A -> Active. Second Place holder - Mandate Action - S -> Creation, D -> Cancellation. Third Place holder - Mandate ID. Fourth Place holder - Mandate Request ID"
+                    }
+                }
+            },
+            "OpenApiCheque": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "type": "string",
+                        "description": "Cheque Number"
+                    },
+                    "clearingDate": {
+                        "type": "string",
+                        "description": "Cheque Clearing Date",
+                        "format": "date"
+                    },
+                    "transactionReference": {
+                        "type": "string",
+                        "description": "Transaction Reference"
+                    },
+                    "batchNumber": {
+                        "type": "string",
+                        "description": "Batch Number"
+                    }
+                },
+                "description": "(Not in use) The cheque information."
+            },
+            "OpenApiPostalAddress": {
+                "type": "object",
+                "properties": {
+                    "line_1": {
+                        "maxLength": 70,
+                        "minLength": 0,
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Address Line 1"
+                    },
+                    "line_2": {
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Address Line 2"
+                    },
+                    "line_3": {
+                        "pattern": "^[a-zA-Z0-9/?:().,'_+ -]*$",
+                        "type": "string",
+                        "description": "Address Line 3"
+                    },
+                    "line_4": {
+                        "type": "string",
+                        "description": "Address Line 4"
+                    },
+                    "city": {
+                        "maxLength": 35,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "City"
+                    },
+                    "postcode": {
+                        "maxLength": 16,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Postal Code"
+                    },
+                    "country": {
+                        "maxLength": 2,
+                        "minLength": 0,
+                        "pattern": "^[A-Z]*$",
+                        "type": "string",
+                        "description": "Country"
+                    }
+                },
+                "description": "(Not in use) The creditor's address information."
+            },
+            "ListedSecurity": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Security Name"
+                    },
+                    "isin": {
+                        "type": "string",
+                        "description": "Security ISIN"
+                    }
+                }
+            },
+            "AccountStatusNotification": {
+                "type": "object",
+                "properties": {
+                    "groupId": {
+                        "type": "string",
+                        "description": "Internal SCB Identifier",
+                        "example": "GROUP1"
+                    },
+                    "timestamp": {
+                        "type": "integer",
+                        "description": "Timestamp",
+                        "format": "int64"
+                    },
+                    "accountOpeningType": {
+                        "type": "string",
+                        "description": "Account Opening Type",
+                        "example": "Primary",
+                        "enum": [
+                            "Primary",
+                            "Secondary"
+                        ]
+                    },
+                    "countryOfAccount": {
+                        "type": "string",
+                        "description": "Country of the Account",
+                        "example": "SG"
+                    },
+                    "currencyOfAccount": {
+                        "type": "string",
+                        "description": "Currency of the Account",
+                        "example": "SGD"
+                    },
+                    "legalEntity": {
+                        "$ref": "#/components/schemas/LegalEntity"
+                    },
+                    "additionalProperties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "Additional Properties",
+                        "example": "['label1: value1', 'label2: value2']"
+                    },
+                    "accountId": {
+                        "type": "string",
+                        "description": "Account ID",
+                        "example": "123456"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Status",
+                        "example": "Active"
+                    }
+                }
+            },
+            "NewsflashAttachment": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "ID of the Newsflash",
+                        "format": "int64",
+                        "example": 9
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Title of the attached file",
+                        "example": "Snapshot"
+                    },
+                    "filename": {
+                        "type": "string",
+                        "description": "Attached File Name",
+                        "example": "samplemarketsnapshot.pdf"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "description": "Size of the file",
+                        "format": "int64",
+                        "example": 70527
+                    },
+                    "mimeType": {
+                        "type": "string",
+                        "description": "Type of the file",
+                        "example": "application/pdf"
+                    },
+                    "documentId": {
+                        "type": "string",
+                        "description": "Attached File ID"
+                    }
+                }
+            },
+            "ProductImpact": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "ID of the impacted product",
+                        "format": "int64",
+                        "example": 12
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the impacted product",
+                        "example": "Securities Market Information"
+                    },
+                    "topicImpacts": {
+                        "type": "array",
+                        "description": "Impacted Topic Details",
+                        "items": {
+                            "$ref": "#/components/schemas/TopicImpact"
+                        }
+                    },
+                    "marketImpacts": {
+                        "type": "array",
+                        "description": "Impacted Market Details",
+                        "items": {
+                            "$ref": "#/components/schemas/MarketImpact"
+                        }
+                    }
+                }
+            },
+            "TopicImpact": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Topic(channel) ID associated with the flash within the product",
+                        "format": "int64",
+                        "example": 4
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "Topic(channel) name associated with the flash within the product",
+                        "example": "General News"
+                    }
+                }
+            },
+            "NewsflashAttachmentWithData": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "ID of the Newsflash",
+                        "format": "int64"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Title of the attached file",
+                        "example": "Snapshot"
+                    },
+                    "filename": {
+                        "type": "string",
+                        "description": "Attached File Name",
+                        "example": "samplemarketsnapshot.pdf"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "description": "Size of the file",
+                        "format": "int64",
+                        "example": 70527
+                    },
+                    "mimeType": {
+                        "type": "string",
+                        "description": "Type of the file",
+                        "example": "application/pdf"
+                    },
+                    "documentId": {
+                        "type": "string",
+                        "description": "Attachment File ID"
+                    },
+                    "base64EncodedData": {
+                        "type": "string",
+                        "description": "Element contains base64-encoded files, attached to the flash"
+                    }
+                }
+            },
+            "LinkedNewsflash": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "ID of a linked newsflash",
+                        "format": "int64",
+                        "example": 4581
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "Linked newsflash details",
+                        "example": "Partnership Between  Bovespa and CME Group - Update, 10/02/2009"
+                    }
+                }
+            },
+            "AccountId": {
+                "required": [
+                    "accountId",
+                    "bankCode",
+                    "currencyCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "accountId": {
+                        "type": "string",
+                        "description": "The account number for the credit/debit advice is generated.",
+                        "example": "22201111594",
+                        "maxLength": 34,
+                        "minLength": 0
+                    },
+                    "currencyCode": {
+                        "description": "The account currency code",
+                        "$ref": "#/components/schemas/CurrencyCode"
+                    },
+                    "bankCode": {
+                        "type": "string",
+                        "description": "The Bank's branch BIC code.",
+                        "maxLength": 11,
+                        "minLength": 0,
+                        "example": "SCBLINBBXXX"
+                    }
+                }
+            },
+            "CurrencyCode": {
+                "type": "object",
+                "properties": {
+                    "isoCode": {
+                        "type": "string",
+                        "description": "The ISO 3-character currency code.",
+                        "example": "EUR",
+                        "maxLength": 3,
+                        "minLength": 0
+                    }
+                }
+            },
+            "DenominatedAmount": {
+                "required": [
+                    "amount",
+                    "currencyCode"
+                ],
+                "type": "object",
+                "properties": {
+                    "currencyCode": {
+                        "maxLength": 3,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The ISO 3-character currency code.",
+                        "example": "EUR"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "maxLength": 11,
+                        "minLength": 0,
+                        "description": "The value in currency units.",
+                        "example": 12000.12
+                    }
+                }
+            },
+            "TransactionReference": {
+                "required": [
+                    "clientTransactionIdentifier",
+                    "transactionIdentifier"
+                ],
+                "type": "object",
+                "properties": {
+                    "clientTransactionIdentifier": {
+                        "type": "string",
+                        "description": "Your Unique Transaction Reference",
+                        "example": "A33322455"
+                    },
+                    "transactionIdentifier": {
+                        "maxLength": 12,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "Transaction Identifier",
+                        "example": "T664432567"
+                    }
+                }
+            },
+            "Identity": {
+                "required": [
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "ID",
+                        "example": "FPS123456"
+                    }
+                }
+            },
+            "LegalEntity": {
+                "required": [
+                    "identity"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Legal Entity Name",
+                        "example": "Corp Inc"
+                    },
+                    "identity": {
+                        "$ref": "#/components/schemas/Identity"
+                    }
+                }
+            },
+            "MarketImpact": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Id of the impacted market",
+                        "format": "int64",
+                        "example": 19
+                    },
+                    "code": {
+                        "type": "string",
+                        "description": "Unique code of the impacted market",
+                        "example": "BRA"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the impacted market",
+                        "example": "Brazil"
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "Text of the impact statement on the market",
+                        "example": "This information affects the data contained in the Other market where securities are traded and Market Entry Requirements sections of the Securities Market Information Service"
+                    }
+                }
+            },
+            "OpenApiVirtualAccountStatus": {
+                "required": [
+                    "status",
+                    "virtualAccountNumber"
+                ],
+                "type": "object",
+                "properties": {
+                    "virtualAccountNumber": {
+                        "maxLength": 34,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Final Virtual Account Number - (Part A + Part B)",
+                        "example": "CLIENT998877B66"
+                    },
+                    "status": {
+                        "maxLength": 7,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Status of the VAM request",
+                        "example": "PENDING",
+                        "enum": [
+                            "SUCCESS",
+                            "PENDING",
+                            "FAILURE"
+                        ]
+                    },
+                    "statusDescription": {
+                        "type": "string",
+                        "description": "Status description of the VAM request",
+                        "example": "VAM Record already exist"
+                    },
+                    "iban": {
+                        "maxLength": 34,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "International Bank Account Number (IBAN), it is available only for the country that is enabled for IBAN",
+                        "example": "KZ5590238934023248812"
+                    }
+                }
+            },
+            "FinanceStatus": {
+                "type": "object",
+                "properties": {
+                    "AccrualAmortizationFlag": {
+                        "type": "string",
+                        "example": "Y"
+                    },
+                    "AccrualAmortizationFrequency": {
+                        "type": "string",
+                        "example": "DALY"
+                    },
+                    "AccrualAmortizationamount": {
+                        "type": "string",
+                        "example": "0"
+                    },
+                    "BaseRate": {
+                        "type": "string",
+                        "example": "0"
+                    },
+                    "BaseRatetenor": {
+                        "type": "string"
+                    },
+                    "BatchAmount": {
+                        "type": "string",
+                        "example": "5000000"
+                    },
+                    "BatchNo": {
+                        "type": "string"
+                    },
+                    "BuyerDocumentNo": {
+                        "type": "string"
+                    },
+                    "BuyerID": {
+                        "type": "string",
+                        "example": "100495842"
+                    },
+                    "BuyerName": {
+                        "type": "string",
+                        "example": "CHINA NATIONAL BUILDING MATERIAL"
+                    },
+                    "ComputedInterestAmount": {
+                        "type": "string",
+                        "example": "80222.22"
+                    },
+                    "CurrencyCode": {
+                        "type": "string",
+                        "example": "CNY"
+                    },
+                    "DaystoMaturity": {
+                        "type": "string",
+                        "example": "70"
+                    },
+                    "DealID": {
+                        "type": "string",
+                        "example": "TF675V0021"
+                    },
+                    "DealRecID": {
+                        "type": "string",
+                        "example": "TF675V0021-01219"
+                    },
+                    "DocumentAmount": {
+                        "type": "string",
+                        "example": "5000000"
+                    },
+                    "DocumentCurrency": {
+                        "type": "string",
+                        "example": "CNY"
+                    },
+                    "DocumentDate": {
+                        "type": "string",
+                        "example": "11/24/2022"
+                    },
+                    "DocumentID": {
+                        "type": "string",
+                        "example": "2PRT253JJZ-42221"
+                    },
+                    "DocumentOutstandingAmount": {
+                        "type": "string",
+                        "example": "5000000"
+                    },
+                    "DueDate": {
+                        "type": "string",
+                        "example": "4/25/2023"
+                    },
+                    "FinalSettlementFlag": {
+                        "type": "string"
+                    },
+                    "FinanceAmount": {
+                        "type": "string",
+                        "example": "5000000"
+                    },
+                    "FinanceOutstandingAmount": {
+                        "type": "string",
+                        "example": "5000000"
+                    },
+                    "FinanceOutstandingAmountCreditProtected": {
+                        "type": "string",
+                        "example": "0"
+                    },
+                    "FinanceOutstandingAmountNotCreditProtected": {
+                        "type": "string",
+                        "example": "5000000"
+                    },
+                    "FinancePercentage": {
+                        "type": "string",
+                        "example": "100"
+                    },
+                    "FinanceValueDate": {
+                        "type": "string",
+                        "example": "11/24/2022"
+                    },
+                    "FloatingRateFlag": {
+                        "type": "string",
+                        "example": "N"
+                    },
+                    "IncludeEndDateFlag": {
+                        "type": "string",
+                        "example": "N"
+                    },
+                    "InterestCategoryCode": {
+                        "type": "string",
+                        "example": "DINT-Interest Regular - Doc"
+                    },
+                    "InterestCollectionSubtypecode": {
+                        "type": "string"
+                    },
+                    "InterestCollectionSubtypevalue": {
+                        "type": "string"
+                    },
+                    "InterestCollectiontype": {
+                        "type": "string",
+                        "example": "UPFT-Upfront"
+                    },
+                    "InterestDebitAccount": {
+                        "type": "string"
+                    },
+                    "InterestDebitAmount": {
+                        "type": "string",
+                        "example": "80222.22"
+                    },
+                    "InterestDebitCurrency": {
+                        "type": "string",
+                        "example": "CNY"
+                    },
+                    "InterestEndDate": {
+                        "type": "string",
+                        "example": "4/25/2023"
+                    },
+                    "InterestID": {
+                        "type": "string",
+                        "example": "20583328000"
+                    },
+                    "InterestIncomeAccount": {
+                        "type": "string"
+                    },
+                    "InterestRate": {
+                        "type": "string",
+                        "example": "3.8"
+                    },
+                    "InterestRateBasis": {
+                        "type": "string",
+                        "example": "ACTD-Actual/360"
+                    },
+                    "InterestRateType": {
+                        "type": "string",
+                        "example": "N"
+                    },
+                    "InterestStartDate": {
+                        "type": "string",
+                        "example": "11/24/2022"
+                    },
+                    "Interestindexcode": {
+                        "type": "string",
+                        "example": "FIXD-Fixed"
+                    },
+                    "MarginFactor": {
+                        "type": "string",
+                        "example": "1"
+                    },
+                    "MarginPercentage": {
+                        "type": "string",
+                        "example": "3.8"
+                    },
+                    "MarginRate": {
+                        "type": "string",
+                        "example": "3.8"
+                    },
+                    "MaturityDate": {
+                        "type": "string",
+                        "example": "4/25/2023"
+                    },
+                    "OwnerCustomerID": {
+                        "type": "string",
+                        "example": "100487222"
+                    },
+                    "ParentRFFIDifpartpendingamountfinanced": {
+                        "type": "string",
+                        "example": "TF675V0021-01219"
+                    },
+                    "PartyToChargeID": {
+                        "type": "string",
+                        "example": "100487222"
+                    },
+                    "PartytoChargeCode": {
+                        "type": "string",
+                        "example": "P01"
+                    },
+                    "PaymentAmount": {
+                        "type": "string"
+                    },
+                    "PaymentCurrency": {
+                        "type": "string"
+                    },
+                    "PaymentNo": {
+                        "type": "string"
+                    },
+                    "PaymentStatusCode": {
+                        "type": "string",
+                        "example": "Outstanding"
+                    },
+                    "PaymentValueDate": {
+                        "type": "string"
+                    },
+                    "Perdayamount": {
+                        "type": "string",
+                        "example": "0"
+                    },
+                    "ProductCode": {
+                        "type": "string",
+                        "example": "Vendor Prepay"
+                    },
+                    "RFFFinanceAmount": {
+                        "type": "string",
+                        "example": "5000000"
+                    },
+                    "RFFFinanceCurrency": {
+                        "type": "string",
+                        "example": "CNY"
+                    },
+                    "ResetFrequencyCode": {
+                        "type": "string",
+                        "example": "DALY"
+                    },
+                    "Straight2BankFinanceRequestID": {
+                        "type": "string"
+                    },
+                    "SupplierBatchNo": {
+                        "type": "string"
+                    },
+                    "SupplierDocumentNo": {
+                        "type": "string",
+                        "example": "16250bf131db4002"
+                    },
+                    "SupplierID": {
+                        "type": "string",
+                        "example": "100487222"
+                    },
+                    "SupplierName": {
+                        "type": "string",
+                        "example": "SHENZHEN QIANHAI HUANRONG"
+                    },
+                    "Tenor": {
+                        "type": "string",
+                        "example": "152"
+                    },
+                    "TenorStartDate": {
+                        "type": "string",
+                        "example": "11/24/2022"
+                    },
+                    "TransactionAmount": {
+                        "type": "string",
+                        "example": "5000000"
+                    },
+                    "TransactionDate": {
+                        "type": "string",
+                        "example": "11/24/2022"
+                    },
+                    "TransactionDueDate": {
+                        "type": "string",
+                        "example": "4/25/2023"
+                    },
+                    "Transactioncurrency": {
+                        "type": "string",
+                        "example": "CNY"
+                    },
+                    "WaiveFlag": {
+                        "type": "string",
+                        "example": "N"
+                    }
+                }
+            }
+        }
+    }
+}

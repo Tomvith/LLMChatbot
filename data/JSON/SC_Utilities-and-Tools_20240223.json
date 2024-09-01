@@ -1,0 +1,226 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Banking - Heartbeat API",
+        "description": "Heartbeat APIs allow to check the current status of services and determine whether they are available. The health check will help to ensure that transaction request can be initiated once there is a confirmation about the service availability. This will ensure a better customer experience due to minimum impact to transaction processing.",
+        "termsOfService": "https://www.sc.com/s2b/legalnotice/",
+        "contact": {
+            "name": "API Banking Support Team",
+            "url": "https://www.sc.com",
+            "email": "api.query@sc.com"
+        },
+        "license": {
+            "name": "Company Licence",
+            "url": "http://www.sc.com/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.standardchartered.com/openapi"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Health Check Service",
+            "description": "Heartbeat APIs allow to check the current status of services and determine whether they are available. Available for notifications, collections, payments and accounts services.",
+            "x-subcategory": "Utilities and Tools"
+        }
+    ],
+    "paths": {
+        "/collections/health": {
+            "get": {
+                "tags": [
+                    "Health Check Service"
+                ],
+                "summary": "Collections Health",
+                "description": "The Collections Health API allows to check the current status of collection service and determine whether it is available. The health check will help to ensure that transaction request can be initiated once there is a confirmation about the service availability. This will ensure a better customer experience due to minimum impact to transaction processing.",
+                "responses": {
+                    "200": {
+                        "description": "Service status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiHealth"
+                                },
+                                "example": {
+                                    "service": "collections",
+                                    "status": "HEALTHY"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized request"
+                    }
+                },
+                "x-markets": "HK,SL"
+            }
+        },
+        "/payments/health": {
+            "get": {
+                "tags": [
+                    "Health Check Service"
+                ],
+                "summary": "Payments Health",
+                "description": "The Payments Health API allows to check the current status of payments service and determine whether it is available. The health check will help to ensure that transaction request can be initiated once there is a confirmation about the service availability. This will ensure a better customer experience due to minimum impact to transaction processing.",
+                "responses": {
+                    "200": {
+                        "description": "Service status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiHealth"
+                                },
+                                "example": {
+                                    "service": "payments",
+                                    "status": "HEALTHY"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized request"
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,AE,PK,BH,QA,JO,NG,ZA,KE,UG,TZ,GH,ZM,CI,ZW,NP,CM,GB,SL"
+            }
+        },
+        "/notifications/health": {
+            "get": {
+                "tags": [
+                    "Health Check Service"
+                ],
+                "summary": "Notifications Health",
+                "description": "The Notifications Health API allows to check the current status of notifications service and determine whether it is available. The health check will help to ensure that transaction request can be initiated once there is a confirmation about the service availability. This will ensure a better customer experience due to minimum impact to transaction processing.",
+                "responses": {
+                    "200": {
+                        "description": "Service status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiHealth"
+                                },
+                                "example": {
+                                    "service": "notifications",
+                                    "status": "HEALTHY"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized request"
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,AE,PK,BH,QA,JO,NG,ZA,KE,UG,TZ,GH,ZM,CI,ZW,NP,CM,GB,SL"
+            }
+        },
+        "/accounts/health": {
+            "get": {
+                "tags": [
+                    "Health Check Service"
+                ],
+                "summary": "Accounts Health",
+                "description": "The Accounts Health API allows to check the current status of collection service and determine whether it is available. The health check will help to ensure that transaction request can be initiated once there is a confirmation about the service availability. This will ensure a better customer experience due to minimum impact to transaction processing.",
+                "responses": {
+                    "200": {
+                        "description": "Service status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiHealth"
+                                },
+                                "example": {
+                                    "service": "accounts",
+                                    "status": "UNHEALTHY"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized request"
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,AE,PK,BH,QA,JO,NG,ZA,KE,UG,TZ,GH,ZM,CI,ZW,NP,CM,GB,SL"
+            }
+        },
+        "/health": {
+            "get": {
+                "tags": [
+                    "Health Check Service"
+                ],
+                "summary": "Aggregate Health",
+                "description": "The Aggregate Health API allows to check the current status of all services (limited to accounts, payments, collections and notifications) and determine whether they are available. The health check will help to ensure that transaction request can be initiated once there is a confirmation about the service availability. This will ensure a better customer experience due to minimum impact to transaction processing.",
+                "responses": {
+                    "200": {
+                        "description": "Service status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OpenApiHealthAggregate"
+                                },
+                                "example": [
+                                    {
+                                        "service": "accounts",
+                                        "status": "UNHEALTHY"
+                                    },
+                                    {
+                                        "service": "payments",
+                                        "status": "HEALTHY"
+                                    },
+                                    {
+                                        "service": "collections",
+                                        "status": "HEALTHY"
+                                    },
+                                    {
+                                        "service": "notifications",
+                                        "status": "HEALTHY"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized request"
+                    }
+                },
+                "x-markets": "HK,CN,TW,SG,MY,TH,ID,PH,VN,IN,BD,LK,AE,PK,BH,QA,JO,NG,ZA,KE,UG,TZ,GH,ZM,CI,ZW,NP,CM,GB,SL"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "OpenApiHealthAggregate": {
+                "type": "object",
+                "properties": {
+                    "accounts": {
+                        "type": "array",
+                        "description": "Status Details",
+                        "items": {
+                            "$ref": "#/components/schemas/OpenApiHealth"
+                        }
+                    }
+                }
+            },
+            "OpenApiHealth": {
+                "type": "object",
+                "properties": {
+                    "service": {
+                        "type": "string",
+                        "description": "Name of the service for which health check is performed",
+                        "example": "payments"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Health status of the service",
+                        "enum": [
+                            "HEALTHY",
+                            "UNHEALTHY"
+                        ],
+                        "example": "HEALTHY"
+                    }
+                }
+            }
+        }
+    }
+}

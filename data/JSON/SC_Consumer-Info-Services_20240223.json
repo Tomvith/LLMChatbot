@@ -1,0 +1,1081 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Consumer Info Services APIs Specifications",
+    "version": "1.0.0",
+    "description": "## Introduction\nThere are 3 API service in this group for Info Services APIs. <br/> 1. Info Services Branch Locator to retrieve branch location details <br/> 2. Info Services Product Information to retrieve product details <br/> 3. Info Services Product Category to retrieve the list of product categories <br/>\n## Encryption and Signing\nEncryption and Signing uses JSON Web Tokens (JWT), an open industry standard <a href=\"https://tools.ietf.org/html/rfc7519\">RFC7519</a> method to represent claims securely across two parties.\n### Algorithms\nSCB provides support for the beLow-mentioned algorithms, which are specified in the JOSE Header, as per <a href=\"https://tools.ietf.org/html/rfc7515\">JSON Web Signature</a> (JWS) and <a href=\"https://tools.ietf.org/html/rfc7516#section-4.1.12\">JSON Web Encryption</a> (JWE) Standards.\n <table>\n  <thead>\n    <tr>\n      <th width='25%'>Standard</th>\n      <th width='25%'>Algorithm</th>\n      <th width='70%'>JOSE Header</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>JSON Web Signature (JWS)</td>\n      <td>ES256</td>\n      <td>\n        kid: (key id)\n        cty: JWS\n        alg: ES256\n      </td>\n    </tr>\n    <tr>\n      <td>JSON Web Encryption (JWE)</td>\n      <td>RSA-OAEP-256 (Asymmetric)</td>\n      <td>\n          kid: (key id)\n          cty: JWT\n          alg: RSA-OAEP-256\n      </td>\n    </tr>\n    </tbody>\n</table>\n\n<hr/>\n\n## Guide for JWE and JWS\nAs per SCB API Security standards, SCB uses Compact Serialization for its <a href=\"https://tools.ietf.org/html/rfc7515#section-7.1\">JWS</a>/<a href=\"https://tools.ietf.org/html/rfc7516#section-3.1\">JWE</a> representation. The content to be sent to the client <b>is first signed folLowing JWS specifications</b> and <b>then encrypted and sent as a JWE to the client</b>. Specifics for creating each component are as shown beLow:\n### JSON Web Signature\nThe folLowing describes the structure of our JWS.\n\n**Message** : Content to be sent to client\n\n**JWS Payload** : BASE64URL-ENCODE(Message)\n\n**Signature** : ASCII(BASE64URL-ENCODE(UTF8(JOSE Header))‘.’BASE64URL-ENCODE(JWS Payload))\n\n**Structure** : BASE64URL(UTF8(JOSE Header))‘.’BASE64URL(JWS Payload)‘.’BASE64URL(JWS Signature)\n<hr/>\n\n### JSON Web Encryption\nThe folLowing describes the structure of our JWE. The payload in our JWE is the JWS we have created in the steps above. The JOSE header of JWE contains both symmetric and asymmetric encryptions. Symmetric encryption to encrypt the payload, and assymetric encryption to encrypt the symmetric key. The assymetric keypair belongs to the client who will be receiving the JWE.\n\n**JWE Payload** : JWS Signature (from above)\n\n**JWE Ciphertext** : *ENCRYPT-SYMMETRIC*(JWE Payload)\n\n**JWE Encrypted Key** : *ENCRYPT-ASYMMETRIC*(Symmetric Key) - using client's public key\n\n**Structure** : BASE64URL-ENCODE(UTF8(JWE Header))‘.’BASE64URL-ENCODE(JWE Encrypted Key)‘.’BASE64URL-ENCODE(JWE Initialization Vector)‘.’BASE64URL-ENCODE(JWE Ciphertext)‘.’BASE64URL-ENCODE(JWE Authentication Tag)\n\n## API Response Codes\n\n\n  <table style='border: 0.5px solid; '>\n    <thead>\n      <tr>\n        <th width='5%'>Response Code</th>\n        <th width='40%'>Response Message</th>\n        <th width='10%'>HTTP status</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>E001</td>\n        <td>Field is mandatory</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E002</td>\n        <td>Field value not in valid range</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E003</td>\n        <td>Invalid Format</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E004</td>\n        <td>Contains invalid characters</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E005</td>\n        <td>Resource not found</td>\n        <td>404</td>\n      </tr>\n      <tr>\n        <td>E006</td>\n        <td>No unique resource found</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E100</td>\n        <td>Unable to decrypt</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E101</td>\n        <td>Unable to verify signature</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E102</td>\n        <td>Unable to decrypt or verify signature</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E103</td>\n        <td>Unable to encrypt</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E104</td>\n        <td>Unable to sign</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E105</td>\n        <td>Unable to encrypt or sign</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E110</td>\n        <td>Invalid MTLS Cert</td>\n        <td>400</td>\n      </tr>\n      <tr>\n        <td>E111</td>\n        <td>Invalid Token Error</td>\n        <td>401</td>\n      </tr>\n      <tr>\n        <td>E112</td>\n        <td>Forbidden</td>\n        <td>403</td>\n      </tr>\n      <tr>\n        <td>E200</td>\n        <td>Downstream System Error</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E201</td>\n        <td>Internal API Gateway Error</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E202</td>\n        <td>Timeout Error</td>\n        <td>500</td>\n      </tr>\n      <tr>\n        <td>E300</td>\n        <td>Modify request as message is too large</td>\n        <td>413</td>\n      </tr>\n      <tr>\n        <td>E999</td>\n        <td>Unexpected error occurred</td>\n        <td>500</td>\n      </tr>\n    <tbody>\n  </table>\n"
+  },
+  "servers": [
+    {
+      "url": "https://test-api.sc.com",
+      "description": "Test Environment"
+    },
+    {
+      "url": "https://api.sc.com",
+      "description": "Production Environment"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Info Services Enquiry APIs",
+      "description": "There are 3 APIs in this group for Info Services APIs",
+      "x-subcategory": "Consumer Info Services APIs"
+    }
+  ],
+  "paths": {
+    "/consumer/{version}/info-services/locations": {
+      "get": {
+        "tags": [
+          "Info Services Enquiry APIs"
+        ],
+        "description": "Retrieve info services branch locator based on details provided",
+        "summary": "Retrieve info services branch locator details",
+        "parameters": [
+          {
+            "name": "Transaction-Id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request, for tracking purposes",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "example": "6bc1371d-f47d-46c5-d769-e1592589c78d"
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "description": "IP address which the request originated from, segregated by commas. \\<user ip>, \\<server ip> etc",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "example": "10.123.123.123, 10.123.45.67"
+          },
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 2,
+              "minLength": 2,
+              "enum": [
+                "IN"
+              ]
+            },
+            "example": "IN"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version of the API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "v1",
+              "enum": [
+                "v1"
+              ]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Type of branch locator",
+            "explode": false,
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 6,
+              "enum": [
+                "ATM",
+                "BRANCH"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieves info services branch locator.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/locations-response"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message parameters etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-bad-request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "IN"
+      }
+    },
+    "/consumer/{version}/info-services/products": {
+      "get": {
+        "tags": [
+          "Info Services Enquiry APIs"
+        ],
+        "description": "Retrieve info services product information based on details provided",
+        "summary": "Retrieve info services product details",
+        "parameters": [
+          {
+            "name": "Transaction-Id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request, for tracking purposes",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "example": "6bc1371d-f47d-46c5-d769-e1592589c78d"
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "description": "IP address which the request originated from, segregated by commas. \\<user ip>, \\<server ip> etc",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "example": "10.123.123.123, 10.123.45.67"
+          },
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 2,
+              "minLength": 2,
+              "enum": [
+                "IN"
+              ]
+            },
+            "example": "IN"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version of the API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "v1",
+              "enum": [
+                "v1"
+              ]
+            }
+          },
+          {
+            "name": "category-code",
+            "in": "query",
+            "description": "A category code that can be used to filter the output list <table style='border: 0.5px solid; '>\n    <thead>\n      <tr>\n        <th width='10%'>Code</th>\n        <th width='90%'>Description</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr><td>BL1</td><td>Bundle</td></tr>\n      <tr><td>CC</td><td>Credit Card</td></tr>\n      <tr><td>CA</td><td>Current Account</td></tr>\n      <tr><td>SA</td><td>Savings Account</td></tr>\n      <tr><td>TD</td><td>Term Deposit</td></tr>\n      <tr><td>PL</td><td>Personal Loan</td></tr>\n    </tbody>\n  </table>",
+            "explode": false,
+            "schema": {
+              "maxLength": 3,
+              "enum": [
+                "BL1",
+                "CC",
+                "CA",
+                "SA",
+                "TD",
+                "PL"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieves info services products information.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/products-response"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message parameters etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-bad-request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "IN"
+      }
+    },
+    "/consumer/{version}/info-services/product-categories": {
+      "get": {
+        "tags": [
+          "Info Services Enquiry APIs"
+        ],
+        "description": "Retrieve info services product categories based on details provided",
+        "summary": "Retrieve list of product categories",
+        "parameters": [
+          {
+            "name": "Transaction-Id",
+            "in": "header",
+            "description": "Unique transaction reference identifier for the API request, for tracking purposes",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 36
+            },
+            "example": "6bc1371d-f47d-46c5-d769-e1592589c78d"
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "description": "IP address which the request originated from, segregated by commas. \\<user ip>, \\<server ip> etc",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "example": "10.123.123.123, 10.123.45.67"
+          },
+          {
+            "name": "X-Market",
+            "in": "header",
+            "description": "Indicate the specific Market or Country for which this operation is performed. Value should be a 2-char ISO-3166 country code.",
+            "style": "simple",
+            "explode": true,
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 2,
+              "minLength": 2,
+              "enum": [
+                "IN"
+              ]
+            },
+            "example": "IN"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "version of the API",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "v1",
+              "enum": [
+                "v1"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieves list of product categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/product-categories-response"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/encrypted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Errors can be like malformed request syntax, invalid request message parameters etc. Refer to response message for more details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-bad-request"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Certificate Mismatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-certificate-mismatch"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server / Unexpected Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fail-unexpected"
+                }
+              }
+            }
+          }
+        },
+        "x-markets": "IN"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "encrypted": {
+        "type": "string",
+        "description": "Encrypted Message base on JWE standard",
+        "example": "eyJraWQiOiI0UTVZMDU1V1NHNFFLMTAxNDcxIiwiZW5jIjoiQTI1NkNCQy1IUzUxMiIsImFsZyI6IlJTQS1PQUVQLTI1NiJ9.kuq6D5pf_cSykPcukL2amWBIyvc6lm49wjuX440CWXvPSXzenwroxpNNfIs8NVuh15xQleXfv8tDwBaamepHQHF8K7xr8BkAoyFYRNLxUpkF4PCG1WbhcQrqVQHYpEXOmReqaiOtZcfHAfE67PxP_ajwnEWoSYyTlUuEM1eQZBRUVg5giOTZpYWjjpfF2nvFxJQY36q-8dHt2AWP2OpQuFcO_NnahC2k3n0X-WuuIUhRlXjvOYgv--KuLC49gvMvVEEqQ041eOTn6t3MLr5Nh48FmD4UxzSF3hePr-DUjK-bZltPW0RnMNCdXzbPGF7OjNm9EPQC6aYtCa-EvKDZmw.XxkayMQH5TT3t4W9zuJtDQ.5-hBIs6mKkSilQuLiofNPYVmdVRmFm0VdNt65qL40jtZG62RDvqUcxw5HeWRWUHt9TIg_GtrLAdVuvt2V0avgqRBeIOj84n5Nx_qphCN1846Dhv-73F5qculYBjdMSFdQoOwmcbIOJKtuF1klRJvIoDc2ebFtkb7YKmrcwDnlBueB-lIDn8G3UcowS9x9z1Cxq4UpkYJjRy-Ak4WuROrJvfHEUpvD7Q7jibIhstKS9oz4kxA5Vc5bzqlRmmjGRn0OiCUeDnUOEwZvCtSG-5WM5W71KI_bUHF9bGNd37-RlRnCsgt0i1ApiNwiI3kOVuHw0nt1bgY5XvXuf5VVjj1dc60yQLPl_VS7I17CgILzRLPS8uFQ8NPrJITGjmZEAvIR7dOxXa16PzRmJUKEE6ioxbKrdnsG1bZqugtx52GCk0gveXtwyH6zH-8h0t9QUdmwtZamZVkjEJlVuPU1SBrrwtHe1CTW9XNIVUMSuIBe_uvF0rcm4k5Jp98gy5ecsI3r81BJn30uLV3Hk4HGoHJ1Hrza9A6q0nEEqQ-XqfSXQEUBVuS8PmQRUIe409isnwdJIQHP3SehVt2nRufh9bDfQ.Yw3C1zME5UShNGZ7oa8eN-Cg3SeM0dKxRWObZwaHdWk"
+      },
+      "signed": {
+        "type": "string",
+        "description": "Signed Message base on JWS standard",
+        "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJhY2Nlc3MtdG9rZW4iOiIxYWFmN2Y0OC00NGRhLTQ5OWUtYmRmMi04OWQ2ZDlkYzM5NzcifQ.eZubyvKstz8lYmAVCfQnAUZ8k4IO6JU0tn8vvZNLWDdXKthA-K0UkQ6GnoURpruoFr4QD7Cy_8uRMBEigm1BSQ"
+      },
+      "locations-response": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "branch-id": {
+              "type": "string",
+              "description": "Branch ID",
+              "maxLength": 6,
+              "minLength": 1,
+              "example": "281851"
+            },
+            "name": {
+              "type": "string",
+              "description": "Branch name",
+              "maxLength": 150,
+              "minLength": 1,
+              "example": "Indira Nagar Branch ATM, Bangalore"
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of branch locator",
+              "maxLength": 6,
+              "minLength": 3,
+              "example": "ATM",
+              "enum": [
+                "ATM",
+                "BRANCH"
+              ]
+            },
+            "latitude": {
+              "type": "number",
+              "description": "ATM or Branch latitude",
+              "maxLength": 10,
+              "example": 12.970522
+            },
+            "longitude": {
+              "type": "number",
+              "description": "ATM or Branch longitude",
+              "maxLength": 10,
+              "example": 77.644134
+            },
+            "place-id": {
+              "type": "string",
+              "description": "Place identifier",
+              "maxLength": 50,
+              "example": "ChIJFTPXmarP5zsRbcrpJr0aT4s"
+            },
+            "working-hours": {
+              "type": "string",
+              "description": "ATM or Branch working hours",
+              "maxLength": 200,
+              "example": "\"Monday to Friday: 9:30 am to 4:30 pm\n  Working Saturday: 9:30 am to 4:30 pm\n  Sunday & Holidays Closed\""
+            },
+            "address": {
+              "type": "string",
+              "description": "ATM or Branch address",
+              "maxLength": 200,
+              "minLength": 1,
+              "example": "No. 2981, 12th main, HAL 2nd stage, Indira Nagar, Bangalore - 560038"
+            },
+            "city": {
+              "type": "string",
+              "description": "ATM or Branch located city",
+              "maxLength": 15,
+              "example": "Bangalore"
+            },
+            "postal-code": {
+              "type": "string",
+              "description": "ATM or Branch postal code",
+              "maxLength": 10,
+              "example": "560038"
+            },
+            "services": {
+              "type": "string",
+              "description": "Services type",
+              "maxLength": 6,
+              "example": "ATM",
+              "enum": [
+                "ATM",
+                "BRANCH"
+              ]
+            },
+            "telephone": {
+              "type": "string",
+              "description": "Telephone details",
+              "maxLength": 100,
+              "example": "9045000749, 9045001046"
+            },
+            "status": {
+              "type": "string",
+              "description": "Status of branch locator",
+              "maxLength": 11,
+              "example": "Open",
+              "enum": [
+                "Open",
+                "Closed",
+                "Maintenance"
+              ]
+            }
+          }
+        },
+        "example": [
+          {
+            "branch-id": "281851",
+            "name": "Indira Nagar Branch ATM, Bangalore",
+            "type": "ATM",
+            "latitude": 12.970522,
+            "longitude": 77.644134,
+            "place-id": "ChIJFTPXmarP5zsRbcrpJr0aT4s",
+            "working-hours": "Monday to Friday: 9:30 am to 4:30 pm<br \\/>\\r\\nWorking Saturday: 9:30 am to 4:30 pm<br \\/>\\r\\nSunday & Holidays Closed<br \\/>",
+            "address": "No. 2981, 12th main, HAL 2nd stage, Indira Nagar, Bangalore - 560038",
+            "city": "Bangalore",
+            "postal-code": "560038",
+            "services": "ATM",
+            "telephone": "9045000749, 9045001046",
+            "status": "Open"
+          },
+          {
+            "branch-id": "264559",
+            "name": "Mumbai Branch - Chembur",
+            "type": "BRANCH",
+            "latitude": 19.05957,
+            "longitude": 72.9009,
+            "place-id": "ChIJFT9hyd7ada0OPXmPsaT4s",
+            "working-hours": "Monday to Friday: 9:30 am to 4:30 pm<br \\/>\\r\\nWorking Saturday: 9:30 am to 4:30 pm<br \\/>\\r\\nSunday & Holidays Closed<br \\/>",
+            "address": "Ground floor, Bella Vista, Central Avenue Road, Near Ambedkar Garden, Chembur, Mumbai - 400071",
+            "city": "Mumbai",
+            "postal-code": "400071",
+            "services": "BRANCH",
+            "telephone": "9029007093, 9029007096",
+            "status": "Maintenance"
+          }
+        ]
+      },
+      "products-response": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the Product",
+              "maxLength": 100,
+              "example": "2 in 1 Account-Personal"
+            },
+            "campaign-code": {
+              "type": "string",
+              "description": "Campaign-code",
+              "maxLength": 16,
+              "example": "INSATDCB00002IN1"
+            },
+            "campaign-description": {
+              "type": "string",
+              "description": "Campaign code description",
+              "maxLength": 100,
+              "example": "2 in 1 account"
+            },
+            "category-code": {
+              "type": "string",
+              "description": "A category code that can be used to filter the output list <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr><td>BL1</td><td>Bundle</td></tr>\n    <tr><td>CC</td><td>Credit Card</td></tr>\n    <tr><td>CA</td><td>Current Account</td></tr>\n    <tr><td>SA</td><td>Savings Account</td></tr>\n    <tr><td>TD</td><td>Term Deposit</td></tr>\n    <tr><td>PL</td><td>Personal Loan</td></tr>\n  </tbody>\n</table>",
+              "maxLength": 3,
+              "example": "BL1",
+              "enum": [
+                "BL1",
+                "CC",
+                "CA",
+                "SA",
+                "TD",
+                "PL"
+              ]
+            },
+            "category": {
+              "type": "string",
+              "description": "Product category",
+              "maxLength": 25,
+              "example": "Bundle",
+              "enum": [
+                "Bundle",
+                "Credit Card",
+                "Current Account",
+                "Savings Account",
+                "Term Deposit",
+                "Personal Loan"
+              ]
+            },
+            "product-type-code": {
+              "type": "string",
+              "description": "Product type code",
+              "maxLength": 5,
+              "example": "083",
+              "enum": [
+                "083",
+                455,
+                451,
+                453,
+                199,
+                535,
+                233,
+                292,
+                55,
+                526,
+                577,
+                342,
+                352,
+                353,
+                354,
+                355,
+                356,
+                357,
+                358,
+                359,
+                360,
+                361,
+                362,
+                363,
+                323,
+                314,
+                315,
+                "RESF",
+                "NREF",
+                "NRER",
+                "FCNU",
+                "FCNR",
+                300,
+                "STFR",
+                "STFF",
+                "STIP",
+                328,
+                338,
+                310,
+                351,
+                309,
+                367,
+                6075,
+                6025
+              ]
+            },
+            "sub-product-type-code": {
+              "type": "string",
+              "description": "Sub product type code",
+              "maxLength": 5,
+              "example": 93
+            },
+            "description": {
+              "type": "string",
+              "description": "Details of the benefit",
+              "maxLength": 250,
+              "example": "Earn high interest rates like a fixed deposit and also get the flexibility and benefits of a savings or current account"
+            },
+            "new-offering": {
+              "type": "string",
+              "description": "To annotate if new offering is available for this specific product",
+              "maxLength": 5,
+              "example": true,
+              "enum": [
+                true,
+                false
+              ]
+            },
+            "promotion": {
+              "type": "string",
+              "description": "To annotate if promotion is available for this specific product",
+              "maxLength": 5,
+              "example": true,
+              "enum": [
+                true,
+                false
+              ]
+            },
+            "start-date": {
+              "type": "string",
+              "description": "Effective start date in YYYY-MM-DD format",
+              "example": "2021-06-27",
+              "maxLength": 10
+            },
+            "end-date": {
+              "type": "string",
+              "description": "Effective end date in YYYY-MM-DD format",
+              "example": "2022-06-27",
+              "maxLength": 10
+            },
+            "segment": {
+              "description": "Segment in which the product is offered for",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 10,
+                "example": "Personal",
+                "enum": [
+                  "Personal",
+                  "Priority",
+                  "Premium"
+                ]
+              }
+            },
+            "allow-joint": {
+              "type": "string",
+              "description": "To annotate if joint allowed is available for this specific product",
+              "maxLength": 5,
+              "example": false,
+              "enum": [
+                true,
+                false
+              ]
+            },
+            "allow-supplementary-card": {
+              "type": "string",
+              "description": "To annotate if supplementary card is available for this specific product",
+              "maxLength": 5,
+              "example": false,
+              "enum": [
+                true,
+                false
+              ]
+            },
+            "insta-pack": {
+              "type": "string",
+              "description": "To annotate if insta pack is available for this specific product",
+              "maxLength": 5,
+              "example": false,
+              "enum": [
+                true,
+                false
+              ]
+            },
+            "is-saadiq": {
+              "type": "string",
+              "description": "To annotate if isalamic product is available for this specific product",
+              "maxLength": 5,
+              "example": false,
+              "enum": [
+                true,
+                false
+              ]
+            },
+            "company-category": {
+              "description": "Company category for employee banking",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 10,
+                "example": "Category A",
+                "enum": [
+                  "Category A",
+                  "Category B",
+                  "Category C",
+                  "Category D",
+                  "Category Z",
+                  "Category E",
+                  "Category H",
+                  "Category M"
+                ]
+              }
+            },
+            "applicable-group": {
+              "description": "Group that product is applicable to",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 2,
+                "example": "EB",
+                "enum": [
+                  "EB"
+                ]
+              }
+            }
+          }
+        },
+        "example": [
+          {
+            "name": "2 in 1 Account-Personal",
+            "campaign-code": "INSATDCB00002IN1",
+            "campaign-description": "2 in 1 account",
+            "category-code": "BL1",
+            "category": "Bundle",
+            "product-type-code": "083",
+            "sub-product-type-code": 93,
+            "description": "Earn high interest rates like a fixed deposit and also get the flexibility and benefits of a savings or current account",
+            "new-offering": true,
+            "promotion": true,
+            "start-date": "2021-06-27",
+            "end-date": "2041-09-30",
+            "segment": [
+              "Personal"
+            ],
+            "allow-joint": false,
+            "allow-supplementary-card": false,
+            "insta-pack": false,
+            "is-saadiq": false,
+            "company-category": [
+              "Category A"
+            ],
+            "applicable-group": [
+              "EB"
+            ]
+          },
+          {
+            "name": "CC + SA Bundle Top 50 Corporates - Offer Letter Program",
+            "campaign-code": "INCCT50BUNDOFLT",
+            "campaign-description": "CC + SA Bundle Top 50 Corporates - Offer Letter Program",
+            "product-category-code": "BL1",
+            "product-category": "Bundle",
+            "product-type-code": "083",
+            "sub-product-type-code": 93,
+            "description": "Easy option to have all your Salaries and expenditures tracked as part of our Employee bundle pack with Savings Account along with a Credit card to suffice your immediate need.",
+            "new-offering": true,
+            "promotion": true,
+            "start-date": "2022-08-17",
+            "end-date": "2099-12-31",
+            "segment": [
+              "Personal",
+              "Premium",
+              "Priority"
+            ],
+            "allow-joint": false,
+            "allow-supplementary-card": false,
+            "insta-pack": false,
+            "is-saadiq": false,
+            "company-category": [
+              "Category A",
+              "Category B",
+              "Category C",
+              "Category D",
+              "Category Z"
+            ],
+            "applicable-group": [
+              "EB"
+            ]
+          }
+        ]
+      },
+      "product-categories-response": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the Product",
+              "maxLength": 100,
+              "example": "2 in 1 Account-Personal"
+            },
+            "campaign-code": {
+              "type": "string",
+              "description": "Campaign-code",
+              "maxLength": 16,
+              "example": "INSATDCB00002IN1"
+            },
+            "campaign-description": {
+              "type": "string",
+              "description": "Campaign code description",
+              "maxLength": 100,
+              "example": "2 in 1 account"
+            },
+            "category-code": {
+              "type": "string",
+              "description": "A category code that can be used to filter the output list <table style='border: 0.5px solid; '>\n  <thead>\n    <tr>\n      <th width='10%'>Code</th>\n      <th width='90%'>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr><td>BL1</td><td>Bundle</td></tr>\n    <tr><td>CC</td><td>Credit Card</td></tr>\n    <tr><td>CA</td><td>Current Account</td></tr>\n    <tr><td>SA</td><td>Savings Account</td></tr>\n    <tr><td>TD</td><td>Term Deposit</td></tr>\n    <tr><td>PL</td><td>Personal Loan</td></tr>\n  </tbody>\n</table>",
+              "maxLength": 3,
+              "example": "BL1",
+              "enum": [
+                "BL1",
+                "CC",
+                "CA",
+                "SA",
+                "TD",
+                "PL"
+              ]
+            },
+            "category": {
+              "type": "string",
+              "description": "Product category",
+              "maxLength": 25,
+              "example": "Bundle",
+              "enum": [
+                "Bundle",
+                "Credit Card",
+                "Current Account",
+                "Savings Account",
+                "Term Deposit",
+                "Personal Loan"
+              ]
+            },
+            "product-type-code": {
+              "type": "string",
+              "description": "Product type code",
+              "maxLength": 5,
+              "example": "083",
+              "enum": [
+                "083",
+                455,
+                451,
+                453,
+                199,
+                535,
+                233,
+                292,
+                55,
+                526,
+                577,
+                342,
+                352,
+                353,
+                354,
+                355,
+                356,
+                357,
+                358,
+                359,
+                360,
+                361,
+                362,
+                363,
+                323,
+                314,
+                315,
+                "RESF",
+                "NREF",
+                "NRER",
+                "FCNU",
+                "FCNR",
+                300,
+                "STFR",
+                "STFF",
+                "STIP",
+                328,
+                338,
+                310,
+                351,
+                309,
+                367,
+                6075,
+                6025
+              ]
+            },
+            "sub-product-type-code": {
+              "type": "string",
+              "description": "Sub product type code",
+              "maxLength": 5,
+              "example": 93
+            }
+          }
+        },
+        "example": [
+          {
+            "name": "2 in 1 Account-Personal",
+            "campaign-code": "INSATDCB00002IN1",
+            "campaign-description": "2 in 1 account",
+            "category-code": "BL1",
+            "category": "Bundle",
+            "product-type-code": "083",
+            "sub-product-type-code": "93"
+          },
+          {
+            "name": "Bandhan Xclusive",
+            "campaign-code": "INSATDCB00002IN1",
+            "campaign-description": "2 in 1 account",
+            "category-code": "CC",
+            "category": "Credit Card",
+            "product-type-code": "455",
+            "sub-product-type-code": "0"
+          }
+        ]
+      },
+      "error": {
+        "description": "Error object details",
+        "title": "error",
+        "required": [
+          "id",
+          "code",
+          "detail"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The transaction id from the request header, if the transaction id was not present in the request header, a generated random UUID will shown here for tracking purposes.",
+            "type": "string"
+          },
+          "code": {
+            "description": "An application-specific error code",
+            "type": "string"
+          },
+          "detail": {
+            "description": "A human-readable explanation specific to this occurrence of the problem",
+            "type": "string"
+          },
+          "source": {
+            "description": "Source of the error - denotes the name of parameter name causing the problem",
+            "type": "string"
+          }
+        },
+        "example": {
+          "id": "1234",
+          "code": "E001",
+          "detail": "Field is mandatory",
+          "source": "first-name"
+        }
+      },
+      "errors": {
+        "description": "List of error object",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/error"
+        }
+      },
+      "fail-bad-request": {
+        "$ref": "#/components/schemas/errors"
+      },
+      "fail-certificate-mismatch": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Certificate used in API call did not match",
+            "example": "Certificate mismatch"
+          }
+        }
+      },
+      "fail-unexpected": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the transaction-id from the request header"
+          },
+          "code": {
+            "type": "string",
+            "description": "Response Code. Refer to Response Code Table for list of responses."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Details of the error.",
+            "example": "Unexpected error occurred"
+          }
+        },
+        "example": {
+          "id": "86c1d522-efab-479c-9c4a-d51f1c3152d8",
+          "code": "E005",
+          "detail": "Unexpected error occurred"
+        }
+      },
+      "fail-notfound": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the transaction-id from the request header"
+          },
+          "code": {
+            "type": "string",
+            "description": "Response Code.Refer to Response Code Table for list of responses."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Details of the error"
+          }
+        },
+        "example": {
+          "id": "75c1d522-efab-473d-9c4a-d51f1c3152d8",
+          "code": "E005",
+          "detail": "Resource not found"
+        }
+      }
+    }
+  }
+}
